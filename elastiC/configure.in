@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.10 2002/06/06 17:27:57 panta Exp $
+dnl   $Id: configure.in,v 1.11 2002/06/06 19:19:18 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -449,7 +449,7 @@ AC_CHECK_LIB_EFENCE
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h values.h malloc.h string.h strings.h sys/file.h sys/types.h sys/wait.h sys/ioctl.h sys/time.h sys/times.h syslog.h unistd.h signal.h errno.h netinet/in.h)
+AC_CHECK_HEADERS(fcntl.h limits.h values.h malloc.h string.h strings.h sys/file.h sys/types.h sys/stat.h sys/wait.h sys/ioctl.h sys/time.h sys/times.h syslog.h unistd.h signal.h dirent.h errno.h netinet/in.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 if test "x$MINGW32" = "xyes" -o "x$CYGWIN" = "xyes" ; then
@@ -494,6 +494,10 @@ AC_CHECK_FUNCS(getcwd select socket strerror)
 AC_CHECK_FUNCS(isinf isnan)
 AC_CHECK_FUNCS(getopt)
 dnl POSIX functions
+AC_CHECK_FUNCS(getcwd mkdir rmdir chdir link unlink rename stat fstat lstat)
+AC_CHECK_FUNCS(chmod chown utime)
+AC_CHECK_FUNCS(opendir readdir closedir rewinddir seekdir telldir)
+AC_CHECK_FUNCS(chmod chown utime)
 AC_CHECK_FUNCS(access open creat close read write fcntl fstat lseek dup dup2)
 AC_CHECK_FUNCS(pipe mkfifo umask fdopen fileno)
 AC_CHECK_FUNCS(fork execl execle execlp execv execve execvp wait waitpid _exit)

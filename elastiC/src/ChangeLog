@@ -1,8 +1,10 @@
 2002-06-06  Marco Pantaleoni  <panta@elasticworld.org>
 
-	* modules/posix_m.c: added POSIX functions `dup', `dup2', `pipe',
-	`fork', `execv', `execve', `execvp', `wait', `waitpid', `_exit',
-	`kill', `sleep', `pause', `alarm', `setuid', `setgid'.
+	* modules/posix_m.c: added POSIX functions `getcwd', `mkdir',
+	`rmdir', `chdir', `link', `unlink', `rename', `chmod', `chown',
+	`dup', `dup2', `pipe', `fork', `execv', `execve', `execvp',
+	`wait', `waitpid', `_exit', `kill', `sleep', `pause', `alarm',
+	`setuid', `setgid'.
 
 	* modules/posix_m.c: added a `posix.has' hash table, indexed by
 	symbols like `#access', `#fork', ... indicating if the named

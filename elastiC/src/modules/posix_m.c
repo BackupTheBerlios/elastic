@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.4 2002/06/06 17:27:57 panta Exp $
+ *   $Id: posix_m.c,v 1.5 2002/06/06 19:19:19 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -55,6 +55,12 @@
 #endif
 #if HAVE_SIGNAL_H
 #include <signal.h>
+#endif
+#if HAVE_DIRENT_H
+#include <dirent.h>
+#endif
+#if HAVE_LIMITS_H
+#include <limits.h>
 #endif
 #if HAVE_ERRNO_H
 #include <errno.h>
@@ -181,6 +187,298 @@ static EC_OBJ posix2exception( int posix_errnum, EC_OBJ ioObject, const char *ms
 
 	/* files and directories */
 
+/* If PATH_MAX is not defined, look for MAXPATHLEN */
+#if !defined (PATH_MAX)
+#  if defined (HAVE_SYS_PARAM_H)
+#    include <sys/param.h>
+#    define maxpath_param_h
+#  endif
+#  if defined (MAXPATHLEN) && !defined (PATH_MAX)
+#    define PATH_MAX MAXPATHLEN
+#  endif /* MAXPATHLEN && !PATH_MAX */
+#endif /* !PATH_MAX */
+
+/* Default POSIX values */
+#if !defined (PATH_MAX) && defined (_POSIX_PATH_MAX)
+#  define PATH_MAX _POSIX_PATH_MAX
+#endif
+
+/* Default values */
+#if !defined (PATH_MAX)
+#  define PATH_MAX 4096
+#endif
+
+#if PATH_MAX < 4096
+#  undef PATH_MAX
+#  define PATH_MAX 4096
+#endif
+
+static EC_OBJ EcLibPosix_getcwd( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: char *getcwd(char *buf, size_t size) */
+
+#if HAVE_GETCWD
+	size_t  size;
+	char   *buf;
+	char   *rv;
+
+	EC_CHECKNARGS_F("posix.getcwd", 0);
+
+	size = PATH_MAX;
+	do
+	{
+		buf = alloca( size+1 );
+		if (! buf) return EcMemoryError();
+		rv = getcwd( buf, size );
+		buf[size] = '\0';
+		if ((rv == NULL) && (errno == ERANGE))
+		{
+			if (size * 2 < size)
+				return EcMemoryError();
+			size *= 2;
+		}
+	} while ((rv == NULL) && (errno == ERANGE));
+
+	if (rv == NULL)
+		return posix2exception( errno, EC_NIL, "in posix.getcwd" );
+	return EcMakeString( buf, 0 );
+#else
+	return EcUnimplementedError( "POSIX `getcwd' function not available" );
+#endif /* HAVE_GETCWD */
+}
+
+static EC_OBJ EcLibPosix_mkdir( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int mkdir(const char *pathname, mode_t mode) */
+
+#if HAVE_MKDIR
+	char   *pathname;
+	EC_OBJ  mode_o = EC_NIL;
+	EcInt   mode_i = 0;
+	mode_t  mode   = 0;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.mkdir", TRUE, stack, "s|O",
+								&pathname, &mode_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	if (EC_NNULLP(mode_o))
+	{
+		if (EC_INUMP(mode_o))
+			mode_i = EC_INUM(mode_o);
+		else
+		{
+			res = _ec_sequence2mask( "posix.mkdir", 2, sym2int_open_mode, mode_o, &mode_i );
+			if (EC_ERRORP(res)) return res;
+		}
+	} else
+		mode_i = 0;
+
+	mode = (mode_t) mode_i;
+
+	rv = mkdir( pathname, mode );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.mkdir" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `mkdir' function not available" );
+#endif /* HAVE_MKDIR */
+}
+
+static EC_OBJ EcLibPosix_rmdir( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int mkdir(const char *pathname) */
+
+#if HAVE_RMDIR
+	char   *pathname;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.rmdir", TRUE, stack, "s",
+								&pathname );
+	if (EC_ERRORP(res))
+		return res;
+
+	rv = rmdir( pathname );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.rmdir" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `rmdir' function not available" );
+#endif /* HAVE_RMDIR */
+}
+
+static EC_OBJ EcLibPosix_chdir( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int chdir(const char *path) */
+
+#if HAVE_CHDIR
+	char   *path;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.chdir", TRUE, stack, "s",
+								&path );
+	if (EC_ERRORP(res))
+		return res;
+
+	rv = chdir( path );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.chdir" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `chdir' function not available" );
+#endif /* HAVE_CHDIR */
+}
+
+static EC_OBJ EcLibPosix_link( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int link(const char *oldpath, const char *newpath) */
+
+#if HAVE_LINK
+	char   *oldpath, *newpath;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.link", TRUE, stack, "ss",
+								&oldpath, &newpath );
+	if (EC_ERRORP(res))
+		return res;
+
+	rv = link( oldpath, newpath );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.link" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `link' function not available" );
+#endif /* HAVE_LINK */
+}
+
+static EC_OBJ EcLibPosix_unlink( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int unlink(const char *pathname) */
+
+#if HAVE_UNLINK
+	char   *pathname;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.unlink", TRUE, stack, "s",
+								&pathname );
+	if (EC_ERRORP(res))
+		return res;
+
+	rv = unlink( pathname );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.unlink" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `unlink' function not available" );
+#endif /* HAVE_UNLINK */
+}
+
+static EC_OBJ EcLibPosix_rename( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int rename(const char *oldpath, const char *newpath) */
+
+#if HAVE_RENAME
+	char   *oldpath, *newpath;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.rename", TRUE, stack, "ss",
+								&oldpath, &newpath );
+	if (EC_ERRORP(res))
+		return res;
+
+	rv = rename( oldpath, newpath );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.rename" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `rename' function not available" );
+#endif /* HAVE_RENAME */
+}
+
+static EC_OBJ EcLibPosix_chmod( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int chmod(const char *path, mode_t mode) */
+
+#if HAVE_CHMOD
+	char   *path;
+	EC_OBJ  mode_o = EC_NIL;
+	EcInt   mode_i = 0;
+	mode_t  mode   = 0;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.chmod", TRUE, stack, "sO",
+								&path, &mode_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	if (EC_NNULLP(mode_o))
+	{
+		if (EC_INUMP(mode_o))
+			mode_i = EC_INUM(mode_o);
+		else
+		{
+			res = _ec_sequence2mask( "posix.chmod", 2, sym2int_open_mode, mode_o, &mode_i );
+			if (EC_ERRORP(res)) return res;
+		}
+	} else
+		mode_i = 0;
+
+	mode = (mode_t) mode_i;
+
+	rv = chmod( path, mode );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.chmod" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `chmod' function not available" );
+#endif /* HAVE_CHMOD */
+}
+
+static EC_OBJ EcLibPosix_chown( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int chown(const char *path, uid_t owner, gid_t group) */
+
+#if HAVE_CHOWN
+	char  *path;
+	EcInt  owner_i, group_i;
+	uid_t  owner;
+	gid_t  group;
+	int    rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.chown", TRUE, stack, "sii",
+								&path, &owner_i, &group_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	owner = (uid_t) owner_i;
+	group = (gid_t) group_i;
+
+	rv = chown( path, owner, group );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.chown" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `chown' function not available" );
+#endif /* HAVE_CHOWN */
+}
+
 	/* file operations */
 
 static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
@@ -218,30 +516,43 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 
 #if HAVE_OPEN
 	char   *pathname;
-	EC_OBJ  flags_o, mode_o = EC_NIL;
-	EcInt   flags, mode = 0;
+	EC_OBJ  flags_o = EC_NIL, mode_o = EC_NIL;
+	EcInt   flags_i = 0, mode_i = 0;
+	int     flags;
+	mode_t  mode;
 	int     rv;
 	EC_OBJ  res;
 
-	res = EcParseStackFunction( "posix.open", TRUE, stack, "sO|O",
+	flags_o = EcMakeArrayInit( 1, EcMakeSymbol("O_RDONLY") );
+	if (EC_ERRORP(flags_o)) return flags_o;
+
+	res = EcParseStackFunction( "posix.open", TRUE, stack, "s|OO",
 								&pathname, &flags_o, &mode_o );
 	if (EC_ERRORP(res))
 		return res;
 
-	res = _ec_sequence2mask( "posix.open", 2, sym2int_open_flags, flags_o, &flags );
+	res = _ec_sequence2mask( "posix.open", 2, sym2int_open_flags, flags_o, &flags_i );
 	if (EC_ERRORP(res)) return res;
 
 	if (EC_NNULLP(mode_o))
 	{
-		res = _ec_sequence2mask( "posix.open", 3, sym2int_open_mode, mode_o, &mode );
-		if (EC_ERRORP(res)) return res;
+		if (EC_INUMP(mode_o))
+			mode_i = EC_INUM(mode_o);
+		else
+		{
+			res = _ec_sequence2mask( "posix.open", 3, sym2int_open_mode, mode_o, &mode_i );
+			if (EC_ERRORP(res)) return res;
+		}
 	} else
-		mode = 0;
+		mode_i = 0;
+
+	flags = (int)    flags_i;
+	mode  = (mode_t) mode_i;
 
 	if (flags & O_CREAT)
-		rv = open( pathname, (int) flags, (mode_t) mode );
+		rv = open( pathname, flags, mode );
 	else
-		rv = open( pathname, (int) flags );
+		rv = open( pathname, flags );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.open" );
 	else
@@ -258,25 +569,37 @@ static EC_OBJ EcLibPosix_creat( EC_OBJ stack, EcAny userdata )
 #if HAVE_CREAT
 	char   *pathname;
 	EC_OBJ  mode_o = EC_NIL;
-	EcInt   mode = 0;
+	EcInt   mode_i = 0;
+	mode_t  mode;
 	int     rv;
 	EC_OBJ  res;
 
-	res = EcParseStackFunction( "posix.creat", TRUE, stack, "sO",
+	res = EcParseStackFunction( "posix.creat", TRUE, stack, "s|O",
 								&pathname, &mode_o );
 	if (EC_ERRORP(res))
 		return res;
 
-	res = _ec_sequence2mask( "posix.creat", 2, sym2int_open_mode, mode_o, &mode );
-	if (EC_ERRORP(res)) return res;
+	if (EC_NNULLP(mode_o))
+	{
+		if (EC_INUMP(mode_o))
+			mode_i = EC_INUM(mode_o);
+		else
+		{
+			res = _ec_sequence2mask( "posix.creat", 2, sym2int_open_mode, mode_o, &mode_i );
+			if (EC_ERRORP(res)) return res;
+		}
+	} else
+		mode_i = 0;
 
-	rv = creat( pathname, (mode_t) mode );
+	mode = (mode_t) mode_i;
+
+	rv = creat( pathname, mode );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.creat" );
 	else
 		return EcMakeInt( rv );
 #elif HAVE_OPEN
-	rv = open( pathname, O_CREAT, (mode_t) mode );
+	rv = open( pathname, O_CREAT, mode );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.creat" );
 	else
@@ -919,6 +1242,16 @@ EC_API EC_OBJ ec_posix_init( void )
 		return pkg;
 
 #if HAVE_UNISTD_H
+	EcAddPrimitive( "posix.getcwd",     EcLibPosix_getcwd );
+	EcAddPrimitive( "posix.mkdir",      EcLibPosix_mkdir );
+	EcAddPrimitive( "posix.rmdir",      EcLibPosix_rmdir );
+	EcAddPrimitive( "posix.chdir",      EcLibPosix_chdir );
+	EcAddPrimitive( "posix.link",       EcLibPosix_link );
+	EcAddPrimitive( "posix.unlink",     EcLibPosix_unlink );
+	EcAddPrimitive( "posix.rename",     EcLibPosix_rename );
+	EcAddPrimitive( "posix.chmod",      EcLibPosix_chmod );
+	EcAddPrimitive( "posix.chown",      EcLibPosix_chown );
+
 	EcAddPrimitive( "posix.access",     EcLibPosix_access );
 	EcAddPrimitive( "posix.open",       EcLibPosix_open );
 	EcAddPrimitive( "posix.creat",      EcLibPosix_creat );
@@ -1226,6 +1559,60 @@ EC_API EC_OBJ ec_posix_init( void )
 	feature = EcMakeHash();
 	if (EC_ERRORP(feature)) return feature;
 
+	EcHashSet( feature, EcMakeSymbol("getcwd"),
+#if HAVE_UNISTD_H && HAVE_GETCWD
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("mkdir"),
+#if HAVE_UNISTD_H && HAVE_MKDIR
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("rmdir"),
+#if HAVE_UNISTD_H && HAVE_RMDIR
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("chdir"),
+#if HAVE_UNISTD_H && HAVE_CHDIR
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("link"),
+#if HAVE_UNISTD_H && HAVE_LINK
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("unlink"),
+#if HAVE_UNISTD_H && HAVE_UNLINK
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("rename"),
+#if HAVE_UNISTD_H && HAVE_RENAME
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("chmod"),
+#if HAVE_UNISTD_H && HAVE_CHMOD
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("chown"),
+#if HAVE_UNISTD_H && HAVE_CHOWN
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
 	EcHashSet( feature, EcMakeSymbol("access"),
 #if HAVE_UNISTD_H && HAVE_ACCESS
 			   EcTrueObject );
@@ -1341,7 +1728,7 @@ EC_API EC_OBJ ec_posix_init( void )
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("alarm"),
-#if HAVE_UNISTD_H && HAVE_SLEEP
+#if HAVE_UNISTD_H && HAVE_ALARM
 		       EcTrueObject );
 #else
 		       EcFalseObject );
