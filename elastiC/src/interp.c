@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.2 2002/06/13 17:44:18 panta Exp $
+ *   $Id: interp.c,v 1.3 2003/04/01 09:21:53 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -1871,6 +1871,7 @@ restart:
 			obj1 = EC_STACKPOP( stack );
 			ret = ec_binop_and( obj1, obj2 );
 			if (EC_ERRORP(ret)) goto on_error;
+			EC_STACKPUSH( stack, ret );
 			continue;
 
 		case OrOP:
@@ -1879,6 +1880,7 @@ restart:
 			obj1 = EC_STACKPOP( stack );
 			ret = ec_binop_or( obj1, obj2 );
 			if (EC_ERRORP(ret)) goto on_error;
+			EC_STACKPUSH( stack, ret );
 			continue;
 
 		case XorOP:
@@ -1887,6 +1889,7 @@ restart:
 			obj1 = EC_STACKPOP( stack );
 			ret = ec_binop_xor( obj1, obj2 );
 			if (EC_ERRORP(ret)) goto on_error;
+			EC_STACKPUSH( stack, ret );
 			continue;
 
 		case NegOP:
