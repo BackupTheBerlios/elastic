@@ -1,0 +1,6 @@
+This example shows how one might pass C structures to and
+from elastiC as arrays instead of pointers.   This uses SWIG's
+typemap capability.
+(This is the database example for Python of the SWIG distribution
+ported to elastiC).
+

@@ -1,0 +1,87 @@
+			   SWIG for elastiC
+			   ================
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+SWIG (Simplified Wrapper and Interface Generator) is a tool generating
+the necessary "glue" C code to use a C/C++ library from interpreted
+languages. This module is an attempt to extend SWIG giving it support
+for the elastiC language.
+SWIG can be found at:
+
+  http://www.swig.org
+  ftp://ftp.swig.org
+
+(get version 1.1p5)
+
+USAGE
+-----
+
+To use SWIG for elastiC read SWIG documentation before, than read the
+examples in this package.
+To start using it you'll need to compile and install it before (see the
+INSTALLATION section below).
+
+ELASTIC WEB SITE
+----------------
+
+elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other valuable information, in addition to many modules.
+
+INSTALLATION
+------------
+
+SWIG for elastiC makes use of automake & autoconf.
+To compile it, simply issue the commands:
+
+  % configure
+  % make
+  % make install
+
+You can specify to configure where you have installed SWIG; for
+example, if you have SWIG in /usr:
+
+  % configure --with-swig=/usr
+
+(please note that SWIG for elastiC has been tested only on SWIG
+version 1.1p5).
+For a full list of options, do a 'configure --help'.
+There is also an example directory (named 'examples' :). You can
+compile the examples by making:
+
+  % make examples
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+29 December 1999
