@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.5 2002/06/07 17:34:05 panta Exp $
+ *   $Id: builtin.c,v 1.6 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -562,6 +562,11 @@ EcBool _ec_register_builtin( void )
 	EcPackageIntroduce( "sys" );
 	EcPackageIntroduce( "math" );
 
+#if ECMODULE_FILESTREAM_STATIC
+	if (EC_ERRORP(_ec_filestream_init()))
+		return FALSE;
+#endif
+
 	if (! _ec_lib_init())
 		return FALSE;
 
@@ -741,4 +746,5 @@ void _ec_cleanup_builtin( void )
 	_ec_modstring_cleanup();
 	_ec_file_cleanup();
 	_ec_lib_cleanup();
+	_ec_filestream_cleanup();
 }

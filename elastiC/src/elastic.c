@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.7 2002/06/11 15:08:59 panta Exp $
+ *   $Id: elastic.c,v 1.8 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -275,6 +275,8 @@ EC_API EcBool EcInit( void )
 	PRIVATE(stream_stdout) = NULL;
 	PRIVATE(stream_stderr) = NULL;
 
+	PRIVATE(filestream_def) = NULL;
+
 	/* :TODO: register filestream and initialize default streams */
 
 	PRIVATE(package)   = NULL;
@@ -431,6 +433,8 @@ EC_API void EcCleanup( void )
 	PRIVATE(stream_stdin)  = NULL;									/* these are no more usable from now on */
 	PRIVATE(stream_stdout) = NULL;
 	PRIVATE(stream_stderr) = NULL;
+
+	PRIVATE(filestream_def) = NULL;
 
 	EcTrueObject        = EC_NIL;
 	EcFalseObject       = EC_NIL;

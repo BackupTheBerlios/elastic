@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.h,v 1.1 2002/06/11 15:08:59 panta Exp $
+ *   $Id: stream.h,v 1.2 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -79,30 +79,32 @@ typedef struct ec_stream_struct     ec_stream;
 typedef struct ec_serializer_struct ec_serializer;				/* :TODO: define */
 
 typedef EcBool           (*ec_stream_create_fcn)   ( ec_stream *s, EC_OBJ *excp, va_list ap );
-typedef EcBool           (*ec_stream_destroy_fcn)  ( ec_stream *s, EC_OBJ *excp );
-typedef ec_stream_mode   (*ec_stream_mode_fcn)     ( ec_stream *s, EC_OBJ *excp );
-typedef EcBool           (*ec_stream_close_fcn)    ( ec_stream *s, EC_OBJ *excp );
-typedef EcBool           (*ec_stream_eof_fcn)	   ( ec_stream *s, EC_OBJ *excp );
-typedef EcBool			 (*ec_stream_flush_fcn)    ( ec_stream *s, EC_OBJ *excp );
-typedef ssize_t          (*ec_stream_read_fcn)     ( ec_stream *s, EC_OBJ *excp, void *buf, size_t count );
-typedef ssize_t          (*ec_stream_write_fcn)    ( ec_stream *s, EC_OBJ *excp, const void *buf, size_t count );
-typedef EcBool           (*ec_stream_unread_fcn)   ( ec_stream *s, EC_OBJ *excp, const void *buf, size_t count );
-typedef ssize_t          (*ec_stream_gets_fcn)     ( ec_stream *s, EC_OBJ *excp, ec_string *dst, ssize_t maxchars );
-typedef EcBool           (*ec_stream_charready_fcn)( ec_stream *s, EC_OBJ *excp );
-typedef EcBool           (*ec_stream_seek_fcn)     ( ec_stream *s, EC_OBJ *excp, ec_stream_seek_type whence );
-typedef ssize_t          (*ec_stream_tell_fcn)     ( ec_stream *s, EC_OBJ *excp );
+typedef EcBool           (*ec_stream_destroy_fcn)  ( ec_stream *s );
+typedef EcInt            (*ec_stream_close_fcn)    ( ec_stream *s );
+typedef ec_stream_mode   (*ec_stream_mode_fcn)     ( ec_stream *s );
+typedef EcBool           (*ec_stream_eof_fcn)	   ( ec_stream *s );
+typedef EcBool			 (*ec_stream_flush_fcn)    ( ec_stream *s );
+typedef ssize_t          (*ec_stream_read_fcn)     ( ec_stream *s, void *buf, ssize_t count );
+typedef ssize_t          (*ec_stream_write_fcn)    ( ec_stream *s, const void *buf, ssize_t count );
+typedef EcBool           (*ec_stream_unread_fcn)   ( ec_stream *s, const void *buf, ssize_t count );
+typedef ssize_t          (*ec_stream_gets_fcn)     ( ec_stream *s, ec_string *dst, ssize_t maxchars );
+typedef EcBool           (*ec_stream_charready_fcn)( ec_stream *s );
+typedef EcBool           (*ec_stream_seek_fcn)     ( ec_stream *s, ssize_t offset, ec_stream_seek_type whence );
+typedef ssize_t          (*ec_stream_tell_fcn)     ( ec_stream *s );
 /* :TODO: add seek64 */
 /* :TODO: add tell64 */
 
-typedef ssize_t          (*ec_stream_transform_fcn)( ec_stream *s, EC_OBJ *excp,
+#if 0
+typedef ssize_t          (*ec_stream_transform_fcn)( ec_stream *s,
 													 ec_stream_direction direction,
 													 const void *src, size_t  src_len,
 													 void       *dst, size_t *dst_len ); /* for `filter' streams' operations */
+#endif
 
-typedef EcUInt           (*ec_stream_store_fcn)    ( ec_stream *s, EC_OBJ *excp, EC_OBJ object,
+typedef EcUInt           (*ec_stream_store_fcn)    ( ec_stream *s, EC_OBJ object,
 													 ec_serializer *ser_delegate,
 													 const char *ser_mode );
-typedef EC_OBJ           (*ec_stream_restore_fcn)  ( ec_stream *s, EC_OBJ *excp,
+typedef EC_OBJ           (*ec_stream_restore_fcn)  ( ec_stream *s,
 													 ec_serializer *ser_delegate,
 													 const char *ser_mode );
 
@@ -120,8 +122,8 @@ struct ec_streamdef_struct
 	ec_stream_create_fcn        create_fcn;
 	ec_stream_destroy_fcn       destroy_fcn;
 
+	ec_stream_close_fcn         close_fcn;
 	ec_stream_mode_fcn			mode_fcn;
-	ec_stream_close_fcn			close_fcn;
 	ec_stream_eof_fcn			eof_fcn;
 	ec_stream_flush_fcn			flush_fcn;
 	ec_stream_read_fcn			read_fcn;
@@ -134,7 +136,9 @@ struct ec_streamdef_struct
 	/* :TODO: add seek64 */
 	/* :TODO: add tell64 */
 
+#if 0
 	ec_stream_transform_fcn     transform_fcn;					/* for `filter' streams */
+#endif
 
 	ec_stream_store_fcn			store_fcn;						/* serialization: passivation */
 	ec_stream_restore_fcn		restore_fcn;					/* serialization: activation  */
@@ -146,12 +150,16 @@ struct ec_streamdef_struct
 	 *   async I/O ?
 	 */
 
-	ec_type  user1_type;										/* type in userdata1 union                      */
-	size_t   user2_size;										/* size in bytes of userdata2 in ec_stream      */
-	char    *name;												/* stream type name (file, socket, ...)         */
-	EcDWord  magic[4];											/* 128 bit magic uniquely identifying this type */
+	ec_type  user1_type;										/* type in userdata1 union                             */
+	char    *name;												/* stream type name (file, socket, ...)                */
+	EcByte   magic[17];											/* 128 bit magic uniquely identifying this type (+NUL) */
 };
 
+/*
+ * ec_stream
+ *
+ * The real thing: a stream.
+ */
 struct ec_stream_struct
 {
 	ec_streamdef  *streamdef;
@@ -187,24 +195,28 @@ EC_API EC_OBJ               EcMakeStream( ec_stream *stream );
 /* EC_API EC_OBJ               ec_stream_exception( ec_stream *stream ); */
 #define                     ec_stream_exception(stream)		((stream)->exc)
 EC_API void                 ec_stream_exception_clear( ec_stream *stream );
+
+EC_API EcInt                ec_stream_close( ec_stream *stream );
 EC_API ec_stream_mode       ec_stream_getmode( ec_stream *stream );
-EC_API EcBool               ec_stream_close( ec_stream *stream );
 EC_API EcBool               ec_stream_eof( ec_stream *stream );
 EC_API EcBool			    ec_stream_flush( ec_stream *stream );
 EC_API ssize_t              ec_stream_read( ec_stream *stream, void *buf, ssize_t count );
 EC_API ssize_t              ec_stream_write( ec_stream *stream, const void *buf, ssize_t count );
 EC_API EcBool               ec_stream_unread( ec_stream *stream, const void *buf, ssize_t count );
 EC_API EcByte               ec_stream_getch( ec_stream *stream );
+EC_API ssize_t              ec_stream_gets_slow( ec_stream *stream,
+												 ec_string *dst, ssize_t maxchars ); /* maxchars == -1: unlimited, read up to NL or NUL */
 EC_API ssize_t              ec_stream_getcstr( ec_stream *stream,
-											   char *dst, ssize_t maxchars );			/* maxchars includes terminating NUL */
+											   char *dst, ssize_t maxchars );		/* maxchars includes terminating NUL */
 EC_API ssize_t              ec_stream_gets( ec_stream *stream,
-											ec_string *dst, ssize_t maxchars );			/* maxchars == -1: unlimited, read up to NUL */
+											ec_string *dst, ssize_t maxchars );		/* maxchars == -1: unlimited, read up to NL or NUL */
+/* :TODO: getline (doesn't store newline) */
 EC_API EcBool               ec_stream_putch( ec_stream *stream, EcByte c );
 EC_API EcBool               ec_stream_putcstr( ec_stream *stream, const char *src );
 EC_API EcBool               ec_stream_puts( ec_stream *stream, ec_string *src );
 EC_API EcBool               ec_stream_ungetch( ec_stream *stream, EcByte c );
 EC_API EcBool               ec_stream_charready( ec_stream *stream );
-EC_API EcBool               ec_stream_seek( ec_stream *stream, ec_stream_seek_type whence );
+EC_API EcBool               ec_stream_seek( ec_stream *stream, ssize_t offset, ec_stream_seek_type whence );
 EC_API ssize_t              ec_stream_tell( ec_stream *stream );
 /* :TODO: add seek64 */
 /* :TODO: add tell64 */

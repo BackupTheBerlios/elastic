@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.5 2002/06/11 15:08:59 panta Exp $
+#   $Id: Makefile.am,v 1.6 2002/06/11 18:44:17 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -99,6 +99,7 @@ static_sources = \
 	elastic_s.l	\
 	elastic.c	\
 	errno_switch.c.incl \
+	filestream.c	\
 	gc.c		\
 	hashdefs.c	\
 	hashfunc.c	\
@@ -134,6 +135,7 @@ static_rt_sources = \
 	dstring.c	\
 	elastic.c	\
 	errno_switch.c.incl \
+	filestream.c	\
 	gc.c		\
 	hashdefs.c	\
 	hashfunc.c	\

@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.4 2002/06/11 15:08:59 panta Exp $
+ *   $Id: elastic.h,v 1.5 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -416,6 +416,8 @@ EC_API EC_OBJ EcExecute( EC_OBJ self, EC_OBJ at_class, EC_OBJ compiled, EC_OBJ s
 EC_API ec_stream *ec_stream_stdin( void );
 EC_API ec_stream *ec_stream_stdout( void );
 EC_API ec_stream *ec_stream_stderr( void );
+
+EC_API const ec_streamdef *ec_filestream_def( void );
 
 /* Printing */
 

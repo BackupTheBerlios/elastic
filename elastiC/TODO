@@ -30,6 +30,7 @@ immediate_future  /* got from other sections (max ~10 points here) */
 
 core
 {
+	* implement a GenericError / UnknownError exception
 	* add fundamental types ec_int8, ec_uint8, ec_int16, ec_uint16, ...,
 	  ec_char, ec_schar, ec_uchar, ec_short, ec_ushort, ec_int, ec_uint, ...
           ec_bool, ec_off64. Change EcInt, EcWord, EcBool, ... to ec_int,

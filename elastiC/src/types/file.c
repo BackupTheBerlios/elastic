@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.c,v 1.3 2002/06/07 16:09:56 panta Exp $
+ *   $Id: file.c,v 1.4 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -138,7 +138,7 @@ EC_API EC_OBJ EcLibFileClose( EC_OBJ obj )
 		int rv;
 		rv = pclose( EC_FILEH(obj) );
 		EC_FILEH_SET(obj, NULL);
-		EC_FILE_POPENED_SET(obj, NULL);
+		EC_FILE_POPENED_SET(obj, FALSE);
 		if (rv == -1)
 			return _ec_errno2exception( errno, obj, "in pclose" );
 		return EcMakeInt( rv );
@@ -148,7 +148,7 @@ EC_API EC_OBJ EcLibFileClose( EC_OBJ obj )
 	} else
 		fclose( EC_FILEH(obj) );
 	EC_FILEH_SET(obj, NULL);
-	EC_FILE_POPENED_SET(obj, NULL);
+	EC_FILE_POPENED_SET(obj, FALSE);
 	return EcTrueObject;
 }
 

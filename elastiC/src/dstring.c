@@ -7,7 +7,7 @@
  *
  *   Created: Sun May  3 10:26:04 MEST 1998
  *
- *   $Id: dstring.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: dstring.c,v 1.3 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -145,7 +145,7 @@ EC_API char *ec_strcat( ec_string *ds, const char *string, EcInt length )
 	ASSERT( ds );
 
 	if (! string) return DSDATA(ds);
-	len = (length <= 0) ? strlen( string ) : length;
+	len = (length <= 0) ? strlen( string ) : length;			/* :TODO: < 0 instead of <= 0 */
 
 	if (len+1 > DSAVAIL(ds))
 	{

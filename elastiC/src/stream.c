@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.1 2002/06/11 15:08:59 panta Exp $
+ *   $Id: stream.c,v 1.2 2002/06/11 18:44:17 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -43,6 +43,21 @@
 #include "private.h"
 
 #include "stream.h"
+
+EC_API ec_stream *ec_stream_stdin( void )
+{
+	return PRIVATE(stream_stdin);
+}
+
+EC_API ec_stream *ec_stream_stdout( void )
+{
+	return PRIVATE(stream_stdout);
+}
+
+EC_API ec_stream *ec_stream_stderr( void )
+{
+	return PRIVATE(stream_stderr);
+}
 
 EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 {
@@ -165,7 +180,7 @@ EC_API EcBool ec_stream_destroy( ec_stream *stream, EC_OBJ *excp )
 
 	if (stream->streamdef->destroy_fcn)
 	{
-		ok = stream->streamdef->destroy_fcn( stream, excp );
+		ok = stream->streamdef->destroy_fcn( stream );
 		if (! ok) return ok;
 	}
 
@@ -187,29 +202,29 @@ EC_API void ec_stream_exception_clear( ec_stream *stream )
 	stream->exc = EC_NIL;
 }
 
+EC_API EcInt ec_stream_close( ec_stream *stream )
+{
+	ASSERT( stream );
+	if (stream->streamdef->close_fcn)
+		return stream->streamdef->close_fcn( stream );
+	stream->exc = EcUnimplementedError( "`close' not implemented for this stream type." );
+	return -1;	/* unimportant */
+}
+
 EC_API ec_stream_mode ec_stream_getmode( ec_stream *stream )
 {
 	ASSERT( stream );
 	if (stream->streamdef->mode_fcn)
-		return stream->streamdef->mode_fcn( stream, &stream->exc );
+		return stream->streamdef->mode_fcn( stream );
 	stream->exc = EcUnimplementedError( "`mode' not implemented for this stream type." );
 	return ec_stream_mode_unknown;
-}
-
-EC_API EcBool ec_stream_close( ec_stream *stream )
-{
-	ASSERT( stream );
-	if (stream->streamdef->close_fcn)
-		return stream->streamdef->close_fcn( stream, &stream->exc );
-	stream->exc = EcUnimplementedError( "`close' not implemented for this stream type." );
-	return FALSE;
 }
 
 EC_API EcBool ec_stream_eof( ec_stream *stream )
 {
 	ASSERT( stream );
 	if (stream->streamdef->eof_fcn)
-		return stream->streamdef->eof_fcn( stream, &stream->exc );
+		return stream->streamdef->eof_fcn( stream );
 	stream->exc = EcUnimplementedError( "`eof' not implemented for this stream type." );
 	return FALSE;	/* unimportant */
 }
@@ -218,7 +233,7 @@ EC_API EcBool ec_stream_flush( ec_stream *stream )
 {
 	ASSERT( stream );
 	if (stream->streamdef->flush_fcn)
-		return stream->streamdef->flush_fcn( stream, &stream->exc );
+		return stream->streamdef->flush_fcn( stream );
 	stream->exc = EcUnimplementedError( "`flush' not implemented for this stream type." );
 	return FALSE;
 }
@@ -230,7 +245,7 @@ EC_API ssize_t ec_stream_read( ec_stream *stream, void *buf, ssize_t count )
 
 	/* :TODO: handle short reads (needed for buffer streams and low-level OS "read" */
 	if (stream->streamdef->read_fcn)
-		return stream->streamdef->read_fcn( stream, &stream->exc, buf, count );
+		return stream->streamdef->read_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
 	errno = EINVAL;
 	return -1;
@@ -243,7 +258,7 @@ EC_API ssize_t ec_stream_write( ec_stream *stream, const void *buf, ssize_t coun
 
 	/* :TODO: handle short writes (needed for buffer streams and low-level OS "write" */
 	if (stream->streamdef->write_fcn)
-		return stream->streamdef->write_fcn( stream, &stream->exc, buf, count );
+		return stream->streamdef->write_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
 	errno = EINVAL;
 	return -1;
@@ -255,7 +270,7 @@ EC_API EcBool ec_stream_unread( ec_stream *stream, const void *buf, ssize_t coun
 	ASSERT( count >= 0 );
 
 	if (stream->streamdef->unread_fcn)
-		return stream->streamdef->unread_fcn( stream, &stream->exc, buf, count );
+		return stream->streamdef->unread_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`unread' not implemented for this stream type." );
 	return FALSE;
 }
@@ -267,16 +282,69 @@ EC_API EcByte ec_stream_getch( ec_stream *stream )
 	ASSERT( stream );
 	if (stream->streamdef->read_fcn)
 	{
-		stream->streamdef->read_fcn( stream, &stream->exc, &val, 1 );
+		stream->streamdef->read_fcn( stream, &val, 1 );
 		return val;
 	}
 	stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
 	return 0;	/* unimportant */
 }
 
+EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t maxchars )
+	/* maxchars == -1: unlimited, read up to NL or NUL */
+{
+	char    ch;
+	ssize_t rem;
+	ssize_t nread, nr;
+
+	ASSERT( stream );
+	if (maxchars == 0)
+		return 0;
+
+	if (! stream->streamdef->read_fcn)
+	{
+		stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
+		return -1;
+	}
+
+	if (maxchars >= 0)
+	{
+		/* limited */
+
+		rem = maxchars;
+		while (rem > 0)
+		{
+			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
+			if (nr != 1)
+				break;
+			if (ch == '\0') break;								/* :TODO: ??? */
+			ec_strcatc( dst, ch );
+			rem--;
+			nread += nr;
+			if (ch == '\n') break;
+		}
+	} else
+	{
+		/* unlimited */
+
+		while (TRUE)
+		{
+			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
+			if (nr != 1)
+				break;
+			if (ch == '\0') break;								/* :TODO: ??? */
+			ec_strcatc( dst, ch );
+			nread += nr;
+			if (ch == '\n') break;
+		}
+	}
+
+	ASSERT( rem >= 0 );
+	return nread;
+}
+
 EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars )	/* maxchars includes terminating NUL */
 {
-	char   *dstp;
+	char   *dstp, ch;
 	ssize_t rem;
 	ssize_t nread, nr;
 
@@ -296,7 +364,7 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 		ec_string ds;
 
         ec_string_init( &ds, NULL );
-		nread = stream->streamdef->gets_fcn( stream, &stream->exc, &ds, maxchars - 1 );
+		nread = stream->streamdef->gets_fcn( stream, &ds, maxchars - 1 );
 		if (nread > 0)
 		{
 			ASSERT( nread <= maxchars - 1 );
@@ -318,13 +386,15 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 	dstp = dst;
 	while (rem > 1)
 	{
-		nr = stream->streamdef->read_fcn( stream, &stream->exc, dstp, 1 );
+		nr = stream->streamdef->read_fcn( stream, &ch, 1 );
 		if (nr != 1)
 			break;
-		if (*dstp == '\0') break;
+		*dstp = ch;
+		if (ch == '\0') break;									/* :TODO: ??? */
 		dstp++;
 		rem--;
 		nread += nr;
+		if (ch == '\n') break;
 	}
 	*dstp++ = '\0';
 	rem--;
@@ -332,57 +402,16 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 	return nread;
 }
 
-EC_API ssize_t ec_stream_gets( ec_stream *stream, ec_string *dst, ssize_t maxchars ) /* maxchars == -1: unlimited, read up to NUL */
+EC_API ssize_t ec_stream_gets( ec_stream *stream, ec_string *dst, ssize_t maxchars ) /* maxchars == -1: unlimited, read up to NL or NUL */
 {
-	char    ch;
-	ssize_t  rem;
-	ssize_t nread, nr;
-
 	ASSERT( stream );
 	if (maxchars == 0)
 		return 0;
 
 	if (stream->streamdef->gets_fcn)
-		return stream->streamdef->gets_fcn( stream, &stream->exc, dst, maxchars );
+		return stream->streamdef->gets_fcn( stream, dst, maxchars );
 
-	if (! stream->streamdef->read_fcn)
-	{
-		stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
-		return -1;
-	}
-
-	if (maxchars >= 0)
-	{
-		/* limited */
-
-		rem = maxchars;
-		while (rem > 0)
-		{
-			nr = stream->streamdef->read_fcn( stream, &stream->exc, &ch, 1 );
-			if (nr != 1)
-				break;
-			if (ch == '\0') break;
-			ec_strcatc( dst, ch );
-			rem--;
-			nread += nr;
-		}
-	} else
-	{
-		/* unlimited */
-
-		while (TRUE)
-		{
-			nr = stream->streamdef->read_fcn( stream, &stream->exc, &ch, 1 );
-			if (nr != 1)
-				break;
-			if (ch == '\0') break;
-			ec_strcatc( dst, ch );
-			nread += nr;
-		}
-	}
-
-	ASSERT( rem >= 0 );
-	return nread;
+	return ec_stream_gets_slow( stream, dst, maxchars );
 }
 
 EC_API EcBool ec_stream_putch( ec_stream *stream, EcByte c )
@@ -394,7 +423,7 @@ EC_API EcBool ec_stream_putch( ec_stream *stream, EcByte c )
 	if (stream->streamdef->write_fcn)
 	{
 		ch = c;
-		nwritten = stream->streamdef->write_fcn( stream, &stream->exc, &ch, 1 );
+		nwritten = stream->streamdef->write_fcn( stream, &ch, 1 );
 		return (nwritten == 1) ? TRUE : FALSE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
@@ -410,7 +439,7 @@ EC_API EcBool ec_stream_putcstr( ec_stream *stream, const char *src )
 	if (stream->streamdef->write_fcn)
 	{
 		len = src ? strlen(src) : 0;
-		nwritten = stream->streamdef->write_fcn( stream, &stream->exc, src, len );
+		nwritten = stream->streamdef->write_fcn( stream, src, len );
 		return (nwritten == len) ? TRUE : FALSE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
@@ -424,7 +453,7 @@ EC_API EcBool ec_stream_puts( ec_stream *stream, ec_string *src )
 	ASSERT( stream );
 	if (stream->streamdef->write_fcn)
 	{
-		nwritten = stream->streamdef->write_fcn( stream, &stream->exc, ec_strdata(src), ec_strlen(src) );
+		nwritten = stream->streamdef->write_fcn( stream, ec_strdata(src), ec_strlen(src) );
 		return (nwritten == ec_strlen(src)) ? TRUE : FALSE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
@@ -438,7 +467,7 @@ EC_API EcBool ec_stream_ungetch( ec_stream *stream, EcByte c )
 	ASSERT( stream );
 	ch = c;
 	if (stream->streamdef->unread_fcn)
-		return stream->streamdef->unread_fcn( stream, &stream->exc, &ch, 1 );
+		return stream->streamdef->unread_fcn( stream, &ch, 1 );
 	stream->exc = EcUnimplementedError( "`unread' not implemented for this stream type." );
 	return FALSE;
 }
@@ -447,16 +476,16 @@ EC_API EcBool ec_stream_charready( ec_stream *stream )
 {
 	ASSERT( stream );
 	if (stream->streamdef->ready_fcn)
-		return stream->streamdef->ready_fcn( stream, &stream->exc );
+		return stream->streamdef->ready_fcn( stream );
 	stream->exc = EcUnimplementedError( "`ready' not implemented for this stream type." );
 	return FALSE;	/* unimportant */
 }
 
-EC_API EcBool ec_stream_seek( ec_stream *stream, ec_stream_seek_type whence )
+EC_API EcBool ec_stream_seek( ec_stream *stream, ssize_t offset, ec_stream_seek_type whence )
 {
 	ASSERT( stream );
 	if (stream->streamdef->seek_fcn)
-		return stream->streamdef->seek_fcn( stream, &stream->exc, whence );
+		return stream->streamdef->seek_fcn( stream, offset, whence );
 	stream->exc = EcUnimplementedError( "`seek' not implemented for this stream type." );
 	return FALSE;
 }
@@ -465,7 +494,7 @@ EC_API ssize_t ec_stream_tell( ec_stream *stream )
 {
 	ASSERT( stream );
 	if (stream->streamdef->tell_fcn)
-		return stream->streamdef->tell_fcn( stream, &stream->exc );
+		return stream->streamdef->tell_fcn( stream );
 	stream->exc = EcUnimplementedError( "`tell' not implemented for this stream type." );
 	return -1;
 }
