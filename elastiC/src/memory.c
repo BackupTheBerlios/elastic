@@ -7,9 +7,9 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: memory.c,v 1.1 2002/05/23 21:17:24 panta Exp $
+ *   $Id: memory.c,v 1.2 2002/05/24 17:28:10 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -37,6 +37,15 @@
 #include "memory.h"
 #include "debug.h"
 #include "cnf.h"
+#include "conf.h"
+
+
+/* user has overridden with configure option */
+#ifdef EC_DIRTY_MALLOC_ENABLE
+#undef EC_DIRTY_MALLOC
+#define EC_DIRTY_MALLOC 1
+#endif
+
 
 struct poolchunk												/* Head of a chunk */
 {
@@ -56,6 +65,51 @@ struct ec_mempool
 																*/
 };
 
+
+#ifdef EC_DEBUG
+#if EC_DIRTY_MALLOC
+static inline void memfill(void *dst, const void *pattern, size_t dst_size, size_t pattern_size)
+{
+	register char       *dst_p, *dst_end;
+	register const char *pattern_p, *pattern_end;
+
+	if (dst_size <= 0)
+		return;
+	if (pattern_size <= 0)
+		return;
+
+	dst_p     = (char *)dst;
+	dst_end   = (char *)dst + dst_size - 1;
+	pattern_p   = (const char *)pattern;
+	pattern_end = (const char *)pattern + (pattern_size - 1);
+	while (dst_p <= dst_end)
+	{
+		*dst_p++ = *pattern_p;
+		if (pattern_p++ == pattern_end)
+			pattern_p = pattern;
+	}
+}
+
+static inline void memfill_dword(void *dst, EcDWord pattern, size_t dst_size)
+{
+	register EcDWord *dst_dw, *dst_dw_end;
+	EcDWord           pat;
+
+	pat = pattern;
+
+	dst_dw     = (EcDWord *) dst;
+	dst_dw_end = dst_dw + (dst_size / 4) - 1;
+	while (dst_dw <= dst_dw_end)
+		*dst_dw++ = pat;
+	if (((char *)dst_dw_end) < ((char *)dst) + dst_size)
+	{
+		char *rem_s = (char *) dst_dw;							/* == (char *) (dst_dw_end + 1) */
+
+		memfill( rem_s, &pat, ((char *)dst + dst_size) - rem_s, sizeof(EcDWord) );
+	}
+}
+#endif
+#endif
 
 /* ---------------------------------------------------------------------------------------------------
  * ec_malloc
@@ -91,6 +145,17 @@ EC_API void *ec_malloc(size_t size)
 	memset(mem, 0, size);
 #endif
 
+#ifdef EC_DEBUG
+#if EC_DIRTY_MALLOC
+	/*
+	{
+		EcDWord pat = EC_DIRTY_PATTERN;
+		memfill(mem, &pat, size, sizeof(EcDWord));
+		}*/
+	memfill_dword(mem, EC_DIRTY_PATTERN, size);
+#endif
+#endif
+
 	return mem;
 }
 
@@ -112,6 +177,11 @@ EC_API void *ec_malloc(size_t size)
 EC_API void ec_free(void *ptr)
 {
 	if (!ptr) return;
+
+	/*
+	 * :TODO: when EC_DIRTY_MALLOC, fill with dirty pattern.
+	 * To do so, we need to store the size of the block in a header.
+	 */
 
 	free(ptr);
 }

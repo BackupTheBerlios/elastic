@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan 17 11:07:49 MET 1999
  *
- *   $Id: conf.h,v 1.1 2002/05/23 21:16:53 panta Exp $
+ *   $Id: conf.h,v 1.2 2002/05/24 17:28:10 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -83,6 +83,19 @@
 
 /* Define this to one if you want unnecessary initializations, ... */
 #define EC_PARANOID_CODE	0
+
+/*
+ * EC_DIRTY_MALLOC
+ *
+ * Define this to one if you want ec_malloc() & friends to initialize
+ * memory to a specific pattern (0xdeadbeef) after (de)allocation.
+ * Useful to detect strange missing initialization problems.
+ *
+ * NOTE: This value has effect only when EC_DEBUG is defined.
+ */
+#define EC_DIRTY_MALLOC		1
+#define EC_DIRTY_PATTERN	0xdeadbeef
+
 
 /* Private */
 
