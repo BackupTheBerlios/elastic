@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:15:48 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/05/25 18:53:21 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -70,10 +70,10 @@ endif
 
 dist-hook:
 	mkdir -p $(distdir)/build
-	cp -p $(srcdir)/build/* $(distdir)/build
+	cp -a $(srcdir)/build/* $(distdir)/build
 	mkdir -p $(distdir)/tools
-	cp -p $(srcdir)/tools/* $(distdir)/tools
+	cp -a $(srcdir)/tools/* $(distdir)/tools
 	mkdir -p $(distdir)/misc
-	cp -p $(srcdir)/misc/* $(distdir)/misc
+	cp -a $(srcdir)/misc/* $(distdir)/misc
 	mkdir -p $(distdir)/win32
 	cp -a $(srcdir)/win32/* $(distdir)/win32

@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:16:19 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/05/25 18:53:47 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -77,8 +77,8 @@ install-data-local:
 dist-hook:
 	cp -p INSTALL.txt $(distdir)/../INSTALL
 	mkdir -p $(distdir)/images
-	cp -p $(srcdir)/images/* $(distdir)/images
+	cp -a $(srcdir)/images/* $(distdir)/images
 	mkdir -p $(distdir)/examples
-	cp -p $(srcdir)/examples/* $(distdir)/examples
+	cp -a $(srcdir)/examples/* $(distdir)/examples
 	mkdir -p $(distdir)/devel
-	cp -p $(srcdir)/devel/* $(distdir)/devel
+	cp -a $(srcdir)/devel/* $(distdir)/devel
