@@ -1,0 +1,233 @@
+% -*- Latex -*-
+% Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
+%
+% $Id: api-specification-proposal.tex,v 1.1 2002/05/31 15:14:14 panta Exp $
+
+\documentclass[10pt,twocolumn]{article}
+
+%% Use the following two lines for PDF (pdfLaTeX)
+%% and commend 'cmbright' below
+%\usepackage[T1]{fontenc}
+%\usepackage{times}
+
+% Use this for normal (not pdfLaTeX) output
+\usepackage{cmbright}
+
+\pagestyle{empty}
+
+\begin{document}
+
+\title{A proposal for C API specification for automated binding
+  generation for interpreted languages}
+
+\author{Marco Pantaleoni\\ {\small panta@elasticworld.org}}
+
+\date{30 May 2002}
+
+\maketitle
+
+\thispagestyle{plain}
+
+\section{Introduction}
+
+Usually interpreted languages can be extended by adding new functions
+to the set they provide on their own. In this document we'll consider
+those languages that can be extended by writing C modules that can be
+linked into the interpreter either statically or dynamically.
+There is a wealth of C libraries whose functionalities would be useful
+to these interpreted languages, but that have not yet been integrated
+due to the time-consuming and boring process of writing bindings by
+hand.\par
+Our objective is to develop a formalism to specify C APIs in such a
+way that bindings to interpreted languages can be generated easily.
+With our formalism, we must be able to write a concise description of
+data structures and function prototypes. Then processing the
+description with a binding generator we'll obtain a module
+implementing the described types and functions in our language of
+choice.
+
+\section{Objectives}
+
+Our formalism has to satisfy some requirements in order to be useful:
+
+\begin{itemize}
+  \item writing specifications must be easier than writing bindings
+    for the majority of interpreted languages;
+
+  \item the formalism must be powerful enough to allow capturing all
+    the semantic aspects of a common C library;
+
+  \item the formalism must take into account typical interpreted
+    language needs and mechanisms, like automatic memory management
+    (\textsl{garbage collection}), high level types, \dots
+
+  \item it has to be easily machine-readable
+\end{itemize}
+
+It is important to note the relevance of the second point in the above
+list: automated header file processing cannot satisfy this point,
+since C header files can't capture the complete semantic of a C
+library.\footnote{Think for example to pointer arguments to functions:
+  is the argument somewhat to be considered as input or output, or
+  both? It is impossible to tell from the simple examination of a
+  function prototype.}
+
+\section{Lisp-like syntax}
+
+Lisp syntax seems perfect for such a formalism: it's exceptionally
+simple, it is very easy to parse and its list structure makes it
+ideal for the specification of complex data structures and function
+prototypes.\par
+We won't describe in detail the Lisp syntax here, we'll just limit to
+recall that the basic syntactical elements in Lisp are atoms, the most
+primitive entities, and lists\footnote{LISP stands for \textsl{LISt
+    Processing}}, which are ordered sequences of elements, where each
+element can be an atom or a list.\par
+The atoms we'll use will be symbolic names and numerical values. In
+our formal notation, atoms will be strings made of alphanumeric
+characters plus \texttt{.} (dot), \texttt{-} (minus), \texttt{\_}
+(underscore) and \texttt{"} (double quote). We'll use atoms as
+symbolic names, numerical values and strings.\par
+Examples of valid atoms are:
+
+\texttt{
+\begin{itemize}
+\item c-int
+\item c-long
+\item strlen
+\item 10
+\item "time.h"
+\item struct
+\end{itemize}
+}
+
+Lists are specified as a possibly empty sequence of space-separated
+elements, enclosed in parenthesis. Examples:
+
+\texttt{
+\begin{itemize}
+\item (a b c)
+\item ()
+\item (struct point ((c-float x) (c-float y)))
+\end{itemize}
+}
+
+\section{C API specification}
+
+In our formal specification we distinguish between type specification,
+function specification and directives.
+
+\subsection{Type specification: atomic and derived types}
+
+Types can be either \textsl{atomic} or \textsl{derived}. Atomic types
+are those that in the interpreted language are considered primitve
+(integers, floating point, strings, ...), corresponding directly to C
+basic types (like \texttt{int}, \texttt{float}, \dots)\footnote{we
+  considered the string an atomic type, even if its C counter-part is
+  a complex type (a pointer to char: \texttt{char *}), because
+  high-level interpreted languages usually provide a primitive string
+  type. The atomic-ness property is to be considered on the
+  interpreted language side, not at C level.}, or corresponding to
+\texttt{typedef}s of basic C types (like, say, \texttt{time\_t} in
+\texttt{<file.h>}).\par
+
+\subsubsection{Atomic types}
+
+The formalism has provision for some existing basic types, while
+others can be added using directives described below.
+Pre-existing atomic types in our formalism are:
+
+\begin{itemize}
+\item \texttt{int}, \texttt{sint}, \texttt{uint} - corresponding
+  respectively to C native \texttt{int}, \texttt{signed int},
+  \texttt{unsigned int}
+\item \texttt{long}, \texttt{slong}, \texttt{ulong} - corresponding
+  respectively to C native \texttt{long}, \texttt{signed long},
+  \texttt{unsigned long}
+\item \texttt{short}, \texttt{sshort}, \texttt{ushort} - corresponding
+  respectively to C native \texttt{short}, \texttt{signed short},
+  \texttt{unsigned short}
+\item \texttt{char}, \texttt{schar}, \texttt{uchar} - corresponding
+  respectively to C native \texttt{char}, \texttt{signed char},
+  \texttt{unsigned char}
+\item \texttt{int8}, \texttt{uint8} - corresponding
+  respectively to C native 8 bit signed and unsigned integers
+\item \texttt{int16}, \texttt{uint16} - corresponding
+  respectively to C native 16 bit signed and unsigned integers
+\item \texttt{int32}, \texttt{uint32} - corresponding
+  respectively to C native 32 bit signed and unsigned integers
+
+\item \texttt{string-in}
+\item \texttt{string-out}
+\item \texttt{string-inout}
+\item \texttt{string-m-out}
+\end{itemize}
+
+New atomic types corresponding to a C \texttt{typedef} can be added
+using the \texttt{c-atomic-type} directive:
+
+\begin{quotation}
+  \texttt{(c-atomic-type "\textsl{ctype}")}
+\end{quotation}
+
+For example, to add the \texttt{time\_t} type defined in
+\texttt{<time.h>}:
+
+\begin{quotation}
+  \texttt{(c-atomic-type "time\_t")}
+\end{quotation}
+
+It is possible to add a new atomic type corresponding to a C
+enumeration or to a set of \texttt{\#define}s, using the \texttt{enum}
+form:
+
+\begin{quotation}
+  \texttt{(c-enum-type \textsl{enum-name} \textsl{"c-type-name$_{opt}$"} ((\textsl{symbolic-name$_1$} \textsl{C-value$_1$})\dots ))}
+\end{quotation}
+
+(the \textsl{c-type-name} specifies the C name of the enumeration. It
+is mandatory for enumerations, unused otherwise).\par
+
+For example, if we have the C fragment:
+
+\begin{verbatim}
+    typedef enum { color_red, color_green, color_blue } color_t;
+\end{verbatim}
+
+we would write:
+
+\begin{verbatim}
+    (c-enum-type color "color_t"
+      ((red color_red)
+       (green color_green)
+       (blue color_blue)))
+\end{verbatim}
+
+If instead we have:
+
+\begin{verbatim}
+    #define COLOR_RED   1
+    #define COLOR_GREEN 2
+    #define COLOR_BLUE  3
+\end{verbatim}
+
+we could use:
+
+\begin{verbatim}
+    (c-enum-type color
+      ((red COLOR_RED)
+       (green COLOR_GREEN)
+       (blue COLOR_BLUE)))
+\end{verbatim}
+
+\subsubsection{Derived types}
+
+\subsubsection{Type attributes}
+
+const, volatile, \dots
+
+\subsection{Function prototype specification}
+
+\subsection{Directives}
+
+\end{document}

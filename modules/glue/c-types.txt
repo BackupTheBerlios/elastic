@@ -1,0 +1,39 @@
+int
+long
+short
+char
+
+uint
+ulong
+ushort
+uchar
+
+sint
+slong
+sshort
+schar
+
+int8
+int16
+int32
+
+uint8
+uint16
+uint32
+
+c-string
+
+c-functionptr
+
+(c-buffer LEN)
+
+(pointer-in TYPE)
+(pointer-out TYPE)
+(pointer-inout TYPE)
+
+(const TYPE)
+
+;; Combination examples
+;
+; (pointer-in (const int))
+;   -> const int *

@@ -1,0 +1,62 @@
+C-elastiC Glue Generator
+========================
+
+definition file
+      |
+      |
+      | scmparse
+      |
+      |
+      V             IDLModel + IDLTypeTable
+ elastiC data  ------------------------------> OO Interface  +  Type table
+  structures                                    Description          |
+  (arrays)                                           |               |
+                                                     +---------------+
+                                                     |
+                                                     | Module (CModule, EcModule)
+                                                     |    |
+                                                     | GlueGenerator
+                                                     |  (visitors)
+                                                     |
+                                                     V
+                                               C Glue source
+                                                    code
+
+EcModule: elastiC module class
+          Responsible for calling the appropriate visitors
+          (contained in GlueGenerator) for the module contents.
+
+CModule: C module class
+          Register glue functions and the elastiC modules.
+          The CModule could handle possibly more than one
+          elastiC module (EcModule).
+
+Driver: glue
+
+        The `glue' builds a CModule and directs the operations
+        to obtain the final C interface source code.
+
+Files
+-----
+
+  IDLModel.ec      - IDL OO node classes
+  IDLTypeTable.ec  - IDL type table
+  Module.ec        - Provides CModule and EcModule classes
+  GlueGenerator.ec - provides visitors to implement glue generation
+  CCodeEmitter.ec  - helper classes emitting C source code
+
+  main.ec          - program entry point
+  scmparse.ec      - Scheme parser
+  util.ec          - various utilities
+
+C Output
+========
+
+ C file output structure:
+
+        1. heading
+        2. headers
+        3. types
+        4. getters & setters
+        5. functions
+        6. registration
