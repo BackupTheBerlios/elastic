@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: memory.c,v 1.3 2002/05/25 19:37:44 panta Exp $
+ *   $Id: memory.c,v 1.4 2002/06/06 00:04:24 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -54,7 +54,7 @@ struct poolchunk												/* Head of a chunk */
 	struct poolchunk *next;
 };
 
-struct ec_mempool
+struct ec_mempool_struct
 {
 	struct  poolchunk *first;									/* poolchunk at the head of the list   */
 	void   *p;													/* First free address in chunk or NULL */
@@ -283,7 +283,7 @@ EC_API ec_mempool ec_allocpool( size_t size, int alignment )
 {
 	ec_mempool res;
 
-	res = (ec_mempool) ec_malloc( sizeof(struct ec_mempool) );
+	res = (ec_mempool) ec_malloc( sizeof(struct ec_mempool_struct) );
 	res->first = NULL;
 	res->p     = NULL;
 	res->fb    = 0;

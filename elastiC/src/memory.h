@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: memory.h,v 1.1 2002/05/23 21:17:24 panta Exp $
+ *   $Id: memory.h,v 1.2 2002/06/06 00:04:24 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -43,7 +43,7 @@
 
 EC_BEGIN_DECLS
 
-typedef struct ec_mempool *ec_mempool;
+typedef struct ec_mempool_struct *ec_mempool;
 
 EC_API void *ec_malloc(size_t size);
 EC_API void  ec_free(void *ptr);
