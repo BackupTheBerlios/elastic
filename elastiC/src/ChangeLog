@@ -1,5 +1,11 @@
 2005-03-08  Marco Pantaleoni  <panta@elasticworld.org>
 
+	* elastic_p.y: removed dependency on fprintf(). Now uses
+	ec_stderr_*printf().
+
+	* elastic_s.l: removed dependency on fwrite() and fprintf(). Now
+	uses ec_stream_write() and ec_stderr_*printf().
+
 	* modules/stream_m.c (EcLibStream_Gets): Fixed EOF condition
 	handling.
 

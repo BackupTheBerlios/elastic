@@ -8,7 +8,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.4 2005/03/03 23:51:43 panta Exp $
+ *   $Id: elastic_p.y,v 1.5 2005/03/08 14:30:51 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -47,6 +47,22 @@
 #include <stdlib.h>
 #endif
 
+#if YYDEBUG
+#include <stdarg.h>
+
+static int local_yyfprintf(void *stream, const char *fmt, ...)
+{
+	va_list ap;
+	EcInt   rv;
+
+	va_start(ap, fmt);
+	rv = ec_stderr_vprintf(fmt, ap);
+	va_end(ap);
+	return rv;
+}
+
+#define YYFPRINTF local_yyfprintf
+#endif
 
 int yyparse( void );
 int yylex( void );

@@ -7,7 +7,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_s.l,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: elastic_s.l,v 1.4 2005/03/08 14:30:51 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -64,6 +64,25 @@ do {										\
 	}									\
 } while(0)
 
+#define ECHO \
+do {										\
+	if (ec_stream_stdout()) /* we could add PRIVATE(yyout) */		\
+		ec_stream_write( ec_stream_stdout(), yytext, yyleng );		\
+} while(0)
+
+static int local_fprintf(void *fh, const char *fmt, ...)
+{
+	va_list ap;
+	EcInt   rv;
+
+	va_start(ap, fmt);
+	rv = ec_stderr_vprintf(fmt, ap);
+	rv += ec_stderr_printf("\n");
+	va_end(ap);
+	return rv;
+}
+
+#define fprintf local_fprintf
 %}
 
 LBRACE  	"{"
