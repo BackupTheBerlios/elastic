@@ -5,3 +5,6 @@ Uncategorized
 *.exe
 *.obj
 *.ncb
+elastic.nsi
+README.txt
+LICENSE.txt

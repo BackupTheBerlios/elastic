@@ -25,3 +25,4 @@ ecdump
 *.la
 *.so
 *.dll
+stamp-h*

@@ -1,3 +1,11 @@
 bak
 old
 Uncategorized
+install-sh
+mkinstalldirs
+missing
+compile
+depcomp
+config.guess
+config.sub
+ltmain.sh
