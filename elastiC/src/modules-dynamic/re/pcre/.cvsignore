@@ -20,6 +20,8 @@ aclocal.m4
 stamp-h*
 chartables.c
 dmake.output
+ltmain.sh
+libtool
 .libs
 .deps
 *.lo
@@ -28,3 +30,5 @@ dmake.output
 RunTest
 pcre-config
 pcre.h
+dftables
+pcretest

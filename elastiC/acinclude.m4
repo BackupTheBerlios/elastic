@@ -7,9 +7,9 @@
 ##
 ##   Created: 18 Nov 1999
 ##
-##   $Id: acinclude.m4,v 1.1 2002/05/23 21:16:15 panta Exp $
+##   $Id: acinclude.m4,v 1.1 2002/06/01 17:10:07 panta Exp $
 ## --------------------------------------------------------------------------
-##    Copyright (C) 1999 Marco Pantaleoni. All rights reserved.
+##    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 ##
 ##  The contents of this file are subject to the elastiC License version 1.0
 ##  (the "elastiC License"); you may not use this file except in compliance

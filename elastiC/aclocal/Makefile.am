@@ -7,9 +7,9 @@
 #
 #   Created: 19 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:15:54 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/06/01 17:10:07 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -33,7 +33,7 @@
 #  limitations under the elastiC License.
 # ==========================================================================
 
-EXTRA_DIST = elastic-comp elastic-clean.am elastic.am elasticdir.m4
+EXTRA_DIST = elastic-comp elastic-clean.am elastic.am elastic.m4 elasticdir.m4
 
 aclocaldir  = $(datadir)/aclocal
 automakedir = $(datadir)/automake

@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.4 2002/05/28 16:51:10 panta Exp $
+dnl   $Id: configure.in,v 1.5 2002/06/01 17:10:07 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -35,7 +35,13 @@ dnl ==========================================================================
 
 dnl Process this file with autoconf to produce a configure script.
 
+# require autoconf 2.53
+AC_PREREQ(2.53)
+
 AC_INIT(src/elastic.c)
+
+# Save this value here, since automake will set cflags later
+cflags_set=${CFLAGS+set}
 
 dnl ========================================================================
 dnl V E R S I O N I N G
@@ -59,10 +65,10 @@ dnl
 
 EC_MAJOR_VERSION=0
 EC_MINOR_VERSION=0
-EC_MICRO_VERSION=36
-EC_API_VERSION=9
+EC_MICRO_VERSION=37
+EC_API_VERSION=10
 EC_API_REVISION=0
-EC_BINARY_AGE=0
+EC_BINARY_AGE=1
 
 EC_VERSION=$EC_MAJOR_VERSION.$EC_MINOR_VERSION.$EC_MICRO_VERSION
 AC_SUBST(EC_MAJOR_VERSION)
@@ -164,7 +170,11 @@ AC_PROG_CC
 AM_PROG_LIBTOOL
 
 dnl Configure libltdl
-AC_CONFIG_SUBDIRS(src/libltdl)
+dnl AC_CONFIG_SUBDIRS(src/libltdl)
+AC_CONFIG_SUBDIRS(src/libltdl src/modules-dynamic/re/pcre)
+
+dnl  Initialize maintainer mode
+AM_MAINTAINER_MODE
 
 dnl Set name for machine-dependent library files
 AC_SUBST(MACHDEP)
@@ -196,9 +206,16 @@ AC_ARG_ENABLE(profile,      [  --enable-profile=[no/yes]        - Enable compili
 AC_ARG_ENABLE(bprofile,     [  --enable-bprofile=[no/yes]       - Enable compiling with bprof profile information [default=no]],,enable_bprofile=no)
 AC_ARG_ENABLE(pentium,      [  --enable-pentium=[no/gcc/egcs]   - Enable pentium optimizations [default=no]],,enable_pentium=no)
 
+dnl for PCRE `configure'
+AC_ARG_ENABLE(utf8,
+[  --enable-utf8=[no/yes]           - Enable UTF8 support in PCRE (incomplete) [default=yes]],,enable_utf8=yes)
+
 AC_SUBST(DLBACKEND)
 
-AC_ARG_WITH(dlbackend,      [  --with-dlbackend=[dl/ltdl/win32/no] - Specify shared objects backend [default=ltdl]],DLBACKEND=$with_dlbackend,DLBACKEND="ltdl")
+AC_ARG_WITH(dlbackend,
+[  --with-dlbackend=[dl/ltdl/win32/no] - Specify shared objects backend [default=ltdl]],DLBACKEND=$with_dlbackend,DLBACKEND="ltdl")
+AC_ARG_WITH(newline,
+[  --with-newline=[CR/LF/specify]      - Use CR, LF or given value as newline in PCRE [default=LF]],newline_val=$with_newline,newline_val="LF")
 
 AM_CONDITIONAL(DLBACKEND_DL, test x$DLBACKEND = xdl)
 AM_CONDITIONAL(DLBACKEND_LTDL, test x$DLBACKEND = xltdl)
@@ -272,7 +289,7 @@ AM_PROG_LEX
 AC_PROG_YACC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_PROG_RANLIB
+dnl AC_PROG_RANLIB
 dnl AC_PROG_SDF
 
 # libtool option to control which symbols are exported
@@ -356,8 +373,10 @@ AC_CHECK_SIZEOF(void *, 4)
 AC_CHECK_SIZEOF(float, 4)
 AC_CHECK_SIZEOF(double, 8)
 
-ELASTIC_CHECK_TYPE(quad_t, , long, HAVE_QUAD_T)
-ELASTIC_CHECK_TYPE(u_quad_t, , unsigned long, HAVE_U_QUAD_T)
+dnl Use new (2.53) AC_CHECK_TYPE / AC_CHECK_TYPES semantic
+AC_CHECK_TYPES([quad_t, u_quad_t])
+dnl ELASTIC_CHECK_TYPE(quad_t, , long, HAVE_QUAD_T)
+dnl ELASTIC_CHECK_TYPE(u_quad_t, , unsigned long, HAVE_U_QUAD_T)
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA
@@ -373,6 +392,17 @@ AC_CHECK_FUNCS(isinf isnan)
 AC_CHECK_FUNCS(getopt)
 
 ELASTIC_VA_COPY
+
+dnl Macros used by PCRE
+AC_SUBST(UTF8)
+AC_SUBST(NEWLINE)
+if test "x$MINGW32" = "xyes" -o "x$CYGWIN" = "xyes" ; then
+  UTF8=-DSUPPORT_UTF8
+  NEWLINE=-DNEWLINE=10
+else
+  UTF8=-DSUPPORT_UTF8
+  NEWLINE=-DNEWLINE=13
+fi
 
 dnl Gather info about shared linking
 dnl Borrowed from SWIG1.1p5, that says:
@@ -506,7 +536,8 @@ AC_SUBST(PROFILEOBJ)
 
 dnl AC_OUTPUT(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf)
 
-AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+dnl AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
 AC_CONFIG_COMMANDS([win32-cnf.h], [cp -f src/cnf.h win32/cnf.h])
 AC_CONFIG_COMMANDS([win32-nsis], [
 cp -f README win32/README.txt

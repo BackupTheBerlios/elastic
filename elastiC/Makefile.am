@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.2 2002/05/25 18:53:21 panta Exp $
+#   $Id: Makefile.am,v 1.3 2002/06/01 17:10:07 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -33,11 +33,12 @@
 #  limitations under the elastiC License.
 # ==========================================================================
 
-EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS elastic.m4 makemodule mkwin32.bat mingw32-makedll cygwin-makedll
+#EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS elastic.m4 makemodule mkwin32.bat mingw32-makedll cygwin-makedll
+EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS makemodule mkwin32.bat mingw32-makedll cygwin-makedll
 SUBDIRS = src aclocal . doc regress
 
-aclocaldir = $(datadir)/aclocal
-aclocal_DATA = elastic.m4
+#aclocaldir = $(datadir)/aclocal
+#aclocal_DATA = elastic.m4
 
 elasticincludedir = $(includedir)/elastic
 
