@@ -61,6 +61,14 @@ The elastiC official web site is:
 Here, you'll find the most recent release, documentation, support and
 other important information.
 
+AVAILABILITY
+------------
+
+elastiC is freely available on its web site.
+The cutting edge is available through CVS: see the file `README.CVS'
+for details (keep in mind that the latest CVS version is usually a
+`development' version and may be unstable).
+
 DOCUMENTATION
 -------------
 
@@ -148,7 +156,9 @@ BUG REPORTS
 -----------
 
 Bug reports and suggestions are very appreciated. Please send yours
-to me at <panta@elasticworld.org>
+to me at <panta@elasticworld.org> or use the bug tracking system at:
+
+   http://developer.berlios.de/bugs/?group_id=394
 
 AUTHOR
 ------
@@ -161,7 +171,7 @@ LICENSE
 
 elastiC is distributed under the elastiC License version 1.0 (the
 "elastiC License"). A copy of the license is available in the file
-LICENSE.
+`LICENSE'.
 
 THIRD PARTY SOFTWARE
 --------------------

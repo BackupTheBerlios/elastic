@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.5 2002/06/02 10:06:18 panta Exp $
+#   $Id: Makefile.am,v 1.6 2002/06/02 10:19:26 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -34,7 +34,7 @@
 # ==========================================================================
 
 #EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS elastic.m4 makemodule mkwin32.bat mingw32-makedll cygwin-makedll
-EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS TODO			\
+EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS README.CVS TODO		\
 	autogen.sh subautogen.sh aclocal-flags			\
 	makemodule mkwin32.bat mingw32-makedll cygwin-makedll
 SUBDIRS = src aclocal . doc regress
