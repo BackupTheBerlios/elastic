@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.1 2002/05/23 21:15:51 panta Exp $
+dnl   $Id: configure.in,v 1.2 2002/05/24 17:35:59 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -222,6 +222,10 @@ fi
 if test "x$enable_debug" = "xminimum"; then
   test "$cflags_set" = set || CFLAGS="$CFLAGS -g -O2"
   ELASTIC_DEBUG_FLAGS="-DEC_DEBUG_MINIMUM"
+fi
+
+if test "x$enable_memdebug" = "xyes" -a "x$enable_debug" != "xno"; then
+  ELASTIC_DEBUG_FLAGS="$ELASTIC_DEBUG_FLAGS -DEC_DIRTY_MALLOC_ENABLE"
 fi
 
 if test "x$enable_profile" = "xyes"; then
