@@ -8,7 +8,7 @@
 #
 #   Created: 1998
 #
-#   $Id: regress.sh,v 1.1 2002/05/23 21:16:31 panta Exp $
+#   $Id: regress.sh,v 1.2 2002/06/12 16:00:05 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -36,7 +36,7 @@
 
 ERRORPRONE="./testenv"
 
-LIBPATH="${srcdir}/obj:${srcdir}/../src/modules-dynamic/re"
+LIBPATH="${srcdir}/obj:${srcdir}/../src/modules-dynamic/re:${srcdir}/../src/modules:${srcdir}/../modules"
 #LIBPATH=${top_srcdir}/regress/obj:${top_builddir}/src/modules-dynamic/re
 
 if echo '\c' | grep -s c >/dev/null 2>&1

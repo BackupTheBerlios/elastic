@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.7 2002/06/06 19:52:49 panta Exp $
+#   $Id: Makefile.am,v 1.8 2002/06/12 16:00:05 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -37,7 +37,7 @@
 EXTRA_DIST = LICENSE ACKNOWLEDGEMENTS README.CVS TODO		\
 	autogen.sh subautogen.sh aclocal-flags			\
 	makemodule mkwin32.bat mingw32-makedll cygwin-makedll
-SUBDIRS = src aclocal . doc regress
+SUBDIRS = src aclocal . modules doc regress
 
 #aclocaldir = $(datadir)/aclocal
 #aclocal_DATA = elastic.m4
@@ -83,3 +83,6 @@ dist-hook:
 #	cp -a $(srcdir)/build/* $(distdir)/build
 	cp -a $(srcdir)/build/rules.mk $(distdir)/build
 	cp -a $(srcdir)/build/develconf* $(distdir)/build
+
+elastic-modules:
+	(cd modules && $(MAKE) $(AM_MAKEFLAGS))

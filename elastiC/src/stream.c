@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.3 2002/06/11 19:32:07 panta Exp $
+ *   $Id: stream.c,v 1.4 2002/06/12 16:00:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -98,6 +98,10 @@ EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 	/* :TODO: default_flush */
 	/* :TODO: default_unread */
 	/* :TODO: default_gets */
+
+	/* :TODO: default_mark */
+	/* :TODO: default_print */
+	/* :TODO: default_hash */
 
 	streamdef->streamtype = streamidx;
 	PRIVATE(streamtype_next) = streamidx + 1;
@@ -190,17 +194,14 @@ EC_API EcBool ec_stream_destroy( ec_stream *stream, EC_OBJ *excp )
 }
 
 /* EC_OBJ               EcMakeFileFromStream( ec_stream *stream ); */
-EC_API EC_OBJ EcMakeStream( ec_stream *stream )
-{
-	/* :TODO: implement it */
-	return EcUnimplementedError( "elastiC streams not yet implemented." );
-}
 
+#if 0
 EC_API void ec_stream_exception_clear( ec_stream *stream )
 {
 	ASSERT( stream );
 	stream->exc = EC_NIL;
 }
+#endif
 
 EC_API EcInt ec_stream_close( ec_stream *stream )
 {
@@ -314,6 +315,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 		while (rem > 0)
 		{
 			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
+			if (EC_ERRORP(stream->exc)) return nr;
 			if (nr != 1)
 				break;
 			if (ch == '\0') break;								/* :TODO: ??? */
@@ -329,6 +331,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 		while (TRUE)
 		{
 			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
+			if (EC_ERRORP(stream->exc)) return nr;
 			if (nr != 1)
 				break;
 			if (ch == '\0') break;								/* :TODO: ??? */
@@ -365,6 +368,7 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 
         ec_string_init( &ds, NULL );
 		nread = stream->streamdef->gets_fcn( stream, &ds, maxchars - 1 );
+		if (EC_ERRORP(stream->exc)) return nread;
 		if (nread > 0)
 		{
 			ASSERT( nread <= maxchars - 1 );
@@ -387,6 +391,7 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 	while (rem > 1)
 	{
 		nr = stream->streamdef->read_fcn( stream, &ch, 1 );
+		if (EC_ERRORP(stream->exc)) return nr;
 		if (nr != 1)
 			break;
 		*dstp = ch;
@@ -424,6 +429,7 @@ EC_API EcBool ec_stream_putch( ec_stream *stream, EcByte c )
 	{
 		ch = c;
 		nwritten = stream->streamdef->write_fcn( stream, &ch, 1 );
+		if (EC_ERRORP(stream->exc)) return FALSE;
 		return (nwritten == 1) ? TRUE : FALSE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
@@ -434,13 +440,30 @@ EC_API EcBool ec_stream_putcstr( ec_stream *stream, const char *src )
 {
 	size_t  len;
 	ssize_t nwritten;
+	char nl;
 
 	ASSERT( stream );
 	if (stream->streamdef->write_fcn)
 	{
 		len = src ? strlen(src) : 0;
 		nwritten = stream->streamdef->write_fcn( stream, src, len );
-		return (nwritten == len) ? TRUE : FALSE;
+		if (EC_ERRORP(stream->exc)) return nwritten;
+		if (nwritten != len)
+		{
+			stream->exc = EcUnimplementedError( "internal error: wrote different length" );
+			return FALSE;
+		}
+
+		nl = '\n';
+		nwritten = stream->streamdef->write_fcn( stream, &nl, 1 );
+		if (EC_ERRORP(stream->exc)) return nwritten;
+		if (nwritten != 1)
+		{
+			stream->exc = EcUnimplementedError( "internal error: wrote different length" );
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
 	return FALSE;
@@ -449,12 +472,29 @@ EC_API EcBool ec_stream_putcstr( ec_stream *stream, const char *src )
 EC_API EcBool ec_stream_puts( ec_stream *stream, ec_string *src )
 {
 	ssize_t nwritten;
+	char nl;
 
 	ASSERT( stream );
 	if (stream->streamdef->write_fcn)
 	{
 		nwritten = stream->streamdef->write_fcn( stream, ec_strdata(src), ec_strlen(src) );
-		return (nwritten == ec_strlen(src)) ? TRUE : FALSE;
+		if (EC_ERRORP(stream->exc)) return nwritten;
+		if (nwritten != ec_strlen(src))
+		{
+			stream->exc = EcUnimplementedError( "internal error: wrote different length" );
+			return FALSE;
+		}
+
+		nl = '\n';
+		nwritten = stream->streamdef->write_fcn( stream, &nl, 1 );
+		if (EC_ERRORP(stream->exc)) return nwritten;
+		if (nwritten != 1)
+		{
+			stream->exc = EcUnimplementedError( "internal error: wrote different length" );
+			return FALSE;
+		}
+
+		return TRUE;
 	}
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
 	return FALSE;
@@ -513,4 +553,47 @@ EC_API EC_OBJ ec_stream_restore( ec_stream *stream,
 {
 	/* :TODO: implement it */
 	return EcUnimplementedError( "serialization not yet implemented." );
+}
+
+EC_API void ec_stream_mark( ec_stream *stream )
+{
+	ASSERT( stream );
+
+	if ((stream->streamdef->user1_type == ec_type_ecobj) &&
+		EC_NNULLP(stream->userdata1.v_obj))
+		EcMarkObject( stream->userdata1.v_obj );
+
+	if (EC_NNULLP(stream->exc)) EcMarkObject( stream->exc );
+
+	if (stream->delegate) ec_stream_mark( stream->delegate );
+
+	if (stream->streamdef->mark_fcn)
+		return stream->streamdef->mark_fcn( stream );
+}
+
+EC_API EcInt ec_stream_print( ec_stream *stream, ec_string *str, EcBool detailed )
+{
+	ASSERT( stream );
+
+	if (stream->streamdef->print_fcn)
+		return stream->streamdef->print_fcn( stream, str, detailed );
+	else
+	{
+		if (detailed)
+			return ec_sprintf( str, "<stream type:%s>",
+							   stream->streamdef->name ? stream->streamdef->name : "UNNAMED" );
+		else
+			return ec_sprintf( str, "<stream>" );
+	}
+}
+
+EC_API EcUInt ec_stream_hash( ec_stream *stream, EcInt recursion_level )
+{
+	ASSERT( stream );
+
+	if (stream->streamdef->hash_fcn)
+		return stream->streamdef->hash_fcn( stream, recursion_level );
+
+	/* Equivalent object MUST have the same hash */
+	return 1;													/* this is all we can do ... */
 }

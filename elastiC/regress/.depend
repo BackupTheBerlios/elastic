@@ -1,5 +1,8 @@
+obj/Lambda.ecc: ./Lambda.ec 
 obj/SelfBug.ecc: ./SelfBug.ec 
 obj/add.ecc: ./add.ec 
+obj/apply.ecc: ./apply.ec 
+obj/arity.ecc: ./arity.ec 
 obj/bench1.ecc: ./bench1.ec 
 obj/bench2.ecc: ./bench2.ec 
 obj/bug.ecc: ./bug.ec 
@@ -19,6 +22,8 @@ obj/exc3.ecc: ./exc3.ec
 obj/exc4.ecc: ./exc4.ec 
 obj/exc5.ecc: ./exc5.ec 
 obj/fermat.ecc: ./fermat.ec 
+obj/fibonacci.ecc: ./fibonacci.ec 
+obj/filestreamtest.ecc: ./filestreamtest.ec 
 obj/filetest.ecc: ./filetest.ec 
 obj/hashtry1.ecc: ./hashtry1.ec 
 obj/hashtry2.ecc: ./hashtry2.ec 

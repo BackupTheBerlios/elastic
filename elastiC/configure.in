@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.15 2002/06/11 15:08:59 panta Exp $
+dnl   $Id: configure.in,v 1.16 2002/06/12 16:00:05 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -674,8 +674,8 @@ AC_SUBST(PROFILEOBJ)
 
 dnl AC_OUTPUT(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf)
 
-dnl AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
-AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+dnl AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
 AC_CONFIG_COMMANDS([win32-cnf.h], [cp -f src/cnf.h win32/cnf.h])
 AC_CONFIG_COMMANDS([win32-nsis], [
 cp -f README win32/README.txt

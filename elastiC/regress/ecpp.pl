@@ -4,12 +4,16 @@ undef(@deps);
 @deps = ();
 
 %def_mods = (
-	     'basic'  => 1,
-	     'string' => 1,
-	     'file'   => 1,
-	     'sys'    => 1,
-	     'hash'   => 1,
-	     're'     => 1,
+	     'basic'      => 1,
+	     'string'     => 1,
+	     'sys'        => 1,
+	     'hash'       => 1,
+	     'array'      => 1,
+	     'posix'      => 1,
+	     'stream'     => 1,
+	     'filestream' => 1,
+	     'file'       => 1,
+	     're'         => 1,
 	     );
 
 for ($i = 0; $i <= $#ARGV; $i++) {

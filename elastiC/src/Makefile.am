@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.6 2002/06/11 18:44:17 panta Exp $
+#   $Id: Makefile.am,v 1.7 2002/06/12 16:00:05 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -181,6 +181,7 @@ source_headers = \
 	dstring.h	\
 	elastic.h	\
 	file.h		\
+	filestream.h	\
 	floatio.h	\
 	hash.h		\
 	hashdefs.h	\
@@ -195,6 +196,7 @@ source_headers = \
 	prime.h		\
 	stackrecycle.h	\
 	stream.h	\
+	stream_t.h	\
 	strtable.h	\
 	user.h		\
 	utility.h

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.h,v 1.3 2002/06/11 19:32:07 panta Exp $
+ *   $Id: stream.h,v 1.4 2002/06/12 16:00:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -94,6 +94,10 @@ typedef ssize_t          (*ec_stream_tell_fcn)     ( ec_stream *s );
 /* :TODO: add seek64 */
 /* :TODO: add tell64 */
 
+typedef void             (*ec_stream_mark_fcn)( ec_stream *s );
+typedef EcInt            (*ec_stream_print_fcn)( ec_stream *s, ec_string *str, EcBool detailed );
+typedef EcUInt           (*ec_stream_hash_fcn)( ec_stream *s, EcInt recursion_level );
+
 #if 0
 typedef ssize_t          (*ec_stream_transform_fcn)( ec_stream *s,
 													 ec_stream_direction direction,
@@ -135,6 +139,10 @@ struct ec_streamdef_struct
 	ec_stream_tell_fcn			tell_fcn;
 	/* :TODO: add seek64 */
 	/* :TODO: add tell64 */
+
+	ec_stream_mark_fcn          mark_fcn;
+	ec_stream_print_fcn         print_fcn;
+	ec_stream_hash_fcn          hash_fcn;
 
 #if 0
 	ec_stream_transform_fcn     transform_fcn;					/* for `filter' streams */
@@ -190,11 +198,11 @@ EC_API ec_stream           *ec_stream_create_from_type( ec_streamtype streamtype
 EC_API EcBool               ec_stream_destroy( ec_stream *stream, EC_OBJ *excp );
 
 /* EC_API EC_OBJ               EcMakeFileFromStream( ec_stream *stream ); */
-EC_API EC_OBJ               EcMakeStream( ec_stream *stream );
 
 /* EC_API EC_OBJ               ec_stream_exception( ec_stream *stream ); */
-#define                     ec_stream_exception(stream)		((stream)->exc)
-EC_API void                 ec_stream_exception_clear( ec_stream *stream );
+#define                     ec_stream_exception(stream)			((stream)->exc)
+/* EC_API void                 ec_stream_exception_clear( ec_stream *stream ); */
+#define                     ec_stream_exception_clear(stream)	do { ((stream)->exc) = EC_NIL; } while(0)
 
 EC_API EcInt                ec_stream_close( ec_stream *stream );
 EC_API ec_stream_mode       ec_stream_getmode( ec_stream *stream );
@@ -226,6 +234,10 @@ EC_API EcUInt               ec_stream_store( ec_stream *stream, EC_OBJ object,
 EC_API EC_OBJ               ec_stream_restore( ec_stream *stream,
 											   ec_serializer *serialization_delegate,
 											   const char *serialization_mode );
+
+EC_API void                 ec_stream_mark( ec_stream *stream );
+EC_API EcInt                ec_stream_print( ec_stream *stream, ec_string *str, EcBool detailed );
+EC_API EcUInt               ec_stream_hash( ec_stream *stream, EcInt recursion_level );
 
 EC_END_DECLS
 

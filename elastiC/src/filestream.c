@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jun 11 17:34:18 CEST 2002
  *
- *   $Id: filestream.c,v 1.2 2002/06/11 19:32:07 panta Exp $
+ *   $Id: filestream.c,v 1.3 2002/06/12 16:00:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -48,9 +48,157 @@
 #include <stdlib.h>
 
 
+/* C API */
+
 EC_API const ec_streamdef *ec_filestream_def( void )
 {
 	return PRIVATE(filestream_def);
+}
+
+EC_API ec_stream *ec_filestream_fopen( const char *name, const char *mode, EC_OBJ *excp )
+{
+	FILE      *fh;
+	ec_stream *stream;
+
+	fh = fopen( name, mode );
+	if (! fh)
+	{
+		if (excp)
+			*excp = _ec_errno2exception( errno, EC_NIL, "in fopen" );
+		return NULL;
+	}
+	stream = ec_stream_create( PRIVATE(filestream_def), excp,
+							   fh, /* don'close */ (int)FALSE, /* popen()-ed */ (int)FALSE );
+	return stream;
+}
+
+EC_API ec_stream *ec_filestream_fdopen( int fildes, const char *mode, EC_OBJ *excp )
+{
+	FILE      *fh;
+	ec_stream *stream;
+
+	fh = fdopen( fildes, mode );
+	if (! fh)
+	{
+		if (excp)
+			*excp = _ec_errno2exception( errno, EC_NIL, "in fdopen" );
+		return NULL;
+	}
+	stream = ec_stream_create( PRIVATE(filestream_def), excp,
+							   fh, /* don'close */ (int)FALSE, /* popen()-ed */ (int)FALSE );
+	return stream;
+}
+
+EC_API ec_stream *ec_filestream_popen( const char *command, const char *type, EC_OBJ *excp )
+{
+	FILE      *fh;
+	ec_stream *stream;
+
+#if HAVE_POPEN
+	fflush(stdout);
+	fflush(stdin);
+	fh = popen( command, type );
+	if (! fh)
+	{
+		if (excp)
+			*excp = _ec_errno2exception( errno, EC_NIL, "in popen" );
+		return NULL;
+	}
+	stream = ec_stream_create( PRIVATE(filestream_def), excp,
+							   fh, /* don'close */ (int)FALSE, /* popen()-ed */ (int)TRUE );
+	return stream;
+#else
+	if (excp)
+		*excp = EcUnimplementedError( "`popen' function not available" );
+	return NULL;
+#endif
+}
+
+EC_API ec_stream *ec_filestream_make( FILE *fh, EcBool dontclose, EcBool popened, EC_OBJ *excp )
+{
+	return ec_stream_create( PRIVATE(filestream_def), excp,
+							 fh, /* don'close */ (int)dontclose, /* popen()-ed */ (int)popened );
+}
+
+EC_API EC_OBJ EcLibFileStreamFOpen( const char *name, const char *mode )
+{
+	ec_stream *stream;
+	EC_OBJ     exc;
+
+	stream = ec_filestream_fopen( name, mode, &exc );
+	if (EC_ERRORP(exc)) return exc;
+	return EcMakeStream( stream );
+}
+
+EC_API EC_OBJ EcLibFileStreamFDOpen( int fildes, const char *mode )
+{
+	ec_stream *stream;
+	EC_OBJ     exc;
+
+	stream = ec_filestream_fdopen( fildes, mode, &exc );
+	if (EC_ERRORP(exc)) return exc;
+	return EcMakeStream( stream );
+}
+
+EC_API EC_OBJ EcLibFileStreamPOpen( const char *command, const char *type )
+{
+	ec_stream *stream;
+	EC_OBJ     exc;
+
+	stream = ec_filestream_popen( command, type, &exc );
+	if (EC_ERRORP(exc)) return exc;
+	return EcMakeStream( stream );
+}
+
+EC_API EC_OBJ EcLibFileStreamMake( FILE *fh, EcBool dontclose, EcBool popened )
+{
+	ec_stream *stream;
+	EC_OBJ     exc;
+
+	stream = ec_filestream_make( fh, dontclose, popened, &exc );
+	if (EC_ERRORP(exc)) return exc;
+	return EcMakeStream( stream );
+}
+
+/* elastiC API */
+
+EC_API EC_OBJ EcLibFileStream_Open( EC_OBJ stack, EcAny userdata )
+{
+	char *name;
+	char *mode = "r";
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "filestream.open", TRUE, stack, "s|s", &name, &mode );
+	if (EC_ERRORP(res))
+		return res;
+
+	return EcLibFileStreamFOpen( name, mode );
+}
+
+EC_API EC_OBJ EcLibFileStream_FDOpen( EC_OBJ stack, EcAny userdata )
+{
+	EcInt   fildes;
+	char   *mode = "r";
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "filestream.fdopen", TRUE, stack, "i|s", &fildes, &mode );
+	if (EC_ERRORP(res))
+		return res;
+
+	return EcLibFileStreamFDOpen( fildes, mode );
+}
+
+EC_API EC_OBJ EcLibFileStream_POpen( EC_OBJ stack, EcAny userdata )
+{
+	char   *command;
+	char   *type = "r";
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "filestream.popen", TRUE, stack, "s|s", &command, &type );
+	if (EC_ERRORP(res))
+		return res;
+
+	return EcLibFileStreamPOpen( command, type );
 }
 
 /* Private */
@@ -323,7 +471,7 @@ static EC_OBJ filestream_restore  ( ec_stream *s,
 
 
 #if ECMODULE_FILESTREAM_STATIC
-EC_OBJ _ec_filestream_init( void )
+EC_OBJ _ec_modfilestream_init( void )
 #else
 EC_API EC_OBJ ec_filestream_init( void )
 #endif
@@ -349,6 +497,10 @@ EC_API EC_OBJ ec_filestream_init( void )
 		/* :TODO: add seek64 */
 		/* :TODO: add tell64 */
 
+		/* mark_fcn    */ NULL,									/* use default */
+		/* print_fcn   */ NULL,									/* use default */
+		/* hash_fcn    */ NULL,									/* use default */
+
 		/* store_fcn   */ filestream_store,						/* serialization: passivation */
 		/* restore_fcn */ filestream_restore,					/* serialization: activation  */
 
@@ -360,17 +512,26 @@ EC_API EC_OBJ ec_filestream_init( void )
 	};
 
 	const ec_streamdef *rdef;
+	EC_OBJ pkg;
 
 	rdef = ec_stream_register( &def );
 	if (! rdef) return EcMemoryError();
 
 	PRIVATE(filestream_def) = rdef;
 
-	return EC_NIL;												/* :TODO: return a package */
+	pkg = EcPackageIntroduce( "filestream" );
+	if (EC_ERRORP(pkg))
+		return pkg;
+
+	EcAddPrimitive( "filestream.open",		EcLibFileStream_Open );
+	EcAddPrimitive( "filestream.popen",		EcLibFileStream_POpen );
+	EcAddPrimitive( "filestream.fdopen",	EcLibFileStream_FDOpen );
+
+	return pkg;												/* :TODO: return a package */
 }
 
 #if ECMODULE_FILESTREAM_STATIC
-void _ec_filestream_cleanup( void )
+void _ec_modfilestream_cleanup( void )
 #else
 EC_API void ec_filestream_cleanup( void )
 #endif

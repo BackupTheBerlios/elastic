@@ -5,11 +5,11 @@
 # --------------------------------------------------------------------------
 #   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 #
-#   Created: 15 Nov 1999
+#   Created: Wed Jun 12 17:23:08 CEST 2002
 #
-#   $Id: Makefile.am,v 1.2 2002/06/12 16:00:06 panta Exp $
+#   $Id: Makefile.am,v 1.1 2002/06/12 16:00:05 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -33,29 +33,21 @@
 #  limitations under the elastiC License.
 # ==========================================================================
 
+#SUBDIRS =
+
 # Directory where sources are, from where we are.
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-noinst_LTLIBRARIES = libtypes.la
+CLEANFILES = $(wildcard $.o)  $(wildcard $.dll) $(wildcard $.ecc)
 
-CFLAGS = $(CORE_CFLAGS)
+elasticlibdir = $(prefix)/lib/elastic-$(EC_API_VERSION)
+elasticlib_DATA = file.ec file.ecc os.ec os.ecc
 
-static_sources = \
-	array.c		\
-	char.c		\
-	class.c		\
-	compiled.c	\
-	file.c		\
-	handler.c	\
-	hash.c		\
-	object.c	\
-	package.c	\
-	stack.c		\
-	string.c	\
-	stream_t.c
+EXTRA_DIST = Re.ec
 
-libtypes_la_SOURCES = \
-	$(static_sources)
+ECC  = $(top_builddir)/src/ecc$(EXEEXT)
+EC   = $(top_builddir)/src/ec$(EXEEXT)
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/src
+%.ecc: %.ec
+	ELASTICPATH="$(ELASTICPATH):$(top_builddir)/src/modules-dynamic/re:$(top_builddir)/src/modules:$(top_builddir)/modules" $(ECC) -o $@ $<

@@ -1,3 +1,14 @@
+2002-06-12  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lot of changes to many files, adapting almost everything to
+	new generic I/O. We still need to complete the generic I/O API,
+	to enable modular compilation of streams and filestreams, to add
+	elastiC functions to change the default stdio streams, ...
+
+	* stream_t.h filestream.[hc] types/stream_t.c modules/stream_m.c:
+	implemented elastiC stream type, stream module, filestream module
+	and C API.
+
 2002-06-11  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* stream.[hc] filestream.c ...: started implementing generic I/O

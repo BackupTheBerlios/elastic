@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.9 2002/06/11 18:44:17 panta Exp $
+ *   $Id: private.h,v 1.10 2002/06/12 16:00:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -436,9 +436,11 @@ void      _ec_hash_cleanup( void );
 EcBool    _ec_list_init( void );
 void      _ec_list_cleanup( void );
 
+#if 0
 /* File module */
 EcBool    _ec_file_init( void );
 void      _ec_file_cleanup( void );
+#endif
 
 /* String module */
 EcBool    _ec_modstring_init( void );
@@ -448,21 +450,32 @@ void      _ec_modstring_cleanup( void );
 EcBool    _ec_modarray_init( void );
 void      _ec_modarray_cleanup( void );
 
-#define ECMODULE_FILESTREAM_STATIC 1
-#if ECMODULE_FILESTREAM_STATIC
-/* filestream module */
-EC_OBJ    _ec_filestream_init( void );
-void      _ec_filestream_cleanup( void );
+/* elastiC stream type */
+EcBool    _ec_stream_t_init( void );
+void      _ec_stream_t_cleanup( void );
+
+/* stream module (elastiC module) */
+#define ECMODULE_STREAM_STATIC 1
+#if ECMODULE_STREAM_STATIC
+EC_OBJ    _ec_modstream_init( void );
+void      _ec_modstream_cleanup( void );
 #endif
 
-#if ECMODULE_POSIX_STATIC
+/* filestream module */
+#define ECMODULE_FILESTREAM_STATIC 1
+#if ECMODULE_FILESTREAM_STATIC
+EC_OBJ    _ec_modfilestream_init( void );
+void      _ec_modfilestream_cleanup( void );
+#endif
+
 /* Posix module */
+#if ECMODULE_POSIX_STATIC
 EC_OBJ    _ec_modposix_init( void );
 void      _ec_modposix_cleanup( void );
 #endif
 
-#if ECMODULE_ERRNO_STATIC
 /* errno module */
+#if ECMODULE_ERRNO_STATIC
 EC_OBJ    _ec_moderrno_init( void );
 void      _ec_moderrno_cleanup( void );
 #endif
