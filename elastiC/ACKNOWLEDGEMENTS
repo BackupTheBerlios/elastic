@@ -1,18 +1,20 @@
-My thanks go to the following people, in no particular order, whose
+My thanks go to the following people, in alphabetical order, whose
 help has proved invaluable:
 
+Alexander Bokovoy    <a.bokovoy@sam-solutions.net> - bug fixes, licensing issues
+Anand Aiyer          <OMISSIS>                     - threading/multiple interpreters
+                                                     suggestions
+David LeBlanc        <whisper@oz.net>              - help with the win32 port
 David N. Welton      <davidw@apache.org>           - documentation
-Federico Di Gregorio <fog@debian.org>              - debian package,
-                                                     versioning discussions
 Emiliano             <emile@iris-advies.com>       - intelligent questions,
                                                      suggestions, bug reports,
                                                      unicode support
-Alexander Bokovoy    <a.bokovoy@sam-solutions.net> - bug fixes, licensing issues
-Patrick Clochesy     <spacehog@new.rr.com>         - BSD license clarification
-Yuri Mironoff        <ymironoff@slk.com>           - AIX native compiler support
+Federico Di Gregorio <fog@debian.org>              - debian package,
+                                                     versioning discussions
 George McBay         <gmcbay@hotmail.com>          - Win32 VisualC++ port
                                                      bug fixes
-David LeBlanc        <whisper@oz.net>              - help with the win32 port
+Patrick Clochesy     <spacehog@new.rr.com>         - BSD license clarification
 Roberto Artigas Jr   <rartiga1@midsouth.rr.com>    - help with the win32 port
+Yuri Mironoff        <ymironoff@slk.com>           - AIX native compiler support
 
 I apologize to the (many) I've forgotten.
