@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.8 2002/06/06 13:44:05 panta Exp $
+dnl   $Id: configure.in,v 1.9 2002/06/06 16:10:57 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -493,7 +493,11 @@ AC_CHECK_FUNCS(getcwd select socket strerror)
 AC_CHECK_FUNCS(isinf isnan)
 AC_CHECK_FUNCS(getopt)
 dnl POSIX functions
-AC_CHECK_FUNCS(access open creat close read write)
+AC_CHECK_FUNCS(access open creat close read write fcntl fstat lseek dup dup2)
+AC_CHECK_FUNCS(pipe mkfifo umask fdopen fileno)
+AC_CHECK_FUNCS(fork execl execle execlp execv execve execvp waitpid _exit)
+AC_CHECK_FUNCS(kill sleep pause alarm setuid setgid)
+AC_CHECK_FUNCS(getpid getppid getlogin getuid geteuid cuserid getgid getegid)
 
 ELASTIC_VA_COPY
 

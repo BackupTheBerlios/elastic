@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.2 2002/06/04 20:08:27 panta Exp $
+ *   $Id: elastic.h,v 1.3 2002/06/06 16:10:57 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -387,7 +387,7 @@ EC_API EC_OBJ EcSetQVariable( const char *qualifiedsymbol, EC_OBJ value );			   
 
 /* Primitive procedures */
 
-EC_API EcBool EcAddPrimitive( const char *name, EcCPrimitive prim ); 							/* name is qualified */
+EC_API EcBool EcAddPrimitive( const char *name, EcCPrimitive prim ); 						/* name is qualified */
 EC_API EcBool EcAddPrimitiveUserData( const char *name, EcCPrimitive prim,					/* name is qualified */
 									  EcAny userdata, EcBool userdata_is_object );
 

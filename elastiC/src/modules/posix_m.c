@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.2 2002/06/06 13:44:05 panta Exp $
+ *   $Id: posix_m.c,v 1.3 2002/06/06 16:10:57 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -173,6 +173,7 @@ static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int access(const char *pathname, int mode) */
 
+#if HAVE_ACCESS
 	char   *pathname;
 	EC_OBJ  mode_o;
 	EcInt   mode;
@@ -187,7 +188,6 @@ static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
 	res = _ec_sequence2mask( "posix.access", 2, sym2int_access_mode, mode_o, &mode );
 	if (EC_ERRORP(res)) return res;
 
-#if HAVE_ACCESS
 	rv = access( pathname, (int) mode );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.access" );
@@ -202,6 +202,7 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int open(const char *pathname, int mode) */
 
+#if HAVE_OPEN
 	char   *pathname;
 	EC_OBJ  flags_o, mode_o = EC_NIL;
 	EcInt   flags, mode = 0;
@@ -223,7 +224,6 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 	} else
 		mode = 0;
 
-#if HAVE_OPEN
 	if (flags & O_CREAT)
 		rv = open( pathname, (int) flags, (mode_t) mode );
 	else
@@ -241,6 +241,7 @@ static EC_OBJ EcLibPosix_creat( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int creat(const char *pathname, mode_t mode) */
 
+#if HAVE_CREAT
 	char   *pathname;
 	EC_OBJ  mode_o = EC_NIL;
 	EcInt   mode = 0;
@@ -255,7 +256,6 @@ static EC_OBJ EcLibPosix_creat( EC_OBJ stack, EcAny userdata )
 	res = _ec_sequence2mask( "posix.creat", 2, sym2int_open_mode, mode_o, &mode );
 	if (EC_ERRORP(res)) return res;
 
-#if HAVE_CREAT
 	rv = creat( pathname, (mode_t) mode );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.creat" );
@@ -276,6 +276,7 @@ static EC_OBJ EcLibPosix_close( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int close(int fd) */
 
+#if HAVE_CLOSE
 	int     fd;
 	int     rv;
 	EC_OBJ  res;
@@ -285,7 +286,6 @@ static EC_OBJ EcLibPosix_close( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-#if HAVE_CLOSE
 	rv = close( fd );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.close" );
@@ -300,6 +300,7 @@ static EC_OBJ EcLibPosix_read( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: ssize_t read(int fd, void *buf, size_t count) */
 
+#if HAVE_READ
 	int     fd, count;
 	ssize_t rv;
 	EC_OBJ  buf;
@@ -310,7 +311,6 @@ static EC_OBJ EcLibPosix_read( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-#if HAVE_READ
 	buf = EcMakeString( "", count + 1 );
 	if (EC_ERRORP(buf)) return buf;
 	rv = read( fd, EC_STRDATA(buf), count );
@@ -327,6 +327,7 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: ssize_t write(int fd, const void *buf, size_t count) */
 
+#if HAVE_WRITE
 	int     fd;
 	ssize_t rv;
 	EC_OBJ  buf;
@@ -337,7 +338,6 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-#if HAVE_WRITE
 	rv = write( fd, EC_STRDATA(buf), EC_STRLEN(buf) );
 	if (rv < 0)
 		return posix2exception( errno, EC_NIL, "in posix.write" );
@@ -348,9 +348,222 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_WRITE */
 }
 
+static EC_OBJ EcLibPosix_dup( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int dup(int oldfd) */
+
+#if HAVE_DUP
+	int    oldfd;
+	int    newfd;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.dup", TRUE, stack, "i",
+								&oldfd );
+	if (EC_ERRORP(res))
+		return res;
+
+	newfd = dup( oldfd );
+	if (newfd < 0)
+		return posix2exception( errno, EC_NIL, "in posix.dup" );
+	else
+		return EcMakeInt( newfd );
+#else
+	return EcUnimplementedError( "POSIX `dup' function not available" );
+#endif /* HAVE_DUP */
+}
+
+static EC_OBJ EcLibPosix_dup2( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int dup2(int oldfd, int newfd) */
+
+#if HAVE_DUP2
+	int    oldfd, newfd;
+	int    newfd_r;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.dup2", TRUE, stack, "ii",
+								&oldfd, &newfd );
+	if (EC_ERRORP(res))
+		return res;
+
+	newfd_r = dup2( oldfd, newfd );
+	if (newfd_r < 0)
+		return posix2exception( errno, EC_NIL, "in posix.dup2" );
+	else
+		return EcMakeInt( newfd_r );
+#else
+	return EcUnimplementedError( "POSIX `dup2' function not available" );
+#endif /* HAVE_DUP2 */
+}
+
+static EC_OBJ EcLibPosix_pipe( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int pipe(int filedes[2]) */
+
+#if HAVE_PIPE
+	int    filedes[2];
+	int    rv;
+
+	EC_CHECKNARGS_F("posix.pipe", 0);
+
+	rv = pipe( filedes );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.pipe" );
+	else
+		return EcMakeArrayInit( 2, EcMakeInt( filedes[0] ), EcMakeInt( filedes[1] ) );
+#else
+	return EcUnimplementedError( "POSIX `pipe' function not available" );
+#endif /* HAVE_PIPE */
+}
+
 	/* process properties */
 
 	/* process management */
+
+static EC_OBJ EcLibPosix_fork( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int fork(void) */
+
+#if HAVE_FORK
+	pid_t  rv;
+
+	EC_CHECKNARGS_F("posix.fork", 0);
+
+	rv = fork();
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.fork" );
+	else
+		return EcMakeInt( rv );
+#else
+	return EcUnimplementedError( "POSIX `fork' function not available" );
+#endif /* HAVE_FORK */
+}
+
+static EC_OBJ EcLibPosix_execv( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int execv(const char *path, char *const argv[]) */
+
+#if HAVE_EXECV
+	const char *pathname;
+	EC_OBJ argv_o, argvl_o, el;
+	EcInt  argvl, i;
+	char **argv;
+	pid_t  rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.execv", TRUE, stack, "sO",
+								&pathname, &argv_o );
+
+	if (! EcIsSequence( argv_o ))
+		return EC_TYPEERROR_F(/* function name    */ "posix.execv",
+							  /* parameter index  */ 2,
+							  /* expected         */ tc_none,
+							  /* offending object */ argv_o,
+							  /* reason           */ "expected a sequence of strings");
+	argvl_o = EcSequenceLength( argv_o );
+	if (EC_ERRORP(argvl_o)) return argvl_o;
+	ASSERT( EC_INUMP(argvl_o) );
+	argvl = EC_INUM(argvl_o);
+	argv = alloca( sizeof(const char *) * (argvl + 1) );
+	if (! argv) return EcMemoryError();
+	for (i = 0; i < argvl; i++)
+	{
+		el = EcSequenceGetElement( argv_o, i );
+		if (EC_ERRORP(el)) return el;
+		if (! EC_STRINGP(el))
+			return EC_TYPEERROR_F(/* function name    */ "posix.execv",
+								  /* parameter index  */ 2,
+								  /* expected         */ tc_none,
+								  /* offending object */ argv_o,
+								  /* reason           */ "expected a sequence of strings");
+		argv[i] = ec_stringdup( EC_STRDATA(el) );
+	}
+	argv[i] = NULL;
+
+	rv = execv(pathname, argv);
+	/* we shouldn't return if everything worked */
+	return posix2exception( errno, EC_NIL, "in posix.execv" );
+#else
+	return EcUnimplementedError( "POSIX `execv' function not available" );
+#endif /* HAVE_EXECV */
+}
+
+static EC_OBJ EcLibPosix_execve( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int execve(const char *path, char *const argv[], char *const envp[]) */
+
+#if HAVE_EXECVE
+	const char *pathname;
+	EC_OBJ argv_o, argvl_o, el;
+	EC_OBJ envp_o, envpl_o;
+	EcInt  argvl, envpl, i;
+	char **argv, **envp;
+	pid_t  rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.execve", TRUE, stack, "sOO",
+								&pathname, &argv_o, &envp_o );
+
+	if (! EcIsSequence( argv_o ))
+		return EC_TYPEERROR_F(/* function name    */ "posix.execv",
+							  /* parameter index  */ 2,
+							  /* expected         */ tc_none,
+							  /* offending object */ argv_o,
+							  /* reason           */ "expected a sequence of strings");
+	if (! EcIsSequence( envp_o ))
+		return EC_TYPEERROR_F(/* function name    */ "posix.execv",
+							  /* parameter index  */ 3,
+							  /* expected         */ tc_none,
+							  /* offending object */ envp_o,
+							  /* reason           */ "expected a sequence of strings");
+
+	argvl_o = EcSequenceLength( argv_o );
+	if (EC_ERRORP(argvl_o)) return argvl_o;
+	ASSERT( EC_INUMP(argvl_o) );
+	argvl = EC_INUM(argvl_o);
+	argv = alloca( sizeof(const char *) * (argvl + 1) );
+	if (! argv) return EcMemoryError();
+	for (i = 0; i < argvl; i++)
+	{
+		el = EcSequenceGetElement( argv_o, i );
+		if (EC_ERRORP(el)) return el;
+		if (! EC_STRINGP(el))
+			return EC_TYPEERROR_F(/* function name    */ "posix.execve",
+								  /* parameter index  */ 2,
+								  /* expected         */ tc_none,
+								  /* offending object */ argv_o,
+								  /* reason           */ "expected a sequence of strings");
+		argv[i] = ec_stringdup( EC_STRDATA(el) );
+	}
+	argv[i] = NULL;
+
+	envpl_o = EcSequenceLength( envp_o );
+	if (EC_ERRORP(envpl_o)) return envpl_o;
+	ASSERT( EC_INUMP(envpl_o) );
+	envpl = EC_INUM(envpl_o);
+	envp = alloca( sizeof(const char *) * (envpl + 1) );
+	if (! envp) return EcMemoryError();
+	for (i = 0; i < envpl; i++)
+	{
+		el = EcSequenceGetElement( envp_o, i );
+		if (EC_ERRORP(el)) return el;
+		if (! EC_STRINGP(el))
+			return EC_TYPEERROR_F(/* function name    */ "posix.execve",
+								  /* parameter index  */ 3,
+								  /* expected         */ tc_none,
+								  /* offending object */ envp_o,
+								  /* reason           */ "expected a sequence of strings");
+		envp[i] = ec_stringdup( EC_STRDATA(el) );
+	}
+	envp[i] = NULL;
+
+	rv = execve(pathname, argv, envp);
+	/* we shouldn't return if everything worked */
+	return posix2exception( errno, EC_NIL, "in posix.execve" );
+#else
+	return EcUnimplementedError( "POSIX `execve' function not available" );
+#endif /* HAVE_EXECVE */
+}
 
 #endif /* HAVE_UNISTD_H */
 
@@ -363,6 +576,7 @@ EC_API EC_OBJ ec_posix_init( void )
 #endif
 {
 	EC_OBJ pkg;
+	EC_OBJ feature;
 	int i;
 
 	pkg = EcPackageIntroduce( "posix" );
@@ -376,6 +590,12 @@ EC_API EC_OBJ ec_posix_init( void )
 	EcAddPrimitive( "posix.close",      EcLibPosix_close );
 	EcAddPrimitive( "posix.read",       EcLibPosix_read );
 	EcAddPrimitive( "posix.write",      EcLibPosix_write );
+	EcAddPrimitive( "posix.dup",        EcLibPosix_dup );
+	EcAddPrimitive( "posix.dup2",       EcLibPosix_dup2 );
+	EcAddPrimitive( "posix.pipe",       EcLibPosix_pipe );
+	EcAddPrimitive( "posix.fork",       EcLibPosix_fork );
+	EcAddPrimitive( "posix.execv",      EcLibPosix_execv );
+	EcAddPrimitive( "posix.execve",     EcLibPosix_execve );
 
 	/* Symbols */
 
@@ -637,6 +857,88 @@ EC_API EC_OBJ ec_posix_init( void )
 	ASSERT( i == 15 );
 
 #endif /* HAVE_UNISTD_H */
+
+	/* Variables */
+
+	feature = EcMakeHash();
+	if (EC_ERRORP(feature)) return feature;
+
+	EcHashSet( feature, EcMakeSymbol("access"),
+#if HAVE_UNISTD_H && HAVE_ACCESS
+			   EcTrueObject );
+#else
+			   EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("open"),
+#if HAVE_UNISTD_H && HAVE_OPEN
+			   EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("creat"),
+#if HAVE_UNISTD_H && (HAVE_CREAT || HAVE_OPEN)
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("close"),
+#if HAVE_UNISTD_H && HAVE_CLOSE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("read"),
+#if HAVE_UNISTD_H && HAVE_READ
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("write"),
+#if HAVE_UNISTD_H && HAVE_WRITE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("dup"),
+#if HAVE_UNISTD_H && HAVE_DUP
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("dup2"),
+#if HAVE_UNISTD_H && HAVE_DUP2
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("pipe"),
+#if HAVE_UNISTD_H && HAVE_PIPE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("fork"),
+#if HAVE_UNISTD_H && HAVE_FORK
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("execv"),
+#if HAVE_UNISTD_H && HAVE_EXECV
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("execve"),
+#if HAVE_UNISTD_H && HAVE_EXECVE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+
+	EcPackageVariable( pkg, "has",
+					   feature,
+					   TRUE, TRUE );
 
 	return pkg;
 }
