@@ -8,7 +8,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: elastic_p.y,v 1.4 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -424,7 +424,7 @@ basic.parameter.list
 ;
 
 parameter.list
-	: /* EMPTY */                                              { $$ = makeParamList( FALSE, NULL ); SAVE($$, @1);       }
+	: /* EMPTY */                                              { $$ = makeParamList( FALSE, NULL ); /* SAVE($$, @1); */ }
 	| basic.parameter.list                                     { $$ = makeParamList( FALSE, $1 ); SAVE($$, @1);         }
 	| basic.parameter.list T_ELLIPSIS                          { $$ = makeParamList( TRUE,  $1 ); SAVE($$, @1);         }
 ;

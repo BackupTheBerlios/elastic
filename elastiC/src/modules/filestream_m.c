@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jun 11 17:34:18 CEST 2002
  *
- *   $Id: filestream_m.c,v 1.2 2002/06/13 11:06:21 panta Exp $
+ *   $Id: filestream_m.c,v 1.3 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -412,7 +412,7 @@ static EcBool filestream_ready( ec_stream *s )
 
 static EcBool filestream_seek( ec_stream *s, ssize_t offset, ec_stream_seek_type whence )
 {
-	int wh;
+	int wh = SEEK_SET;
 
 	switch (whence)
 	{

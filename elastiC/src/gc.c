@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec  9 10:24:32 MET 1998
  *
- *   $Id: gc.c,v 1.4 2002/06/13 17:44:18 panta Exp $
+ *   $Id: gc.c,v 1.5 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -299,7 +299,7 @@ inline EC_API EC_OBJ EcAllocObject( void )
 	EC_OBJ res;
 	register EcPrivate *lprivate;
 
-	lprivate = &_ec_private;
+	lprivate = PPRIVATE;
 
 	/* Check and try */
 	CHECK_AND_ALLOC;

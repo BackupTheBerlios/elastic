@@ -2,6 +2,9 @@ Original Author
 ---------------
 Marco Pantaleoni     <panta@elasticworld.org>
 
+Threading/multiple interpreters support
+---------------------------------------
+Anand Aiyer          <OMISSIS>
 
 Win32 VisualC++ port
 --------------------

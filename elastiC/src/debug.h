@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: debug.h,v 1.1 2002/05/23 21:16:54 panta Exp $
+ *   $Id: debug.h,v 1.2 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,8 @@
 
 #ifndef __DEBUG_H
 #define __DEBUG_H
+
+#include <elastic/private.h>
 
 EC_BEGIN_DECLS
 
@@ -89,8 +91,8 @@ do { \
 	if (!(A)) { \
 		EC_PRINTFUNC; \
 		fprintf(stderr, "\tAssertion failed: %s is false\n", #A);	\
-		if (_ec_private.rt.line_num > 0)	\
-			fprintf(stderr, "\t(Interpreted program line %ld)\n", ((long)_ec_private.rt.line_num));	\
+		if (PRIVATE(rt).line_num > 0)	\
+			fprintf(stderr, "\t(Interpreted program line %ld)\n", ((long)PRIVATE(rt).line_num));	\
 		fprintf(stderr, "\n");	\
 		fflush(stderr); \
 		abort(); \

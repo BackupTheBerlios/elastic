@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.7 2002/06/13 17:44:18 panta Exp $
+ *   $Id: stream.c,v 1.8 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -409,6 +409,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 	}
 
 	ec_stream_exception_clear( stream );
+	nread = 0;
 	if (maxchars >= 0)
 	{
 		/* limited */
@@ -466,6 +467,7 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 	if (maxchars < 1)
 		return 0;
 
+	nread = 0;
 	if (stream->streamdef->gets_fcn)
 	{
 		ec_string ds;

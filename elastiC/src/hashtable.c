@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jun 24 10:34:09 MEST 1999
  *
- *   $Id: hashtable.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: hashtable.c,v 1.4 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -388,6 +388,8 @@ EC_API EcBool ec_hash_set( ec_hash table, EcAny key, EcAny value )
 	{
 		/* already occupied slot */
 
+		/* :TODO: if the key is not the _SAME_ stored in entry we need to free the stored
+		          version and copy the new one. */
 		if (H_DEF(table).value_destroy && (EC_HASH_ENTRY_VALUE(entry) != H_INVVAL(table)))
 			H_VALDESTROY(table, EC_HASH_ENTRY_VALUE(entry));
 		EC_HASH_ENTRY_VALUE(entry) = H_DEF(table).value_copy ? H_VALCOPY(table, value) : value;

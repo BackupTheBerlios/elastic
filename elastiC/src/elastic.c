@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.11 2002/06/13 17:44:18 panta Exp $
+ *   $Id: elastic.c,v 1.12 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -93,8 +93,11 @@ EC_API EC_OBJ EcTargetErrorClass           = EC_NIL;
 EC_API EC_OBJ EcParameterCountErrorClass   = EC_NIL;
 EC_API EC_OBJ EcCompileErrorClass          = EC_NIL;
 
-
+#ifdef EC_THREADING
+pthread_key_t _ec_private;
+#else
 EcPrivate _ec_private;
+#endif
 
 /* ========================================================================
  * P R I V A T E
@@ -113,12 +116,51 @@ EcPrivate _ec_private;
 
 /* Library Initialization/Cleanup */
 
+#ifdef EC_THREADING
+void *_ec_threading_cleanup( void *i )
+{
+	if (pthread_getspecific(_ec_private) != NULL)
+	{
+		ec_free(pthread_getspecific(_ec_private));
+	}
+}
+
+EC_API EcBool EcThreadingInit()
+{
+	EcInt rc;
+	
+	rc = pthread_key_create( &_ec_private, (void *) _ec_threading_cleanup );
+	if (rc != 0)
+	{
+		fprintf( stderr, "Could not create thread-specific key: %s\n", strerror(rc) );
+		return FALSE;
+	}
+	
+	return TRUE;
+}
+#endif
+
 EC_API EcBool EcInit( void )
 {
-#if MEM_STATS
+#if MEM_STATS || defined(EC_THREADING)
 	EcInt i;
 #endif
+
 	void _ec_initializeOT( void );
+
+#ifdef EC_THREADING
+	EcPrivate *ec_private;
+	if (pthread_getspecific(_ec_private) == NULL)
+	{
+		ec_private = (EcPrivate *) ec_malloc( sizeof(EcPrivate) );
+		i = pthread_setspecific( _ec_private, (void *) ec_private );
+		if (i != 0)
+		{
+			fprintf( stderr, "Could not set thread-specific key data: %s - %d\n", strerror(i) );
+			return FALSE;
+		}
+	}
+#endif
 
 	if (! EcDLInit())
 	{
@@ -532,8 +574,10 @@ EC_API void EcCleanup( void )
 	_ec_char_cleanup();
 	_ec_array_cleanup();
 
+#ifndef EC_THREADING
 	EcDLCleanup();
-
+#endif
+	
 	PRIVATE(in_cleanup) = FALSE;
 }
 

@@ -1,3 +1,17 @@
+2005-03-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/elastic.c src/private.h ...: integrated patch from Anand
+	Aiyer to support multiple threads with an interpreter instance per
+	thread.
+	Can be enabled using '--enable-threading' configure option, and
+	the parent thread should call EcThreadingInit() before anything
+	else.
+
+	* src/elastic_p.y: modified to support new versions of bison
+	(>1.873)
+
+	* src/stream.c: fixed a couple of uninitialized variables.
+
 2003-05-29  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/compile2c* src/ec2c.c: integrated preliminary elastiC to C

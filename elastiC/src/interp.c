@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.4 2003/05/29 10:36:00 panta Exp $
+ *   $Id: interp.c,v 1.5 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -534,7 +534,7 @@ EC_API EC_OBJ EcExecute( EC_OBJ self, EC_OBJ at_class, EC_OBJ compiled, EC_OBJ s
 	ASSERT( EC_COMPILEDP(compiled) );
 	ASSERT( EC_STACKP(stack) );
 
-	lprivate = &_ec_private;
+	lprivate = PPRIVATE;
 
 #if EC_COMPILE2C
 	if (EC_COMPILEDCCALLABLE(compiled))							/* Check for a C-callable #JP */

@@ -1,5 +1,10 @@
 Overview of Changes in elastiC 0.0.38:
 
+* Integrated patch from Anand Aiyer to support multiple threads with
+  an interpreter instance per thread. Can be enabled using
+  '--enable-threading' configure option, and the parent thread should
+  call EcThreadingInit() before anything else.
+
 * Added an elastiC to C compiler written by my brother Jacopo
   (jp@lightflowtech.com). Preliminary and experimental right
   now, but it's very promising.

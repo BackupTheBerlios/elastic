@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 15:05:56 MEST 1998
  *
- *   $Id: ecc.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: ecc.c,v 1.3 2005/03/03 23:51:43 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -127,7 +127,11 @@ int main( int argc, char *argv[] )
 
 	source = argv[optind];
 
+#ifdef EC_THREADING
+	if (! EcThreadingInit() || ! EcInit())
+#else
 	if (! EcInit())
+#endif
 	{
 		error( "can't initialize elastiC environment" );
 		goto onError;
