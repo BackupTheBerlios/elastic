@@ -1,3 +1,22 @@
+2002-05-24  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c (EcCompilerContextCreate): now ctxt members are
+	properly initialized. This fixes a(nother) bug discovered by
+	George McBay.
+
+	* gc.c (heap_grow): now zeros newly-allocated chunks. This fixes a
+	bug discovered by George McBay: the object table release routine
+	crashed because it descended erroneously-non-NULL pointers (the
+	bug showed up only on windows, and now even on unix with
+	EC_DIRTY_MALLOC).
+
+	* memory.c (memfill, memfill_dword, ec_malloc): Added
+	uninitialized malloc()ed memory detection support (enabled by
+	EC_DIRTY_MALLOC).
+
+	* conf.h: Added uninitialized malloc()ed memory detection macros
+	(EC_DIRTY_MALLOC, EC_DIRTY_PATTERN).
+
 2002-05-21  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* object.c packageio.c types/stack.c: made 64-bit clean.
