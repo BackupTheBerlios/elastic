@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.3 2002/05/27 21:09:40 panta Exp $
+ *   $Id: lib.c,v 1.4 2002/06/01 16:17:22 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -457,7 +457,7 @@ EC_API EC_OBJ EcLibArity( EC_OBJ stack, EcAny userdata )
 	default:
 		if (EC_COMPILEDP(callable))
 		{
-			EcInt n_req;
+			/* EcInt n_req; */
 
 			ismethod = EC_COMPILEDISMETHOD(callable);
 			nargs_req = EC_COMPILEDNARG(callable) - (ismethod ? 2 : 0);
