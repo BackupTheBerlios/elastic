@@ -27,4 +27,8 @@
 	  add macros to build the name, declare the author, version, ...
 
 	o change header file protections to __EC_name_H
+
+	o make a patch to remove libc stdio usage from generated scanner
+	  (and parser? it doesn't seem necessary here)
+	  (needed for WITH_STDIO... well, when it's not defined...)
 }
