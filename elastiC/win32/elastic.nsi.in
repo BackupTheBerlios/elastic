@@ -1,0 +1,111 @@
+; ========================================================================
+;
+;   elastic.nsi
+;
+; ------------------------------------------------------------------------
+; NOTE: this .NSI script is designed for NSIS v1.8+
+
+; ========================================================================
+;  General settings
+; ------------------------------------------------------------------------
+
+; Name of the installer
+Name "elastiC"
+
+; Installer executable to create
+OutFile "elastiC-setup-@VERSION@.exe"
+
+; Icon of the installer
+;Icon "elastic.ico"
+
+; Uninstall
+UninstallText "This will uninstall elastiC. Hit 'Next' to continue."
+
+; ========================================================================
+;  Various settings
+; ------------------------------------------------------------------------
+
+; Some default compiler settings (uncomment and change at will):
+SetCompress auto ; (can be off or force)
+SetDatablockOptimize on ; (can be off)
+CRCCheck on ; (can be off)
+; AutoCloseWindow false ; (can be true for the window go away automatically at end)
+; ShowInstDetails hide ; (can be show to have them shown, or nevershow to disable)
+ShowInstDetails show ; (can be show to have them shown, or nevershow to disable)
+; SetDateSave off ; (can be on to have files restored to their orginal date)
+
+; ========================================================================
+;  License
+; ------------------------------------------------------------------------
+
+LicenseText "You must agree to this license before installing."
+LicenseData "LICENSE.txt"
+
+; ========================================================================
+;  Component page configuration
+; ------------------------------------------------------------------------
+ComponentText "The following components are available."
+
+; ========================================================================
+;  Directory selection page configuration
+; ------------------------------------------------------------------------
+
+; Text used to prompt the user to choose a directory
+DirText "Choose a directory in which to install elastiC."
+
+; The default installation directory
+InstallDir "$PROGRAMFILES\elastiC"
+
+; If this is an upgrade, use the old InstallDir as a default
+InstallDirRegKey HKEY_LOCAL_MACHINE "SOFTWARE\elastiC world\elastiC" "InstallDir"
+
+DirShow show ; (make this hide to not let the user change it)
+
+; ========================================================================
+;  Installation commands
+; ------------------------------------------------------------------------
+
+Section "-Required"
+;Section "" ; (default section)
+SetOutPath "$INSTDIR"
+File "README.txt"
+File "LICENSE.txt"
+File "vc6\Release\elastiC.dll"
+File "vc6\Release\elastiC.lib"
+File "vc6\Release\re.dll"
+File "vc6\Release\re.lib"
+File "vc6\Release\ec.exe"
+File "vc6\Release\ecc.exe"
+File "vc6\Release\ecdump.exe"
+; File "vc6\Release\ecrt.exe"
+
+; Write the uninstall keys for Windows
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\elastiC world\elastiC" "" "$INSTDIR"
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\elastiC" "DisplayName" "elastiC (remove only)"
+WriteRegStr HKEY_LOCAL_MACHINE "Software\Microsoft\Windows\CurrentVersion\Uninstall\elastiC" "UninstallString" '"$INSTDIR\uninstall.exe"'
+; Write out uninstaller
+WriteUninstaller "$INSTDIR\uninstall.exe"
+
+SectionEnd ; end of default section
+
+Section "Headers"
+SetOutPath "$INSTDIR\include"
+File /r "..\elastic"
+WriteRegStr HKEY_LOCAL_MACHINE "SOFTWARE\elastiC world\elastiC" "headers" "$INSTDIR\include"
+SectionEnd ; end of section "Headers"
+
+Section Uninstall
+; add delete commands to delete whatever files/registry keys/etc you installed here.
+Delete "$INSTDIR\README.txt"
+Delete "$INSTDIR\LICENSE.txt"
+Delete "$INSTDIR\uninstall.exe"
+Delete "$INSTDIR\*.exe"
+Delete "$INSTDIR\*.dll"
+Delete "$INSTDIR\*.lib"
+RMDir  /r "$INSTDIR\include"
+DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\elastiC world\elastiC"
+DeleteRegKey HKEY_LOCAL_MACHINE "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\elastiC"
+RMDir "$INSTDIR"
+SectionEnd ; end of uninstall section
+
+; eof
