@@ -1,0 +1,103 @@
+		       'gtk' module for elastiC
+		       ========================
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+gtk is Graphical User Interface (GUI) library written in C.
+gdk is the windowing graphic library that constitutes the base layer
+on which gtk is built.
+'gtk' module is a wrapper to the gtk and gdk libraries for the elastiC
+language.
+
+USAGE
+-----
+
+gtk elastiC module makes use of automake & autoconf.
+To compile it, simply issue the commands:
+
+  % configure
+  % make
+  % make install
+
+Please note that compilation could take somewhat long times,
+especially on not-so-fast machines.
+
+ELASTIC WEB SITE
+----------------
+
+elastiC and gtk-elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other valuable information.
+
+INSTALLATION
+------------
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+This module requires elastiC 0.0.10 and has been developed and tested
+only with gtk 1.2.3. It _won't_ work with earlier releases of elastiC
+and/or with gtk 1.1.
+
+DOCUMENTATION
+-------------
+
+There is yet no documentation available on gtk module. This is not too bad
+however, since this module mimics very closely the original gdk/gtk API.
+It is intended, in fact, as a low-level base for the development of an object
+oriented gtk-based GUI.
+In the mean time, have a look at the examples 'testgtk.ec',
+'testgdk.ec' and 'fileview.ec'.
+
+CAVEATS
+-------
+
+If you need to use the gdk module alone, you don't need to import the gtk
+module. But in every elastiC gtk program you *need* to import gdk *before*
+than gtk (at least on linux). This is because the gtk modules stacks onto
+gdk and it appears that the dynamic linker does not behave as specified
+in the documentation (for the brave men: dlopen with flags RTLD_LAZY
+wants to resolve all symbols on loading and not on execution, as it should.
+If you know something on this issue that I don't, your help will be highly
+appreciated !).
+
+So, for a gdk program:
+
+  import gdk;
+
+and for a gtk (with or without gdk) program:
+
+  import gdk;
+  import gtk;
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+26-28 December 1999
+
+Last revision: 03 January 2000

@@ -1,0 +1,15 @@
+Overview of Changes in gtk 0.4:
+
+* Fixed a minor bug.
+
+Overview of Changes in gtk 0.3:
+
+* Fixed gtk_signal_connect_full prototype.
+
+* Added fileview.ec example.
+
+* Added gtk.window_set_default_size() and gtk.window_set_modal().
+
+Overview of Changes in gtk 0.1:
+
+* 'gtk' module has been created.

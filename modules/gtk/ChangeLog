@@ -1,0 +1,17 @@
+2000-01-03  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Data.ec (Function::init): fixed a bug causing nullok flag not
+	being reset between parameters.
+
+	* Fixed gtk_signal_connect_full prototype.
+
+2000-01-02  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Added fileview.ec example.
+
+	* Added gtk_window_set_default_size() and gtk_window_set_modal().
+
+1999-12-26  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Created.
+

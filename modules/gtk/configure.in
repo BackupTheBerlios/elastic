@@ -1,0 +1,159 @@
+dnl ==========================================================================
+dnl configure.in
+dnl ==========================================================================
+dnl configure script for 'gtk'/'gdk' elastiC modules.
+dnl --------------------------------------------------------------------------
+dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+dnl
+dnl   Created: 1999
+dnl
+dnl   $Id: configure.in,v 1.1 2002/05/30 12:41:45 panta Exp $
+dnl --------------------------------------------------------------------------
+dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
+dnl
+dnl  The contents of this file are subject to the elastiC License version 1.0
+dnl  (the "elastiC License"); you may not use this file except in compliance
+dnl  with the elastiC License. You may obtain a copy of the elastiC License at
+dnl  http://www.elasticworld.org/LICENSE
+dnl
+dnl  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+dnl  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+dnl  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+dnl  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+dnl  POSSIBILITY OF SUCH DAMAGE.
+dnl
+dnl  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+dnl  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+dnl  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+dnl  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+dnl  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+dnl  MODIFICATIONS.
+dnl
+dnl  See the elastiC License for the specific language governing rights and
+dnl  limitations under the elastiC License.
+dnl ==========================================================================
+
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(ecgtk.c)
+
+dnl Set VERSION so we only need to edit in here
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+VERSION=0.6
+PACKAGE=elastic-gtk
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+
+dnl Specify a configuration file
+AM_CONFIG_HEADER(config.h)
+
+dnl Check for Cygwin32
+AC_CYGWIN
+
+dnl Set name for machine-dependent library files
+AC_SUBST(MACHDEP)
+AC_MSG_CHECKING(MACHDEP)
+if test -z "$MACHDEP"
+then
+	ac_sys_system=`uname -s`
+	if test "$ac_sys_system" = "AIX" ; then
+		ac_sys_release=`uname -v`
+	else
+		ac_sys_release=`uname -r`
+	fi
+	ac_md_system=`echo $ac_sys_system |
+			tr -d '[/ ]' | tr '[[A-Z]]' '[[a-z]]'`
+	ac_md_release=`echo $ac_sys_release |
+			tr -d '[/ ]' | sed 's/\..*//'`
+	MACHDEP="$ac_md_system$ac_md_release"
+
+	case $MACHDEP in
+	'')     MACHDEP="unknown";;
+	esac
+fi
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+dnl Checks for libraries.
+AC_CHECK_LIB(m, sin)
+AC_CHECK_LIB(dl, dlopen)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(limits.h malloc.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+
+dnl Checks for library functions.
+AC_FUNC_ALLOCA
+AC_FUNC_MEMCMP
+AC_FUNC_SETPGRP
+AC_TYPE_SIGNAL
+AC_FUNC_VPRINTF
+AC_FUNC_WAIT3
+AC_CHECK_FUNCS(getcwd)
+
+AC_SUBST(CC)
+
+dnl elastiC libs & flags
+
+AM_PATH_ELASTIC
+
+AC_SUBST(SO)
+AC_SUBST(LDSHARED)
+AC_SUBST(CCSHARED)
+AC_SUBST(LINKFORSHARED)
+CCSHARED="$ELASTIC_CCSHARED"
+LDSHARED="$ELASTIC_LDSHARED"
+LINKFORSHARED="$ELASTIC_LINKFORSHARED"
+SO="$ELASTIC_SO"
+
+dnl Check for cutting edge elastiC functions
+AC_CHECK_LIB(elastic, EcPackageIntroduce)
+dnl AC_CHECK_FUNCS(EcLibString_Sub)
+
+dnl Gtk libs & flags
+
+AC_SUBST(GTK_CFLAGS)
+AC_SUBST(GTK_LIBS)
+dnl AC_SUBST(GTK_LDFLAGS)
+AC_PATH_XTRA
+GTK_LDFLAGS=$X_LIBS
+GTK_LIBS=`gtk-config --libs`
+GTK_FLAGS=`gtk-config --cflags`
+GTK_CFLAGS="$GTK_FLAGS $CFLAGS"
+saved_CFLAGS="$CFLAGS"
+saved_LIBS="$LIBS"
+saved_LDFLAGS="$LDFLAGS"
+
+dnl Check for cutting edge Gtk functions
+CFLAGS="$GTK_CFLAGS $saved_CFLAGS"
+LIBS="$GTK_LIBS $saved_LIBS"
+LDFLAGS="$GTK_LDFLAGS $saved_LDFLAGS"
+AC_CHECK_LIB(gdk-1.1, gdk_window_new)
+AC_CHECK_LIB(gdk, gdk_window_new)
+AC_CHECK_FUNCS(gdk_colormap_ref gdk_visual_ref gdk_window_ref gdk_event_copy)
+AC_CHECK_LIB(gtk-1.1, gtk_init)
+AC_CHECK_FUNCS(gtk_tooltips_ref gtk_timeout_add_full gtk_idle_add_full gtk_signal_connect_full gtk_radio_button_new_full gtk_radio_button_new_with_label_full gtk_widget_peek_colormap gtk_input_add_full gtk_text_forward_delete)
+CFLAGS="$saved_CFLAGS"
+LIBS="$saved_LIBS"
+LDFLAGS="$saved_LDFLAGS"
+
+dnl Substitute
+
+AC_SUBST(CFLAGS)
+AC_SUBST(LIBS)
+AC_SUBST(LDFLAGS)
+CFLAGS="$ELASTIC_CFLAGS $GTK_FLAGS"
+LIBS="$ELASTIC_LIBS $GTK_LIBS"
+LDFLAGS="$LDFLAGS $GTK_LDFLAGS"
+
+AC_OUTPUT(Makefile)
