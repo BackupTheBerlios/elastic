@@ -1,6 +1,6 @@
 			     elastiC CVS
 			     ===========
-$Id: README.CVS,v 1.2 2002/06/01 17:10:07 panta Exp $
+$Id: README.CVS,v 1.3 2002/06/01 17:38:04 panta Exp $
 
 1. Access to elastiC CVS
 ------------------------
@@ -66,17 +66,15 @@ built. These operations are:
   b. Creation of autoconf/automake related files (`configure',
      Makefile.in, ...)
 
-The first step is accomplished by running the `tools/symlinks' script
-at toplevel after checkout. This will re-create the necessary symbolic
-links.
-The second step is accomplished by running the `autogen.sh' script
-at toplevel. autoconf 2.53, automake 1.6, libtool 1.4.2 or later are
-necessary:
+These steps are automatically accomplished by running the `autogen.sh'
+script at toplevel. autoconf 2.53, automake 1.6, libtool 1.4.2 or
+later are necessary:
 
   $ ./autogen.sh [CONFIGURE_OPTIONS]
 
-autogen.sh will recreate all the necessary scripts, and when finished,
-it will call `configure', eventually passing the optional CONFIGURE_OPTIONS.
+autogen.sh will recreate all the necessary links and scripts, and when
+finished, it will call `configure', eventually passing the optional
+CONFIGURE_OPTIONS.
 
 Once these steps have been completed, it's possible to proceed in the
 usual way to compile elastiC:
