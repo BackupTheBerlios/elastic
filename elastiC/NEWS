@@ -2,6 +2,8 @@ Overview of Changes in elastiC 0.0.37:
 
 [UNRELEASED YET]
 
+* Nasty bugs fixed (thanks to George McBay)
+
 * Alpha compatibility.
   (elastiC should be 64-bit clean now).
 
