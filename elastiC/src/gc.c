@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec  9 10:24:32 MET 1998
  *
- *   $Id: gc.c,v 1.2 2002/05/24 17:26:26 panta Exp $
+ *   $Id: gc.c,v 1.3 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "basic.h"
 #include "object.h"
+#include "compat.h"
 #include "debug.h"
 
 #include "strtable.h"

@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ecdump.c,v 1.1 2002/05/23 21:16:56 panta Exp $
+ *   $Id: ecdump.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -36,15 +36,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "basic.h"
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 
-#if defined(MINGW32)
+#if defined(MINGW32) || defined(EC_CCOMPILER_VC)
 char *__progname = "ecdump";
 #endif
 

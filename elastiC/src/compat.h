@@ -7,7 +7,7 @@
  *
  *   Created: Sat Jan 22 16:05:38 MET 2000
  *
- *   $Id: compat.h,v 1.1 2002/05/23 21:16:43 panta Exp $
+ *   $Id: compat.h,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2000-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -95,7 +95,7 @@
 #include <limits.h>
 #endif
 
-#if WIN32
+#if defined(WIN32)
 #  include <stdarg.h>
 #else
 #  if __STDC__
@@ -162,6 +162,15 @@ int setenv(const char *name, const char *value, int);
 	/* unsetenv */
 #if ! HAVE_UNSETENV
 void unsetenv(const char *name);
+#endif
+
+#if defined(EC_CCOMPILER_VC)
+#include <float.h>
+#include <direct.h>
+#define isinf  !_finite
+#define isnan  _isnan
+#define alloca _alloca
+#define getcwd _getcwd
 #endif
 
 #if ! HAVE_ISINF

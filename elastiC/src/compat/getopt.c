@@ -8,7 +8,7 @@
  *
  *   Created: Tue Oct 23 11:27:15 CEST 2001
  *
- *   $Id: getopt.c,v 1.1 2002/05/23 21:17:50 panta Exp $
+ *   $Id: getopt.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
  *
@@ -82,7 +82,8 @@
  * apply anymore.
  */
 
-#include "config.h"
+#include "basic.h"												/* this will include proper cnf.h and config.h */
+/* #include "config.h" */
 
 #include <stdio.h>
 #include <stdlib.h>

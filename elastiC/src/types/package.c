@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: package.c,v 1.1 2002/05/23 21:20:21 panta Exp $
+ *   $Id: package.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 #include "hashfunc.h"

@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jun 24 10:34:09 MEST 1999
  *
- *   $Id: hashtable.c,v 1.1 2002/05/23 21:17:09 panta Exp $
+ *   $Id: hashtable.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -38,6 +38,7 @@
 #include "debug.h"
 
 #include "elastic.h"
+#include "compat.h"
 
 #include "hashfunc.h"
 #include "primes.h"

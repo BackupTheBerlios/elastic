@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 17:02:16 MEST 1998
  *
- *   $Id: strtable.c,v 1.1 2002/05/23 21:17:40 panta Exp $
+ *   $Id: strtable.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -34,9 +34,8 @@
  * ==========================================================================
  */
 
-#include <limits.h>
-
 #include "basic.h"
+#include "compat.h"
 #include "memory.h"
 #include "object.h"
 #include "hashfunc.h"
@@ -50,12 +49,12 @@ typedef struct _entry
 	struct _entry *next;
 } StrTableEntry;
 
-typedef struct _strtable
+struct _strtable
 {
 	StrTableEntry **slot;
 	EcInt nslots;
 	EcInt nentries;
-} ec_strtable;
+};
 
 
 /* ========================================================================

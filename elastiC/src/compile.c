@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.2 2002/05/24 17:17:14 panta Exp $
+ *   $Id: compile.c,v 1.3 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -41,6 +41,7 @@
 #include "elastic.h"
 
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 /*

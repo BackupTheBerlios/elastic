@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec  5 15:08:45 MET 1998
  *
- *   $Id: package.c,v 1.1 2002/05/23 21:17:05 panta Exp $
+ *   $Id: package.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -39,6 +39,7 @@
 
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 
 static EcInt _ec_package_get_public( EC_OBJ package, EcUInt sym );
 

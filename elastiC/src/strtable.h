@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 17:02:16 MEST 1998
  *
- *   $Id: strtable.h,v 1.1 2002/05/23 21:17:40 panta Exp $
+ *   $Id: strtable.h,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -48,7 +48,7 @@ typedef struct _strtable ec_strtable;
  * ======================================================================== */
 
 EC_API ec_strtable *ec_strtable_create( EcInt nslots );
-EC_API void        ec_strtable_destroy( ec_strtable *table );
+EC_API void         ec_strtable_destroy( ec_strtable *table );
 
 EC_API EcBool ec_strtable_set( ec_strtable *table, const char *key, EcUInt  value );
 EC_API EcBool ec_strtable_get( ec_strtable *table, const char *key, EcUInt *value );

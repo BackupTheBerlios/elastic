@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ec.c,v 1.1 2002/05/23 21:16:55 panta Exp $
+ *   $Id: ec.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -36,14 +36,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "basic.h"
 #include "elastic.h"
+#include "compat.h"
 #include "conf.h"
 
 
-#if defined(MINGW32)
+#if defined(MINGW32) || defined(EC_CCOMPILER_VC)
 char *__progname = "ec";
 #endif
 

@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: basic.h,v 1.1 2002/05/23 21:16:40 panta Exp $
+ *   $Id: basic.h,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -37,29 +37,60 @@
 #ifndef __BASIC_H
 #define __BASIC_H
 
-#ifdef WIN32
-#ifdef MINGW32
-/* MINGW32 */
-#include "config.h"
+/* ==== cnf.h ============================================================= */
+
+#if defined(WIN32) || defined(_WIN32) || defined(_MSC_VER)
+	/* Win32 */
+#if defined(MINGW32)
+#include "win32/cnf.h"
+#elif defined(_MSC_VER)
+/*
+ * In VisualC++ we'll use Custom Build to copy ${top_srcdir}/win32/cnf.h to
+ * ${top_srcdir}/elastic/cnf.h
+ */
+#include "cnf.h"
+#elif defined(CYGWIN)
+#include "cnf.h"
 #else
-/* Microsoft Visual C++ */
+#error "unsupported win32 compiler"
+#endif
+
+#else  /* ! win32 */
+	/* autoconf */
+#include "cnf.h"
+#endif /* ! win32 */
+
+/* ======================================================================== */
+
+
+/* ==== config.h ========================================================== */
+
+#if defined(WIN32) || defined(_WIN32) || defined(_MSC_VER)
+	/* Win32 */
+#if defined(MINGW32)
 #include "win32/config.h"
-#endif
-#else
+#elif defined(_MSC_VER)
+/*
+ * In VisualC++ we'll use Custom Build to copy ${top_srcdir}/win32/config.h to
+ * ${top_srcdir}/elastic/config.h
+ */
 #include "config.h"
+#elif  defined(CYGWIN)
+#include "config.h"
+#else
+#error "unsupported win32 compiler"
 #endif
+
+#else  /* ! win32 */
+	/* autoconf */
+#include "config.h"
+#endif /* ! win32 */
+
+/* ======================================================================== */
+
 
 #include <stdlib.h>
 #include <errno.h>
-#if HAVE_STRING_H
-#include <string.h>
-#endif
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#if HAVE_LIMITS_H
-#include <limits.h>
-#endif
 
 #include <elastic/tsize.h>
 

@@ -7,7 +7,7 @@
  *
  *   Created: Fri Dec  4 14:35:43 MET 1998
  *
- *   $Id: symbol.c,v 1.1 2002/05/23 21:17:41 panta Exp $
+ *   $Id: symbol.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -34,12 +34,11 @@
  * ==========================================================================
  */
 
-#include <string.h>
-
 #include "basic.h"
 #include "debug.h"
 #include "elastic.h"
 #include "utility.h"
+#include "compat.h"
 
 #include "private.h"
 

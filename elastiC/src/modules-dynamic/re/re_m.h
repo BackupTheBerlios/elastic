@@ -7,7 +7,7 @@
  *
  *   Created: Wed Nov 24 12:58:41 MET 1999
  *
- *   $Id: re_m.h,v 1.1 2002/05/23 21:18:42 panta Exp $
+ *   $Id: re_m.h,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -46,8 +46,8 @@
 #endif
 
 EC_BEGIN_DECLS
-EC_OBJ ec_re_init( void );
-void ec_re_cleanup( void );
+EC_RE_MODULE_API EC_OBJ ec_re_init( void );
+EC_RE_MODULE_API void   ec_re_cleanup( void );
 EC_END_DECLS
 
 #endif /* __RE_M_H */

@@ -19,6 +19,9 @@ ec
 ecc
 ecrt
 ecdump
+.libs
+.deps
+*.lo
 *.la
 *.so
 *.dll

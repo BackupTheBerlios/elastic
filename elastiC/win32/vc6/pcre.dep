@@ -1,0 +1,26 @@
+# Microsoft Developer Studio Generated Dependency File, included by pcre.mak
+
+"..\..\src\modules-dynamic\re\pcre\get.c" : \
+	"..\..\src\modules-dynamic\re\pcre\config.h"\
+	"..\..\src\modules-dynamic\re\pcre\internal.h"\
+	"..\..\src\modules-dynamic\re\pcre\pcre.h"\
+	
+
+"..\..\src\modules-dynamic\re\pcre\maketables.c" : \
+	"..\..\src\modules-dynamic\re\pcre\config.h"\
+	"..\..\src\modules-dynamic\re\pcre\internal.h"\
+	"..\..\src\modules-dynamic\re\pcre\pcre.h"\
+	
+
+"..\..\src\modules-dynamic\re\pcre\pcre.c" : \
+	"..\..\src\modules-dynamic\re\pcre\chartables.c"\
+	"..\..\src\modules-dynamic\re\pcre\config.h"\
+	"..\..\src\modules-dynamic\re\pcre\internal.h"\
+	"..\..\src\modules-dynamic\re\pcre\pcre.h"\
+	
+
+"..\..\src\modules-dynamic\re\pcre\study.c" : \
+	"..\..\src\modules-dynamic\re\pcre\config.h"\
+	"..\..\src\modules-dynamic\re\pcre\internal.h"\
+	"..\..\src\modules-dynamic\re\pcre\pcre.h"\
+	

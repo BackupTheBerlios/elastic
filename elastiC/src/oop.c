@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec 12 22:01:08 MET 1998
  *
- *   $Id: oop.c,v 1.1 2002/05/23 21:17:28 panta Exp $
+ *   $Id: oop.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -39,6 +39,7 @@
 #include "debug.h"
 
 #include "elastic.h"
+#include "compat.h"
 
 #include "private.h"
 

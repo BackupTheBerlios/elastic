@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.1 2002/05/23 21:17:16 panta Exp $
+ *   $Id: lib.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 #include <math.h>

@@ -8,7 +8,7 @@
  *
  *   Created: Tue Oct 23 11:35:51 CEST 2001
  *
- *   $Id: rindex.c,v 1.1 2002/05/23 21:17:50 panta Exp $
+ *   $Id: rindex.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
  *
@@ -82,7 +82,8 @@
  * apply anymore.
  */
 
-#include "config.h"
+#include "basic.h"												/* this will also include proper config.h */
+/* #include "config.h" */
 
 #include <stdio.h>
 #include <stdlib.h>

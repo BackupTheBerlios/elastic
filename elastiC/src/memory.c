@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: memory.c,v 1.2 2002/05/24 17:28:10 panta Exp $
+ *   $Id: memory.c,v 1.3 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -34,9 +34,11 @@
  * ==========================================================================
  */
 
+#include "basic.h"												/* this will also include the proper cnf.h */
 #include "memory.h"
+#include "compat.h"
 #include "debug.h"
-#include "cnf.h"
+/* #include "cnf.h" */
 #include "conf.h"
 
 

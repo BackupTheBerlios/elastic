@@ -7,3 +7,7 @@ config.cache
 config.log
 config.status
 dmake.output
+.libs
+.deps
+*.lo
+*.la

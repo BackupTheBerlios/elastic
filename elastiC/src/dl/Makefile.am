@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:17:57 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/05/25 19:37:45 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -37,7 +37,7 @@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-EXTRA_DIST = dl-ltdl.c dl-dl.c dl-no.c
+EXTRA_DIST = dl-ltdl.c dl-dl.c dl-no.c dl-win32.c
 noinst_LTLIBRARIES = libdl.la
 
 CFLAGS = $(CORE_CFLAGS)
@@ -57,12 +57,18 @@ NO_SRCS = dl-no.c
 else
 NO_SRCS =
 endif
+if DLBACKEND_WIN32
+WIN32_SRCS = dl-win32.c
+else
+WIN32_SRCS =
+endif
 
 # Chose your version here !
 static_sources = \
 	$(DL_SRCS)	\
 	$(LTDL_SRCS)	\
-	$(NO_SRCS)
+	$(NO_SRCS)	\
+	$(WIN32_SRCS)
 #static_sources = \
 #	dl-no.c
 

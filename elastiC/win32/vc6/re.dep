@@ -1,0 +1,24 @@
+# Microsoft Developer Studio Generated Dependency File, included by re.mak
+
+"..\..\src\modules-dynamic\re\re_m.c" : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\src\modules-dynamic\re\pcre\pcre.h"\
+	"..\..\src\modules-dynamic\re\re_m.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	

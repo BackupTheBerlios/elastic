@@ -7,7 +7,7 @@
  *
  *   Created: Sun May  3 10:26:04 MEST 1998
  *
- *   $Id: dstring.c,v 1.1 2002/05/23 21:16:54 panta Exp $
+ *   $Id: dstring.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -34,8 +34,7 @@
  * ==========================================================================
  */
 
-#include <string.h>
-
+#include "compat.h"
 #include "dstring.h"
 #include "debug.h"
 

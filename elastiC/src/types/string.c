@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: string.c,v 1.1 2002/05/23 21:20:24 panta Exp $
+ *   $Id: string.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -36,12 +36,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <math.h>
-#include <limits.h>
 
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 #include "hashfunc.h"

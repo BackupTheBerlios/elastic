@@ -7,7 +7,7 @@
  *
  *   Created: Sun Nov 21 14:02:53 MET 1999
  *
- *   $Id: string_m.c,v 1.1 2002/05/23 21:18:40 panta Exp $
+ *   $Id: string_m.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -38,11 +38,11 @@
 #include "debug.h"
 
 #include "elastic.h"
+#include "compat.h"
 #include "private.h"
 
 #include "string_m.h"
 
-#include <string.h>
 #include <ctype.h>
 
 static EC_OBJ EcLibString_Length( EC_OBJ stack, EcAny userdata );

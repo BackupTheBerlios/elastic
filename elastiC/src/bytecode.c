@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:06:28 MEST 1998
  *
- *   $Id: bytecode.c,v 1.1 2002/05/23 21:16:42 panta Exp $
+ *   $Id: bytecode.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -34,9 +34,8 @@
  * ==========================================================================
  */
 
-#include <string.h>
-
 #include "private.h"
+#include "compat.h"
 #include "bytecode.h"
 #include "debug.h"
 

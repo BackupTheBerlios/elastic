@@ -1,0 +1,32 @@
+# Microsoft Developer Studio Generated Dependency File, included by ecdump.mak
+
+..\..\src\ecdump.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\compat\getopt.c"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	

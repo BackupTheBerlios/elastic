@@ -7,7 +7,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_s.l,v 1.1 2002/05/23 21:17:04 panta Exp $
+ *   $Id: elastic_s.l,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -39,6 +39,7 @@
 #include "ast.h"
 #include "elastic_p.h"
 #include "private.h"
+#include "compat.h"
 #include <math.h>
 
 static void start( void );

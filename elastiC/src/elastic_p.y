@@ -8,7 +8,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.1 2002/05/23 21:17:03 panta Exp $
+ *   $Id: elastic_p.y,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -42,6 +42,7 @@
 #include "elastic.h"
 #include "ast.h"
 #include "private.h"
+#include "compat.h"
 
 
 int yyparse( void );

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 20:34:10 MEST 1998
  *
- *   $Id: ast.c,v 1.1 2002/05/23 21:16:39 panta Exp $
+ *   $Id: ast.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -37,6 +37,7 @@
 #include "ast.h"
 #include "compile.h"
 #include "elastic.h"
+#include "compat.h"
 #include "private.h"
 
 #include "debug.h"

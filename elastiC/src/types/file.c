@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.c,v 1.1 2002/05/23 21:20:19 panta Exp $
+ *   $Id: file.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -40,6 +40,7 @@
 #include "basic.h"
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 

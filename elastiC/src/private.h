@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.1 2002/05/23 21:17:34 panta Exp $
+ *   $Id: private.h,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -37,9 +37,9 @@
 #ifndef __PRIVATE_H
 #define __PRIVATE_H
 
-#include <elastic/cnf.h>
+/* #include <elastic/cnf.h> */
+#include <elastic/basic.h>										/* this will also include the proper cnf.h */
 #include <elastic/conf.h>
-#include <elastic/basic.h>
 #include <elastic/object.h>
 #include <elastic/elastic.h>
 #include <elastic/memory.h>
@@ -47,19 +47,6 @@
 #include <elastic/compile.h>
 #include <elastic/ast.h>
 #include <elastic/bitstring.h>
-
-#ifdef WIN32
-#ifdef MINGW32
-/* MINGW32 */
-#include "config.h"
-#else
-/* Microsoft Visual C++ */
-#include "win32/config.h"
-#endif
-#else
-#include "config.h"
-#endif
-#include "compat.h"
 
 
 EC_BEGIN_DECLS

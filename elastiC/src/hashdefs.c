@@ -7,7 +7,7 @@
  *
  *   Created: Sat Jul 17 17:33:49 MEST 1999
  *
- *   $Id: hashdefs.c,v 1.1 2002/05/23 21:17:06 panta Exp $
+ *   $Id: hashdefs.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "basic.h"
 #include "elastic.h"
+#include "compat.h"
 
 static EcUInt hash_int( EcAny key );
 

@@ -7,7 +7,7 @@
  *
  *   Created: Wed Nov 24 12:58:41 MET 1999
  *
- *   $Id: re_m.c,v 1.1 2002/05/23 21:18:42 panta Exp $
+ *   $Id: re_m.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "basic.h"
 #include "debug.h"
+#include "compat.h"
 
 #include "elastic.h"
 #include "re_m.h"
@@ -978,7 +979,7 @@ static EcBool match_compare( EC_OBJ obj1, EC_OBJ obj2, EcInt *res )
 
 /* Module initialization & cleanup */
 
-EC_OBJ ec_re_init( void )
+EC_RE_MODULE_API EC_OBJ ec_re_init( void )
 {
 	EcTypespec regexpspec = {
 		/* type    */		0,
@@ -1075,6 +1076,6 @@ EC_OBJ ec_re_init( void )
 	return pkg;
 }
 
-void ec_re_cleanup( void )
+EC_RE_MODULE_API void ec_re_cleanup( void )
 {
 }

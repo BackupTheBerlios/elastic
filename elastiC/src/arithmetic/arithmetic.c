@@ -7,7 +7,7 @@
  *
  *   Created: Sun Aug  1 18:53:27 MEST 1999
  *
- *   $Id: arithmetic.c,v 1.1 2002/05/23 21:17:49 panta Exp $
+ *   $Id: arithmetic.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -36,11 +36,12 @@
 
 #include <math.h>
 
+#include "basic.h"
 #include "elastic.h"
 #include "debug.h"
 
 #include "private.h"
-#include "config.h"
+/* #include "config.h" */
 #include "user.h"
 
 #include "arithmetic.h"

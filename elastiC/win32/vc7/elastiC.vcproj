@@ -1,0 +1,1039 @@
+<?xml version="1.0" encoding = "Windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="7.00"
+	Name="elastiC"
+	SccProjectName=""
+	SccLocalPath="">
+	<Platforms>
+		<Platform
+			Name="Win32"/>
+	</Platforms>
+	<Configurations>
+		<Configuration
+			Name="Debug|Win32"
+			OutputDirectory=".\Debug"
+			IntermediateDirectory=".\Debug"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				Optimization="0"
+				AdditionalIncludeDirectories="..\..,..\..\elastic"
+				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;ELASTIC_EXPORTS;DEBUG;__i386__"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				PrecompiledHeaderFile=".\Debug/elastiC.pch"
+				AssemblerListingLocation=".\Debug/"
+				ObjectFile=".\Debug/"
+				ProgramDataBaseFileName=".\Debug/"
+				BrowseInformation="1"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				DebugInformationFormat="4"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				OutputFile=".\Debug/elastiC.dll"
+				LinkIncremental="2"
+				SuppressStartupBanner="TRUE"
+				GenerateDebugInformation="TRUE"
+				ProgramDatabaseFile=".\Debug/elastiC.pdb"
+				ImportLibrary=".\Debug/elastiC.lib"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Debug/elastiC.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+		<Configuration
+			Name="Release|Win32"
+			OutputDirectory=".\Release"
+			IntermediateDirectory=".\Release"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			ATLMinimizesCRunTimeLibraryUsage="FALSE"
+			CharacterSet="2">
+			<Tool
+				Name="VCCLCompilerTool"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="..\..,..\..\elastic"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;ELASTIC_EXPORTS;__i386__"
+				StringPooling="TRUE"
+				RuntimeLibrary="2"
+				EnableFunctionLevelLinking="TRUE"
+				PrecompiledHeaderFile=".\Release/elastiC.pch"
+				AssemblerListingLocation=".\Release/"
+				ObjectFile=".\Release/"
+				ProgramDataBaseFileName=".\Release/"
+				WarningLevel="3"
+				SuppressStartupBanner="TRUE"
+				CompileAs="0"/>
+			<Tool
+				Name="VCCustomBuildTool"/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalOptions="/MACHINE:I386"
+				AdditionalDependencies="odbc32.lib odbccp32.lib"
+				OutputFile=".\Release/elastiC.dll"
+				LinkIncremental="1"
+				SuppressStartupBanner="TRUE"
+				ProgramDatabaseFile=".\Release/elastiC.pdb"
+				ImportLibrary=".\Release/elastiC.lib"/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="TRUE"
+				SuppressStartupBanner="TRUE"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/elastiC.tlb"/>
+			<Tool
+				Name="VCPostBuildEventTool"/>
+			<Tool
+				Name="VCPreBuildEventTool"/>
+			<Tool
+				Name="VCPreLinkEventTool"/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="1033"/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"/>
+			<Tool
+				Name="VCWebDeploymentTool"/>
+		</Configuration>
+	</Configurations>
+	<Files>
+		<Filter
+			Name="Source Files"
+			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
+			<File
+				RelativePath="..\..\src\ast.c">
+			</File>
+			<File
+				RelativePath="..\..\src\builtin.c">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories="..\..,..\..\elastic;../../src/;$(NoInherit)"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bytecode.c">
+			</File>
+			<File
+				RelativePath="..\..\src\compat.c">
+			</File>
+			<File
+				RelativePath="..\..\src\compile.c">
+			</File>
+			<File
+				RelativePath="..\..\src\debug.c">
+			</File>
+			<File
+				RelativePath=".\dllmain.c">
+			</File>
+			<File
+				RelativePath="..\..\src\dstring.c">
+			</File>
+			<File
+				RelativePath="..\..\src\elastic.c">
+			</File>
+			<File
+				RelativePath="..\..\src\elastic_p.c">
+			</File>
+			<File
+				RelativePath="..\..\src\elastic_s.c">
+			</File>
+			<File
+				RelativePath="..\..\src\gc.c">
+			</File>
+			<File
+				RelativePath="..\..\src\hashdefs.c">
+			</File>
+			<File
+				RelativePath="..\..\src\hashfunc.c">
+			</File>
+			<File
+				RelativePath="..\..\src\hashtable.c">
+			</File>
+			<File
+				RelativePath="..\..\src\interp.c">
+			</File>
+			<File
+				RelativePath="..\..\src\lib.c">
+			</File>
+			<File
+				RelativePath="..\..\src\list.c">
+			</File>
+			<File
+				RelativePath="..\..\src\memory.c">
+			</File>
+			<File
+				RelativePath="..\..\src\numeric.c">
+			</File>
+			<File
+				RelativePath="..\..\src\object.c">
+			</File>
+			<File
+				RelativePath="..\..\src\oop.c">
+			</File>
+			<File
+				RelativePath="..\..\src\win32\os.c">
+			</File>
+			<File
+				RelativePath="..\..\src\package.c">
+			</File>
+			<File
+				RelativePath="..\..\src\packageio.c">
+			</File>
+			<File
+				RelativePath="..\..\src\prime.c">
+			</File>
+			<File
+				RelativePath="..\..\src\printf.c">
+			</File>
+			<File
+				RelativePath="..\..\src\sprintf.c">
+			</File>
+			<File
+				RelativePath="..\..\src\strtable.c">
+			</File>
+			<File
+				RelativePath="..\..\src\strtod.c">
+			</File>
+			<File
+				RelativePath="..\..\src\symbol.c">
+			</File>
+			<File
+				RelativePath="..\..\src\user.c">
+			</File>
+			<File
+				RelativePath="..\..\src\utility.c">
+			</File>
+			<Filter
+				Name="arithmetic"
+				Filter="">
+				<File
+					RelativePath="..\..\src\arithmetic\arithmetic.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\arithmetic/"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="modules"
+				Filter="">
+				<File
+					RelativePath="..\..\src\modules\array_m.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\modules/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\modules\list_m.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\modules/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\modules\string_m.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\modules/"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="types"
+				Filter="">
+				<File
+					RelativePath="..\..\src\types\array.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\char.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\class.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\compiled.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\file.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\handler.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\hash.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\object.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Release\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\package.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Release\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\stack.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\types\string.c">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile=".\Debug\types/"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="dl"
+				Filter="">
+				<File
+					RelativePath="..\..\src\dl\dl-win32.c">
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Header Files"
+			Filter="h;hpp;hxx;hm;inl">
+			<File
+				RelativePath="..\..\src\arithmetic.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\arithmetic.h
+"
+						Outputs="..\..\elastic\arithmetic.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\arithmetic.h
+"
+						Outputs="..\..\elastic\arithmetic.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\ast.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\ast.h
+"
+						Outputs="..\..\elastic\ast.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\ast.h
+"
+						Outputs="..\..\elastic\ast.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\basic.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\basic.h
+"
+						Outputs="..\..\elastic\basic.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\basic.h
+"
+						Outputs="..\..\elastic\basic.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bitstring.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\bitstring.h
+"
+						Outputs="..\..\elastic\bitstring.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\bitstring.h
+"
+						Outputs="..\..\elastic\bitstring.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\bytecode.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\bytecode.h
+"
+						Outputs="..\..\elastic\bytecode.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\bytecode.h
+"
+						Outputs="..\..\elastic\bytecode.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\cnf.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\cnf.h
+"
+						Outputs="..\..\elastic\cnf.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\cnf.h
+"
+						Outputs="..\..\elastic\cnf.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\compat.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\compat.h
+"
+						Outputs="..\..\elastic\compat.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\compat.h
+"
+						Outputs="..\..\elastic\compat.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\compile.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\compile.h
+"
+						Outputs="..\..\elastic\compile.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\compile.h
+"
+						Outputs="..\..\elastic\compile.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\conf.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\conf.h
+"
+						Outputs="..\..\elastic\conf.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\conf.h
+"
+						Outputs="..\..\elastic\conf.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\debug.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\debug.h
+"
+						Outputs="..\..\elastic\debug.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\debug.h
+"
+						Outputs="..\..\elastic\debug.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\dstring.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\dstring.h
+"
+						Outputs="..\..\elastic\dstring.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\dstring.h
+"
+						Outputs="..\..\elastic\dstring.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\elastic.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\elastic.h
+"
+						Outputs="..\..\elastic\elastic.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\elastic.h
+"
+						Outputs="..\..\elastic\elastic.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\elastic_p.h">
+			</File>
+			<File
+				RelativePath="..\..\src\file.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\file.h
+"
+						Outputs="..\..\elastic\file.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\file.h
+"
+						Outputs="..\..\elastic\file.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\floatio.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\floatio.h
+"
+						Outputs="..\..\elastic\floatio.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\floatio.h
+"
+						Outputs="..\..\elastic\floatio.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\hash.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hash.h
+"
+						Outputs="..\..\elastic\hash.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hash.h
+"
+						Outputs="..\..\elastic\hash.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\hashdefs.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashdefs.h
+"
+						Outputs="..\..\elastic\hashdefs.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashdefs.h
+"
+						Outputs="..\..\elastic\hashdefs.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\hashfunc.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashfunc.h
+"
+						Outputs="..\..\elastic\hashfunc.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashfunc.h
+"
+						Outputs="..\..\elastic\hashfunc.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\hashtable.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashtable.h
+"
+						Outputs="..\..\elastic\hashtable.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\hashtable.h
+"
+						Outputs="..\..\elastic\hashtable.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\lib.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\lib.h
+"
+						Outputs="..\..\elastic\lib.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\lib.h
+"
+						Outputs="..\..\elastic\lib.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\list.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\list.h
+"
+						Outputs="..\..\elastic\list.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\list.h
+"
+						Outputs="..\..\elastic\list.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\memory.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\memory.h
+"
+						Outputs="..\..\elastic\memory.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\memory.h
+"
+						Outputs="..\..\elastic\memory.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\object.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\object.h
+"
+						Outputs="..\..\elastic\object.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\object.h
+"
+						Outputs="..\..\elastic\object.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\oop.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\oop.h
+"
+						Outputs="..\..\elastic\oop.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\oop.h
+"
+						Outputs="..\..\elastic\oop.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\os.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\os.h
+"
+						Outputs="..\..\elastic\os.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\os.h
+"
+						Outputs="..\..\elastic\os.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\prime.h">
+			</File>
+			<File
+				RelativePath="..\..\src\primes.h">
+			</File>
+			<File
+				RelativePath="..\..\src\private.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\private.h
+"
+						Outputs="..\..\elastic\private.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\private.h
+"
+						Outputs="..\..\elastic\private.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\stackrecycle.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\stackrecycle.h
+"
+						Outputs="..\..\elastic\stackrecycle.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\stackrecycle.h
+"
+						Outputs="..\..\elastic\stackrecycle.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\strtable.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\strtable.h
+"
+						Outputs="..\..\elastic\strtable.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\strtable.h
+"
+						Outputs="..\..\elastic\strtable.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\tsize.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\tsize.h
+"
+						Outputs="..\..\elastic\tsize.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\tsize.h
+"
+						Outputs="..\..\elastic\tsize.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\user.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\user.h
+"
+						Outputs="..\..\elastic\user.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\user.h
+"
+						Outputs="..\..\elastic\user.h"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\src\utility.h">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\utility.h
+"
+						Outputs="..\..\elastic\utility.h"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						CommandLine="COPY $(InputPath) ..\..\elastic\utility.h
+"
+						Outputs="..\..\elastic\utility.h"/>
+				</FileConfiguration>
+			</File>
+			<Filter
+				Name="modules (.h)"
+				Filter="">
+				<File
+					RelativePath="..\..\src\modules\array_m.h">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="COPY $(InputPath) ..\..\elastic\modules\array_m.h
+"
+							Outputs="..\..\elastic\modules\array_m.h"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="COPY $(InputPath) ..\..\elastic\modules\array_m.h
+"
+							Outputs="..\..\elastic\modules\array_m.h"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\src\modules\string_m.h">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="COPY $(InputPath) ..\..\elastic\modules\string_m.h
+"
+							Outputs="..\..\elastic\modules\string_m.h"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="COPY $(InputPath) ..\..\elastic\modules\string_m.h
+"
+							Outputs="..\..\elastic\modules\string_m.h"/>
+					</FileConfiguration>
+				</File>
+			</Filter>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe">
+		</Filter>
+		<File
+			RelativePath=".\ReadMe.txt">
+		</File>
+	</Files>
+	<Globals>
+	</Globals>
+</VisualStudioProject>

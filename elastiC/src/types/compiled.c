@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: compiled.c,v 1.1 2002/05/23 21:20:18 panta Exp $
+ *   $Id: compiled.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -39,11 +39,11 @@
 #include "elastic.h"
 #include "debug.h"
 #include "private.h"
+#include "compat.h"
 
 #include "hashfunc.h"
 #include "stackrecycle.h"
 
-#include <string.h>
 
 EC_API EcInt tc_compiled = -1;
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: stack.c,v 1.1 2002/05/23 21:20:23 panta Exp $
+ *   $Id: stack.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #define EC_STACK_RECYCLE_OPS 1
 #include "elastic.h"
+#include "compat.h"
 #include "private.h"
 #include "debug.h"
 

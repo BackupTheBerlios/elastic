@@ -11,7 +11,7 @@
  *
  *     This new update fixes Alpha compatibility problems.
  *
- *   $Id: strtod.c,v 1.1 2002/05/23 21:17:46 panta Exp $
+ *   $Id: strtod.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2001-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -78,7 +78,7 @@
  * apply anymore.
  */
 
-#include "basic.h"
+#include "basic.h"												/* this will include proper cnf.h */
 #include "private.h"
 
 #if 0
@@ -171,18 +171,33 @@ __FBSDID("$FreeBSD: src/lib/libc/stdlib/strtod.c,v 1.20 2002/05/21 03:40:42 benn
  *	FLT_RADIX, FLT_ROUNDS, and DBL_MAX.
  */
 
+#ifdef WORDS_BIGENDIAN
+#define IEEE_BIG_ENDIAN
+#else
+#define IEEE_LITTLE_ENDIAN
+#endif
+
 #if defined(__i386__) || defined(__ia64__) || defined(__alpha__) || \
     defined(__sparc64__) || defined(__powerpc__)
 #include <sys/types.h>
+
+#if 0
 #if BYTE_ORDER == BIG_ENDIAN
 #define IEEE_BIG_ENDIAN
 #else
 #define IEEE_LITTLE_ENDIAN
 #endif
+#endif /* 0 */
+
 #endif /* defined(__i386__) ... */
 
+#if defined(EC_CCOMPILER_VC)
+typedef	__int32          Long;
+typedef	unsigned __int32 ULong;
+#else
 typedef	int32_t   Long;
 typedef	u_int32_t ULong;
+#endif
 
 #ifdef DEBUG
 #include "stdio.h"

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: class.c,v 1.1 2002/05/23 21:20:16 panta Exp $
+ *   $Id: class.c,v 1.2 2002/05/25 19:37:45 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -36,6 +36,7 @@
 
 #include "elastic.h"
 #include "private.h"
+#include "compat.h"
 #include "debug.h"
 
 #include "hashfunc.h"

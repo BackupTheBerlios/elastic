@@ -3,3 +3,7 @@ old
 Uncategorized
 Makefile
 Makefile.in
+.libs
+.deps
+*.lo
+*.la

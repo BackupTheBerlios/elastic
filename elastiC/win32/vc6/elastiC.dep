@@ -1,0 +1,1116 @@
+# Microsoft Developer Studio Generated Dependency File, included by elastiC.mak
+
+"..\..\src\dl\dl-win32.c" : \
+	"..\..\..\..\..\..\programmi\microsoft visual studio\vc98\include\basetsd.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\ast.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\ast.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\compile.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\builtin.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\bytecode.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\bytecode.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\compat.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\compat\index.c"\
+	"..\..\src\compat\rindex.c"\
+	"..\..\src\compat\strcasecmp.c"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\compile.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\ast.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\compile.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\debug.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+.\dllmain.c : \
+	"..\..\..\..\..\..\programmi\microsoft visual studio\vc98\include\basetsd.h"\
+	
+
+..\..\src\dstring.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\dstring.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\elastic.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\private.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\ast.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\bitstring.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\stackrecycle.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\elastic_p.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\ast.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\elastic_s.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\ast.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\elastic_p.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\gc.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\object.h"\
+	"..\..\src\private.h"\
+	"..\..\src\strtable.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\hashdefs.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\hashfunc.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\hashfunc.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\hashtable.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\hashfunc.h"\
+	"..\..\src\hashtable.h"\
+	"..\..\src\primes.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\interp.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\private.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\bytecode.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\stackrecycle.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\lib.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\list.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\private.h"\
+	"..\..\src\utility.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\memory.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\conf.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\numeric.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\object.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\hashfunc.h"\
+	"..\..\src\object.h"\
+	"..\..\src\private.h"\
+	"..\..\src\strtable.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\oop.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\private.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\stackrecycle.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\win32\os.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compat.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\private.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\package.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\packageio.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\debug.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\private.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\hashdefs.h"\
+	"..\..\src\hashtable.h"\
+	"..\..\src\private.h"\
+	"..\..\src\stackrecycle.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\prime.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\prime.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\printf.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\private.h"\
+	"..\..\src\strtable.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\sprintf.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\dstring.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\floatio.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\strtable.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\hashfunc.h"\
+	"..\..\src\object.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\strtod.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\symbol.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\utility.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\user.c : \
+	"..\..\elastic\ast.h"\
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\bitstring.h"\
+	"..\..\elastic\bytecode.h"\
+	"..\..\elastic\compile.h"\
+	"..\..\elastic\conf.h"\
+	"..\..\elastic\dstring.h"\
+	"..\..\elastic\elastic.h"\
+	"..\..\elastic\file.h"\
+	"..\..\elastic\hash.h"\
+	"..\..\elastic\hashdefs.h"\
+	"..\..\elastic\hashtable.h"\
+	"..\..\elastic\lib.h"\
+	"..\..\elastic\object.h"\
+	"..\..\elastic\oop.h"\
+	"..\..\elastic\os.h"\
+	"..\..\elastic\strtable.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\elastic\user.h"\
+	"..\..\elastic\utility.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\compat.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\elastic.h"\
+	"..\..\src\private.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+..\..\src\utility.c : \
+	"..\..\elastic\basic.h"\
+	"..\..\elastic\tsize.h"\
+	"..\..\src\basic.h"\
+	"..\..\src\debug.h"\
+	"..\..\src\utility.h"\
+	"..\..\src\win32\cnf.h"\
+	"..\config.h"\
+	
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+
+!IF  "$(CFG)" == "elastiC - Win32 Release"
+
+!ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
+
+!ENDIF 
+

@@ -11,7 +11,7 @@
  *   Second modification: 15 Jan 1999
  *   Third modification : Tue Oct 23 12:24:57 CEST 2001
  *
- *   $Id: sprintf.c,v 1.1 2002/05/23 21:17:40 panta Exp $
+ *   $Id: sprintf.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -92,6 +92,7 @@
 #include "elastic.h"
 #include "dstring.h"
 #include "private.h"
+#include "compat.h"
 
 /*
  * Actual printf innards.

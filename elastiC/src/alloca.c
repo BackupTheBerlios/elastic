@@ -30,6 +30,7 @@
     22 Jan 2000: Modified by Marco Pantaleoni.
 */
 
+#include "basic.h"												/* this will also include proper config.h */
 #include "private.h"
 
 #ifndef __GNUC__   /* Don't need this function if using GCC */
@@ -39,7 +40,7 @@ static char	SCCSid[] = "@(#)alloca.c	1.1";	/* for the "what" utility */
 #endif
 
 #ifdef emacs
-#include "config.h"
+/* #include "config.h" */
 #ifdef static
 /* actually, only want this if static is defined as ""
    -- this is for usg, in which emacs must undefine static

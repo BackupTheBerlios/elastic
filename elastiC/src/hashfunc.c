@@ -7,7 +7,7 @@
  *
  *   Created: Wed Apr 30 21:07:36 MET DST 1997
  *
- *   $Id: hashfunc.c,v 1.1 2002/05/23 21:17:07 panta Exp $
+ *   $Id: hashfunc.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -37,6 +37,7 @@
 #include "basic.h"
 #include "hashfunc.h"
 #include "private.h"
+#include "compat.h"
 
 #if HAVE_LIMITS_H
 #include <limits.h>

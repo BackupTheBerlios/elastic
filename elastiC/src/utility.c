@@ -7,7 +7,7 @@
  *
  *   Created: Tue Feb 24 10:03:50 MET 1998
  *
- *   $Id: utility.c,v 1.1 2002/05/23 21:17:42 panta Exp $
+ *   $Id: utility.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -38,6 +38,7 @@
 #include "utility.h"
 #include "memory.h"
 #include "debug.h"
+#include "compat.h"
 
 #define DELTA 10
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat Jan 22 15:56:53 MET 2000
  *
- *   $Id: os.c,v 1.1 2002/05/23 21:20:24 panta Exp $
+ *   $Id: os.c,v 1.2 2002/05/25 19:37:46 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2000 Marco Pantaleoni. All rights reserved.
  *
@@ -37,6 +37,7 @@
 #include "basic.h"
 #include "debug.h"
 #include "private.h"
+#include "compat.h"
 
 #include <elastic/os.h>
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: object.c,v 1.1 2002/05/23 21:17:25 panta Exp $
+ *   $Id: object.c,v 1.2 2002/05/25 19:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -37,6 +37,7 @@
 #include "basic.h"
 #include "object.h"
 #include "debug.h"
+#include "compat.h"
 
 #include "strtable.h"
 #include "memory.h"
