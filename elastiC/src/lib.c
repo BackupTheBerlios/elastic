@@ -7,9 +7,9 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: lib.c,v 1.3 2002/05/27 21:09:40 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -388,6 +388,88 @@ EC_API EC_OBJ EcLibCompile( EC_OBJ stack, EcAny userdata )
 	return compiled;
 }
 #endif /* not EC_WITHOUT_COMPILER */
+
+EC_API EC_OBJ EcLibApply( EC_OBJ stack, EcAny userdata )
+{
+	EC_OBJ  callable, arguments;
+	EC_OBJ  nargs_o, el;
+	EC_OBJ *argument_v;
+	EcInt   nargs, i;
+
+	EC_CHECKNARGS_F( "basic.apply", 2 );
+
+	arguments = EC_STACKPOP(stack);
+	callable  = EC_STACKPOP(stack);
+
+	if ((! EC_PRIMITIVEP(callable)) &&
+		(! EC_COMPILEDP(callable)))
+		return EC_TYPEERROR_F( "basic.apply", 1, tc_none, callable, "expected a callable object (bytecode or primitive)" );	/* :TODO: should become an EC_TYPCHECK_*_F macro */
+	if (! EcIsSequence( arguments))
+		return EC_TYPEERROR_F( "basic.apply", 2, tc_none, arguments, "expected a sequence object" );	/* :TODO: should become an EC_TYPCHECK_*_F macro */
+
+	nargs_o = EcSequenceLength( arguments );
+	if (EC_ERRORP(nargs_o)) return nargs_o;
+	ASSERT( EC_INUMP(nargs_o) );
+	nargs = EC_INUM(nargs_o);
+	argument_v = alloca( nargs );
+	if (! argument_v)
+		return EcMemoryError();
+
+	for (i = 0; i < nargs; i++)
+	{
+		el = EcSequenceGetElement( arguments, i );
+		if (EC_ERRORP(el)) return el;
+		argument_v[i] = el;
+	}
+
+	return EcCallArgs( /* caller's stack */ stack, EC_NIL, EC_NIL, callable, nargs, argument_v );
+}
+
+EC_API EC_OBJ EcLibArity( EC_OBJ stack, EcAny userdata )
+{
+	EC_OBJ callable;
+	EcInt  nargs_req;
+	EcBool variadic;
+
+	EcBool ismethod;
+
+	EC_CHECKNARGS_F( "basic.arity", 1 );
+
+	callable  = EC_STACKPOP(stack);
+
+	if (EC_NULLP(callable))
+		return EC_TYPEERROR_F( "basic.arity", 1, tc_none, callable, "expected a callable object (bytecode or primitive)" );	/* :TODO: should become an EC_TYPCHECK_*_F macro */
+
+	switch (EC_TYPE(callable))
+	{
+	case tc_primitive:
+		nargs_req = -1;											/* argument count unknown: throw an exception */
+		variadic  = FALSE;
+		return Ec_ERROR;										/* :TODO: throw the correct exception */
+		break;
+
+	case tc_cmethod:
+		nargs_req = -1;											/* argument count unknown: throw an exception */
+		variadic  = FALSE;
+		return Ec_ERROR;										/* :TODO: throw the correct exception */
+		break;
+
+	default:
+		if (EC_COMPILEDP(callable))
+		{
+			EcInt n_req;
+
+			ismethod = EC_COMPILEDISMETHOD(callable);
+			nargs_req = EC_COMPILEDNARG(callable) - (ismethod ? 2 : 0);
+			variadic  = EC_COMPILEDVARG(callable);
+			break;
+		}
+
+		return EC_TYPEERROR_F( "basic.arity", 1, tc_none, callable, "expected a callable object (bytecode or primitive)" );	/* :TODO: should become an EC_TYPCHECK_*_F macro */
+	}
+
+	return EcMakeArrayInit( 2, EcMakeInt( nargs_req ), EcMakeBool( variadic ) );
+}
 
 EC_API EC_OBJ EcLibLength( EC_OBJ stack, EcAny userdata )
 {
@@ -1345,6 +1427,8 @@ EcBool _ec_lib_init( void )
 	EcAddPrimitive( "basic.call",        EcLibCall );
 #endif
 	EcAddPrimitive( "basic.compile",     EcLibCompile );
+	EcAddPrimitive( "basic.apply",       EcLibApply );
+	EcAddPrimitive( "basic.arity",       EcLibArity );
 	EcAddPrimitive( "basic.length",      EcLibLength );
 	EcAddPrimitive( "basic.hash",        EcLibHash );
 	EcAddPrimitive( "basic.time",        EcLibTime );

@@ -7,9 +7,9 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.h,v 1.1 2002/05/23 21:17:16 panta Exp $
+ *   $Id: lib.h,v 1.2 2002/05/27 21:09:40 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -63,6 +63,8 @@ EC_API EC_OBJ EcLibSendWith( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibCall( EC_OBJ stack, EcAny userdata );
 #endif
 EC_API EC_OBJ EcLibCompile( EC_OBJ stack, EcAny userdata );
+EC_API EC_OBJ EcLibApply( EC_OBJ stack, EcAny userdata );
+EC_API EC_OBJ EcLibArity( EC_OBJ stack, EcAny userdata );
 
 EC_API EC_OBJ EcLibLength( EC_OBJ stack, EcAny userdata );
 

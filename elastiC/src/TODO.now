@@ -1,3 +1,7 @@
+- throw an error on wrong argcount to method `new'
+
+- check order of EC_STACKPOP calls in lib.c
+
 - clean-up warnings produced with --enable-devel=paranoid
    (mainly signed vs unsigned comparisons)
 

@@ -1,11 +1,30 @@
 Overview of Changes in elastiC 0.0.37:
 
-[UNRELEASED YET]
-
-* Nasty bugs fixed (thanks to George McBay)
+* win32 Visual C++ 6 support (VC 7 in progress)
 
 * Alpha compatibility.
   (elastiC should be 64-bit clean now).
+
+* Added `basic.apply' and and `basic.arity'
+
+  The former takes two arguments: a callable object and a sequence of
+  arguments and returns the result of the application of the callable
+  to the arguments.
+  For example:
+
+      function add(a, b) { return a + b; }
+      local v = basic.arity( add, #[1, 3] );
+
+  will set v to 4.
+  The latter will receive a callable object as a number and will
+  return an array of two elements: the first is the number of
+  minimum required arguments by the callable, the second if a
+  boolean indicating if the callable takes a variable number of
+  arguments. The API presently doesn't allow to know the number of
+  parameters of primitive functions, so basic.arity works only for
+  bytecode objects at the moment.
+
+* Nasty bugs fixed (thanks to George McBay)
 
 * Some steps toward Cygwin build-ability.
 

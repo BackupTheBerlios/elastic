@@ -1,5 +1,7 @@
 ./SelfBug
 ./add
+./apply
+./arity
 ./bench1
 ./bench2
 ./bug

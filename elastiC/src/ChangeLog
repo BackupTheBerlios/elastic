@@ -1,3 +1,23 @@
+2002-05-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lib.[ch]: Added basic.apply (EcLibApply) and and basic.arity
+	(EcLibArity). The former takes two arguments: a callable object
+	and a sequence of arguments and returns the result of the
+	application of the callable to the arguments.
+	For example:
+
+	        function add(a, b) { return a + b; }
+		local v = basic.arity( add, #[1, 3] );
+
+	will set v to 4.
+	The latter will receive a callable object as a number and will
+	return an array of two elements: the first is the number of
+	minimum required arguments by the callable, the second if a
+	boolean indicating if the callable takes a variable number of
+	arguments. The API presently doesn't allow to know the number of
+	parameters of primitive functions, so basic.arity works only for
+	bytecode objects at the moment.
+
 2002-05-24  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* compile.c (EcCompilerContextCreate): now ctxt members are
