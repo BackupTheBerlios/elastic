@@ -1,3 +1,8 @@
+2002-06-07  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/modules/posix_m.c: added POSIX functions `fstat', `lseek',
+	`mkfifo'.
+
 2002-06-06  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/modules/posix_m.c: added POSIX functions `getcwd', `mkdir',

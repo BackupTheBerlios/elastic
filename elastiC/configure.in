@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.11 2002/06/06 19:19:18 panta Exp $
+dnl   $Id: configure.in,v 1.12 2002/06/07 10:17:48 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -479,7 +479,7 @@ dnl Use new (2.53) AC_CHECK_TYPE / AC_CHECK_TYPES semantic
 AC_CHECK_TYPES([quad_t, u_quad_t])
 dnl ELASTIC_CHECK_TYPE(quad_t, , long, HAVE_QUAD_T)
 dnl ELASTIC_CHECK_TYPE(u_quad_t, , unsigned long, HAVE_U_QUAD_T)
-AC_CHECK_TYPES([ssize_t])
+AC_CHECK_TYPES([ssize_t, off_t])
 
 dnl Checks for library functions.
 AC_FUNC_ALLOCA

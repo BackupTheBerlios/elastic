@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.3 2002/05/25 19:37:44 panta Exp $
+ *   $Id: compile.c,v 1.4 2002/06/07 10:17:48 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -2058,7 +2058,7 @@ static void compileForIn( ec_compiler_ctxt ctxt, ASTNode node )
 	/* We need an hidden variable to keep the index */
 	idxvar = getServiceVariable( ctxt, CCTXT(currentScope) );
 
-	/* Intialization */
+	/* Initialization */
 	initexpr = makeConstInt( 0 );
 	init     = makeExprStmt( makeAssign( idxvar, initexpr ) );
 	compile( ctxt, init );

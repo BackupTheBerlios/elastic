@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.4 2002/06/06 00:09:24 panta Exp $
+ *   $Id: elastic.c,v 1.5 2002/06/07 10:17:48 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -1218,30 +1218,41 @@ double ec_strtod(const char *nptr, char **endptr)
 
 /* symbols to mask */
 
-EC_OBJ _ec_symbol2value( const char *func_name, EcInt param_index, _ec_symbol2int *map, EC_OBJ obj, EcInt *options )
+EC_OBJ _ec_symbol2mask( const char *func_name, EcInt param_index, _ec_symbol2int *map, EcBool nullok, EC_OBJ sym, EcInt *options )
 {
-	EC_OBJ    exc;
 	ec_string ds;
+	EC_OBJ    exc;
 	EcInt     i;
 
 	ASSERT( options );
 
 	*options = 0;
 
-	if (EC_NULLP(obj))
-		return EC_NIL;
-
-	if (! EC_SYMBOLP(obj))
+	if (EC_NULLP(sym))
+	{
+		if (nullok)
+			return EC_NIL;
 		return EC_TYPEERROR_F(/* function name    */ func_name,
 							  /* parameter index  */ param_index,
-							  /* expected         */ tc_none,
-							  /* offending object */ obj,
-							  /* reason           */ "expected a symbol or @nil");
+							  /* expected         */ tc_symbol,
+							  /* offending object */ sym,
+							  /* reason           */ "expected a symbol");
+	}
+
+#define TYPE_ERROR_sym2m	\
+EC_TYPEERROR_F(/* function name    */ func_name,                                     \
+			   /* parameter index  */ param_index,                                   \
+			   /* expected         */ nullok ? tc_none : tc_symbol,                  \
+			   /* offending object */ sym,                                           \
+			   /* reason           */ nullok ? "expected a symbol or @nil" : "expected a symbol")
+
+	if (! EC_SYMBOLP(sym))
+		return TYPE_ERROR_sym2m;
 
 	i = 0;
 	while (map[i].symbolid > 0)
 	{
-		if (map[i].symbolid == EC_SYMBOL(obj))
+		if (map[i].symbolid == EC_SYMBOL(sym))
 		{
 			*options |= map[i].value;
 			return EC_NIL;
@@ -1250,17 +1261,18 @@ EC_OBJ _ec_symbol2value( const char *func_name, EcInt param_index, _ec_symbol2in
 	}
 
 	ec_string_init( &ds, NULL );
-	ec_sprintf( &ds, "option symbol %w not recognized", obj );
+	ec_sprintf( &ds, "symbol %w not recognized as a valid option", sym );
 	exc = EC_TYPEERROR_F(/* function name    */ func_name,
 						 /* parameter index  */ param_index,
-						 /* expected         */ tc_none,
-						 /* offending object */ obj,
-						 /* reason           */ ec_strdata( &ds ));
+						 /* expected         */ nullok ? tc_none : tc_symbol,
+						 /* offending object */ sym,
+						 /* reason           */ ec_strdata( &ds ) );
 	ec_string_cleanup( &ds );
 	return exc;
 }
 
-EC_OBJ _ec_sequence2mask( const char *func_name, EcInt param_index, _ec_symbol2int *map, EC_OBJ seq, EcInt *options )
+EC_OBJ _ec_sequence2mask( const char *func_name, EcInt param_index, _ec_symbol2int *map,
+						  EcBool nullok, EcBool singleok, EC_OBJ seq, EcInt *options )
 {
 	EC_OBJ el, exc;
 	EC_OBJ seql_o;
@@ -1272,17 +1284,28 @@ EC_OBJ _ec_sequence2mask( const char *func_name, EcInt param_index, _ec_symbol2i
 	*options = 0;
 
 	if (EC_NULLP(seq))
-		return EC_NIL;
+	{
+		if (nullok)
+			return EC_NIL;
+		return EC_TYPEERROR_F(/* function name    */ func_name,
+							  /* parameter index  */ param_index,
+							  /* expected         */ tc_none,
+							  /* offending object */ seq,
+							  /* reason           */ "expected a sequence of option symbols");
+	}
 
-#define TYPE_ERROR	\
+#define TYPE_ERROR_seq2m	\
 EC_TYPEERROR_F(/* function name    */ func_name,                                     \
 			   /* parameter index  */ param_index,                                   \
 			   /* expected         */ tc_none,                                       \
 			   /* offending object */ seq,                                           \
-			   /* reason           */ "expected a sequence of option symbols or @nil")
+			   /* reason           */ nullok ? "expected a sequence of option symbols or @nil" : "expected a sequence of option symbols")
+
+	if (singleok && EC_SYMBOLP(seq))
+		return _ec_symbol2mask( func_name, param_index, map, nullok, seq, options );
 
 	if (! EcIsSequence( seq ))
-		return TYPE_ERROR;
+		return TYPE_ERROR_seq2m;
 
 	seql_o = EcSequenceLength( seq );
 	if (EC_ERRORP(seql_o)) return seql_o;
@@ -1323,11 +1346,31 @@ EC_TYPEERROR_F(/* function name    */ func_name,                                
 			}
 
 		} else
-			return TYPE_ERROR;
+			return TYPE_ERROR_seq2m;
 	}
 
 	/* ok */
 	return EC_NIL;
+}
+
+EC_OBJ _ec_mask2sequence( const char *func_name, _ec_symbol2int *map,
+						  unsigned long mask )
+{
+	EC_OBJ res;
+	EcInt  i;
+
+	res = EcMakeArray( 1 );
+	if (EC_ERRORP(res)) return res;
+
+	i = 0;
+	while (map[i].symbolid > 0)
+	{
+		if (map[i].value & mask)
+			EcArrayPush( res, EcMakeSymbolFromId( map[i].symbolid ) );
+		i++;
+	}
+
+	return res;
 }
 
 /* Debugging */

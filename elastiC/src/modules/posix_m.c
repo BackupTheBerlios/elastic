@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.5 2002/06/06 19:19:19 panta Exp $
+ *   $Id: posix_m.c,v 1.6 2002/06/07 10:17:48 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -66,6 +66,14 @@
 #include <errno.h>
 #endif
 
+/*
+ * MISSING:
+ *
+ *   mknod
+ *   truncate
+ *   mount
+ */
+
 #if HAVE_UNISTD_H
 	/* this modules relies on <unistd.h> */
 
@@ -75,7 +83,19 @@ static EcUInt s_O_RDONLY = 0, s_O_WRONLY = 0, s_O_RDWR = 0,
 	s_O_APPEND = 0, s_O_NONBLOCK = 0, s_O_NDELAY = 0,
 	s_O_SYNC = 0, s_O_DSYNC = 0, s_O_RSYNC = 0,
 	s_O_NOFOLLOW = 0, s_O_DIRECTORY = 0, s_O_LARGEFILE = 0;
-static EcUInt s_S_IRWXU = 0,
+static EcUInt
+	s_S_IFMT   = 0,
+	s_S_IFSOCK = 0,
+	s_S_IFLNK  = 0,
+	s_S_IFREG  = 0,
+	s_S_IFBLK  = 0,
+	s_S_IFDIR  = 0,
+	s_S_IFCHR  = 0,
+	s_S_IFIFO  = 0,
+	s_S_ISUID  = 0,
+	s_S_ISGID  = 0,
+	s_S_ISVTX  = 0,
+	s_S_IRWXU = 0,
 	s_S_IRUSR = 0, s_S_IREAD = 0,
 	s_S_IWUSR = 0, s_S_IWRITE = 0,
 	s_S_IXUSR = 0, s_S_IEXEC = 0,
@@ -87,6 +107,7 @@ static EcUInt s_S_IRWXU = 0,
 	s_S_IROTH = 0,
 	s_S_IWOTH = 0,
 	s_S_IXOTH = 0;
+static EcUInt s_SEEK_SET = 0, s_SEEK_CUR = 0, s_SEEK_END = 0;
 static EcUInt s_WNOHANG = 0, s_WUNTRACED = 0;
 
 static _ec_symbol2int sym2int_access_mode[] =
@@ -136,6 +157,45 @@ static _ec_symbol2int sym2int_open_mode[] =
 	{ 0, 0 },													/* S_IROTH  */
 	{ 0, 0 },													/* S_IWOTH  */
 	{ 0, 0 },													/* S_IXOTH  */
+	{ 0, 0 }
+};
+
+static _ec_symbol2int sym2int_mode_t[] =
+{
+	{ 0, 0 },													/* S_IFMT   */
+	{ 0, 0 },													/* S_IFSOCK */
+    { 0, 0 },													/* S_IFLNK  */
+    { 0, 0 },													/* S_IFREG  */
+    { 0, 0 },													/* S_IFBLK  */
+    { 0, 0 },													/* S_IFDIR  */
+    { 0, 0 },													/* S_IFCHR  */
+    { 0, 0 },													/* S_IFIFO  */
+    { 0, 0 },													/* S_ISUID  */
+    { 0, 0 },													/* S_ISGID  */
+    { 0, 0 },													/* S_ISVTX  */
+	{ 0, 0 },													/* S_IRWXU  */
+	{ 0, 0 },													/* S_IRUSR  */
+	{ 0, 0 },													/* S_IREAD  */
+	{ 0, 0 },													/* S_IWUSR  */
+	{ 0, 0 },													/* S_IWRITE */
+	{ 0, 0 },													/* S_IXUSR  */
+	{ 0, 0 },													/* S_IEXEC  */
+	{ 0, 0 },													/* S_IRWXG  */
+	{ 0, 0 },													/* S_IRGRP  */
+	{ 0, 0 },													/* S_IWGRP  */
+	{ 0, 0 },													/* S_IXGRP  */
+	{ 0, 0 },													/* S_IRWXO  */
+	{ 0, 0 },													/* S_IROTH  */
+	{ 0, 0 },													/* S_IWOTH  */
+	{ 0, 0 },													/* S_IXOTH  */
+	{ 0, 0 }
+};
+
+static _ec_symbol2int sym2int_seek_whence[] =
+{
+	{ 0, 0 },													/* SEEK_SET */
+	{ 0, 0 },													/* SEEK_CUR */
+	{ 0, 0 },													/* SEEK_END */
 	{ 0, 0 }
 };
 
@@ -270,11 +330,11 @@ static EC_OBJ EcLibPosix_mkdir( EC_OBJ stack, EcAny userdata )
 			mode_i = EC_INUM(mode_o);
 		else
 		{
-			res = _ec_sequence2mask( "posix.mkdir", 2, sym2int_open_mode, mode_o, &mode_i );
+			res = _ec_sequence2mask( "posix.mkdir", 2, sym2int_open_mode, TRUE, TRUE, mode_o, &mode_i );
 			if (EC_ERRORP(res)) return res;
 		}
 	} else
-		mode_i = 0;
+		mode_i = 0777;											/* rwxrwxrwx */
 
 	mode = (mode_t) mode_i;
 
@@ -425,17 +485,13 @@ static EC_OBJ EcLibPosix_chmod( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-	if (EC_NNULLP(mode_o))
+	if (EC_INUMP(mode_o))
+		mode_i = EC_INUM(mode_o);
+	else
 	{
-		if (EC_INUMP(mode_o))
-			mode_i = EC_INUM(mode_o);
-		else
-		{
-			res = _ec_sequence2mask( "posix.chmod", 2, sym2int_open_mode, mode_o, &mode_i );
-			if (EC_ERRORP(res)) return res;
-		}
-	} else
-		mode_i = 0;
+		res = _ec_sequence2mask( "posix.chmod", 2, sym2int_open_mode, FALSE, TRUE, mode_o, &mode_i );
+		if (EC_ERRORP(res)) return res;
+	}
 
 	mode = (mode_t) mode_i;
 
@@ -497,7 +553,7 @@ static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-	res = _ec_sequence2mask( "posix.access", 2, sym2int_access_mode, mode_o, &mode );
+	res = _ec_sequence2mask( "posix.access", 2, sym2int_access_mode, TRUE, TRUE, mode_o, &mode );
 	if (EC_ERRORP(res)) return res;
 
 	rv = access( pathname, (int) mode );
@@ -523,7 +579,7 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 	int     rv;
 	EC_OBJ  res;
 
-	flags_o = EcMakeArrayInit( 1, EcMakeSymbol("O_RDONLY") );
+	flags_o = EcMakeSymbol("O_RDONLY");
 	if (EC_ERRORP(flags_o)) return flags_o;
 
 	res = EcParseStackFunction( "posix.open", TRUE, stack, "s|OO",
@@ -531,7 +587,7 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-	res = _ec_sequence2mask( "posix.open", 2, sym2int_open_flags, flags_o, &flags_i );
+	res = _ec_sequence2mask( "posix.open", 2, sym2int_open_flags, FALSE, TRUE, flags_o, &flags_i );
 	if (EC_ERRORP(res)) return res;
 
 	if (EC_NNULLP(mode_o))
@@ -540,11 +596,11 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 			mode_i = EC_INUM(mode_o);
 		else
 		{
-			res = _ec_sequence2mask( "posix.open", 3, sym2int_open_mode, mode_o, &mode_i );
+			res = _ec_sequence2mask( "posix.open", 3, sym2int_open_mode, TRUE, TRUE, mode_o, &mode_i );
 			if (EC_ERRORP(res)) return res;
 		}
 	} else
-		mode_i = 0;
+		mode_i = 0777;											/* rwxrwxrwx (autom. masked out by current umask) */
 
 	flags = (int)    flags_i;
 	mode  = (mode_t) mode_i;
@@ -585,11 +641,11 @@ static EC_OBJ EcLibPosix_creat( EC_OBJ stack, EcAny userdata )
 			mode_i = EC_INUM(mode_o);
 		else
 		{
-			res = _ec_sequence2mask( "posix.creat", 2, sym2int_open_mode, mode_o, &mode_i );
+			res = _ec_sequence2mask( "posix.creat", 2, sym2int_open_mode, TRUE, TRUE, mode_o, &mode_i );
 			if (EC_ERRORP(res)) return res;
 		}
 	} else
-		mode_i = 0;
+		mode_i = 0777;											/* rwxrwxrwx (autom. masked out by current umask) */
 
 	mode = (mode_t) mode_i;
 
@@ -694,6 +750,120 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_WRITE */
 }
 
+static EC_OBJ stat2hash( const char *funcname, struct stat *buf )
+{
+	EC_OBJ stat_h;
+	EC_OBJ ftype, mode_seq;
+
+	stat_h = EcMakeHash();
+	if (EC_ERRORP(stat_h)) return stat_h;
+
+	EcHashSet( stat_h, EcMakeSymbol("dev"),     EcMakeInt(buf->st_dev) );
+	EcHashSet( stat_h, EcMakeSymbol("ino"),     EcMakeInt(buf->st_ino) );
+	EcHashSet( stat_h, EcMakeSymbol("mode"),    EcMakeInt(buf->st_mode) );
+
+	ftype = EC_NIL;
+	if (S_ISLNK(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFLNK);
+	else if (S_ISREG(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFREG);
+	else if (S_ISDIR(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFDIR);
+	else if (S_ISCHR(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFCHR);
+	else if (S_ISBLK(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFBLK);
+	else if (S_ISFIFO(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFIFO);
+	else if (S_ISSOCK(buf->st_mode))
+		ftype = EcMakeSymbolFromId(s_S_IFSOCK);
+	EcHashSet( stat_h, EcMakeSymbol("filetype"), ftype );
+
+	mode_seq = _ec_mask2sequence( funcname, sym2int_mode_t, buf->st_mode & 07777 );
+	if (EC_ERRORP(mode_seq)) return mode_seq;
+	EcHashSet( stat_h, EcMakeSymbol("fileperm"), mode_seq );
+
+	EcHashSet( stat_h, EcMakeSymbol("nlink"),   EcMakeInt(buf->st_nlink) );
+	EcHashSet( stat_h, EcMakeSymbol("uid"),     EcMakeInt(buf->st_uid) );
+	EcHashSet( stat_h, EcMakeSymbol("gid"),     EcMakeInt(buf->st_gid) );
+	EcHashSet( stat_h, EcMakeSymbol("rdev"),    EcMakeInt(buf->st_rdev) );
+	EcHashSet( stat_h, EcMakeSymbol("size"),    EcMakeInt(buf->st_size) );
+	EcHashSet( stat_h, EcMakeSymbol("blksize"), EcMakeInt(buf->st_blksize) ); /* :TODO: not portable: need #ifdef */
+	EcHashSet( stat_h, EcMakeSymbol("blocks"),  EcMakeInt(buf->st_blocks) );  /* :TODO: not portable: need #ifdef */
+	EcHashSet( stat_h, EcMakeSymbol("atime"),   EcMakeInt(buf->st_atime) ); /* :TODO: convert? */
+	EcHashSet( stat_h, EcMakeSymbol("mtime"),   EcMakeInt(buf->st_ctime) ); /* :TODO: convert? */
+	EcHashSet( stat_h, EcMakeSymbol("ctime"),   EcMakeInt(buf->st_mtime) ); /* :TODO: convert? */
+
+	return stat_h;
+}
+
+static EC_OBJ EcLibPosix_fstat( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int fstat(int filedes, struct stat *buf) */
+
+#if HAVE_FSTAT
+	EcInt       filedes_i;
+	int         filedes;
+	struct stat buf;
+	int         rv;
+	EC_OBJ      res;
+
+	res = EcParseStackFunction( "posix.fstat", TRUE, stack, "i",
+								&filedes_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	filedes = (int) filedes_i;
+
+	memset( &buf, 0x00, sizeof(struct stat) );
+	rv = fstat( filedes, &buf );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.fstat" );
+
+	return stat2hash( "posix.fstat", &buf );
+#else
+	return EcUnimplementedError( "POSIX `fstat' function not available" );
+#endif /* HAVE_FSTAT */
+}
+
+static EC_OBJ EcLibPosix_lseek( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: off_t lseek(int fildes, off_t offset, int whence) */
+
+#if HAVE_LSEEK
+	EcInt  fildes_i, offset_i;
+	EC_OBJ whence_o = EC_NIL;
+	int    fildes;
+	off_t  offset;
+	int    whence;
+	off_t  rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.lseek", TRUE, stack, "ii|O",
+								&fildes_i, &offset_i, &whence_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	if (EC_NNULLP(whence_o))
+	{
+		res = _ec_symbol2mask( "posix.lseek", 2, sym2int_seek_whence, TRUE, whence_o, &whence );
+		if (EC_ERRORP(res)) return res;
+	} else
+		whence = SEEK_SET;
+
+	fildes = (int)   fildes_i;
+	offset = (off_t) offset_i;
+
+	rv = lseek( fildes, offset, whence );
+	if (rv == (off_t)-1)
+		return posix2exception( errno, EC_NIL, "in posix.lseek" );
+	else
+		return EcMakeInt( rv );
+#else
+	return EcUnimplementedError( "POSIX `lseek' function not available" );
+#endif /* HAVE_LSEEK */
+}
+
 static EC_OBJ EcLibPosix_dup( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int dup(int oldfd) */
@@ -767,6 +937,47 @@ static EC_OBJ EcLibPosix_pipe( EC_OBJ stack, EcAny userdata )
 #else
 	return EcUnimplementedError( "POSIX `pipe' function not available" );
 #endif /* HAVE_PIPE */
+}
+
+static EC_OBJ EcLibPosix_mkfifo( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int mkfifo(const char *pathname, mode_t mode) */
+
+#if HAVE_MKFIFO
+	char   *pathname;
+	EC_OBJ  mode_o = EC_NIL;
+	EcInt   mode_i = 0;
+	mode_t  mode   = 0;
+	int     rv;
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "posix.mkfifo", TRUE, stack, "s|O",
+								&pathname, &mode_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	if (EC_NNULLP(mode_o))
+	{
+		if (EC_INUMP(mode_o))
+			mode_i = EC_INUM(mode_o);
+		else
+		{
+			res = _ec_sequence2mask( "posix.mkfifo", 2, sym2int_open_mode, TRUE, TRUE, mode_o, &mode_i );
+			if (EC_ERRORP(res)) return res;
+		}
+	} else
+		mode_i = 0666;											/* rw-rw-rw */
+
+	mode = (mode_t) mode_i;
+
+	rv = mkfifo( pathname, mode );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.mkfifo" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `mkfifo' function not available" );
+#endif /* HAVE_MKFIFO */
 }
 
 	/* process properties */
@@ -1036,7 +1247,7 @@ static EC_OBJ EcLibPosix_waitpid( EC_OBJ stack, EcAny userdata )
 
 	pid = (pid_t) pid_i;
 
-	res = _ec_sequence2mask( "posix.waitpid", 2, sym2int_waitpid_options, options_o, &options );
+	res = _ec_sequence2mask( "posix.waitpid", 2, sym2int_waitpid_options, TRUE, TRUE, options_o, &options );
 	if (EC_ERRORP(res)) return res;
 
 	rv = waitpid( pid, &status, options );
@@ -1258,9 +1469,12 @@ EC_API EC_OBJ ec_posix_init( void )
 	EcAddPrimitive( "posix.close",      EcLibPosix_close );
 	EcAddPrimitive( "posix.read",       EcLibPosix_read );
 	EcAddPrimitive( "posix.write",      EcLibPosix_write );
+	EcAddPrimitive( "posix.fstat",      EcLibPosix_fstat );
+	EcAddPrimitive( "posix.lseek",      EcLibPosix_lseek );
 	EcAddPrimitive( "posix.dup",        EcLibPosix_dup );
 	EcAddPrimitive( "posix.dup2",       EcLibPosix_dup2 );
 	EcAddPrimitive( "posix.pipe",       EcLibPosix_pipe );
+	EcAddPrimitive( "posix.mkfifo",     EcLibPosix_mkfifo );
 	EcAddPrimitive( "posix.fork",       EcLibPosix_fork );
 	EcAddPrimitive( "posix.execv",      EcLibPosix_execv );
 	EcAddPrimitive( "posix.execve",     EcLibPosix_execve );
@@ -1299,6 +1513,17 @@ EC_API EC_OBJ ec_posix_init( void )
 	s_O_DIRECTORY = EcInternSymbol( "O_DIRECTORY" );
 	s_O_LARGEFILE = EcInternSymbol( "O_LARGEFILE" );
 
+	s_S_IFMT    = EcInternSymbol( "S_IFMT" );
+	s_S_IFSOCK  = EcInternSymbol( "S_IFSOCK" );
+	s_S_IFLNK   = EcInternSymbol( "S_IFLNK" );
+	s_S_IFREG   = EcInternSymbol( "S_IFREG" );
+	s_S_IFBLK   = EcInternSymbol( "S_IFBLK" );
+	s_S_IFDIR   = EcInternSymbol( "S_IFDIR" );
+	s_S_IFCHR   = EcInternSymbol( "S_IFCHR" );
+	s_S_IFIFO   = EcInternSymbol( "S_IFIFO" );
+	s_S_ISUID   = EcInternSymbol( "S_ISUID" );
+	s_S_ISGID   = EcInternSymbol( "S_ISGID" );
+	s_S_ISVTX   = EcInternSymbol( "S_ISVTX" );
 	s_S_IRWXU   = EcInternSymbol( "S_IRWXU" );
 	s_S_IRUSR   = EcInternSymbol( "S_IRUSR" );
 	s_S_IREAD   = EcInternSymbol( "S_IREAD" );
@@ -1449,93 +1674,281 @@ EC_API EC_OBJ ec_posix_init( void )
 #ifdef S_IRWXU
 	sym2int_open_mode[i++].value    = S_IRWXU;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00700;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IRUSR;
 #ifdef S_IRUSR
 	sym2int_open_mode[i++].value    = S_IRUSR;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00400;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IREAD;
 #ifdef S_IREAD
 	sym2int_open_mode[i++].value    = S_IREAD;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00400;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IWUSR;
 #ifdef S_IWUSR
 	sym2int_open_mode[i++].value    = S_IWUSR;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00200;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IWRITE;
 #ifdef S_IWRITE
 	sym2int_open_mode[i++].value    = S_IWRITE;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00200;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IXUSR;
 #ifdef S_IXUSR
 	sym2int_open_mode[i++].value    = S_IXUSR;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00100;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IEXEC;
 #ifdef S_IEXEC
 	sym2int_open_mode[i++].value    = S_IEXEC;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00100;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IRWXG;
 #ifdef S_IRWXG
 	sym2int_open_mode[i++].value    = S_IRWXG;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00070;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IRGRP;
 #ifdef S_IRGRP
 	sym2int_open_mode[i++].value    = S_IRGRP;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00040;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IWGRP;
 #ifdef S_IWGRP
 	sym2int_open_mode[i++].value    = S_IWGRP;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00020;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IXGRP;
 #ifdef S_IXGRP
 	sym2int_open_mode[i++].value    = S_IXGRP;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00010;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IRWXO;
 #ifdef S_IRWXO
 	sym2int_open_mode[i++].value    = S_IRWXO;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00007;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IROTH;
 #ifdef S_IROTH
 	sym2int_open_mode[i++].value    = S_IROTH;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00004;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IWOTH;
 #ifdef S_IWOTH
 	sym2int_open_mode[i++].value    = S_IWOTH;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00002;
 #endif
 	sym2int_open_mode[i].symbolid   = s_S_IXOTH;
 #ifdef S_IXOTH
 	sym2int_open_mode[i++].value    = S_IXOTH;
 #else
-	sym2int_open_mode[i++].value    = 0;
+	sym2int_open_mode[i++].value    = 00001;
 #endif
 	ASSERT( i == 15 );
+
+	i = 0;
+	sym2int_mode_t[i].symbolid   = s_S_IFMT;
+#ifdef S_IFMT
+	sym2int_mode_t[i++].value    = S_IFMT;
+#else
+	sym2int_mode_t[i++].value    = 0170000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFSOCK;
+#ifdef S_IFSOCK
+	sym2int_mode_t[i++].value    = S_IFSOCK;
+#else
+	sym2int_mode_t[i++].value    = 0140000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFLNK;
+#ifdef S_IFLNK
+	sym2int_mode_t[i++].value    = S_IFLNK;
+#else
+	sym2int_mode_t[i++].value    = 0120000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFREG;
+#ifdef S_IFREG
+	sym2int_mode_t[i++].value    = S_IFREG;
+#else
+	sym2int_mode_t[i++].value    = 0100000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFBLK;
+#ifdef S_IFBLK
+	sym2int_mode_t[i++].value    = S_IFBLK;
+#else
+	sym2int_mode_t[i++].value    = 0060000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFDIR;
+#ifdef S_IFDIR
+	sym2int_mode_t[i++].value    = S_IFDIR;
+#else
+	sym2int_mode_t[i++].value    = 0040000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFCHR;
+#ifdef S_IFCHR
+	sym2int_mode_t[i++].value    = S_IFCHR;
+#else
+	sym2int_mode_t[i++].value    = 0020000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IFIFO;
+#ifdef S_IFIFO
+	sym2int_mode_t[i++].value    = S_IFIFO;
+#else
+	sym2int_mode_t[i++].value    = 0010000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_ISUID;
+#ifdef S_ISUID
+	sym2int_mode_t[i++].value    = S_ISUID;
+#else
+	sym2int_mode_t[i++].value    = 0004000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_ISGID;
+#ifdef S_ISGID
+	sym2int_mode_t[i++].value    = S_ISGID;
+#else
+	sym2int_mode_t[i++].value    = 0002000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_ISVTX;
+#ifdef S_ISVTX
+	sym2int_mode_t[i++].value    = S_ISVTX;
+#else
+	sym2int_mode_t[i++].value    = 0001000;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IRWXU;
+#ifdef S_IRWXU
+	sym2int_mode_t[i++].value    = S_IRWXU;
+#else
+	sym2int_mode_t[i++].value    = 00700;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IRUSR;
+#ifdef S_IRUSR
+	sym2int_mode_t[i++].value    = S_IRUSR;
+#else
+	sym2int_mode_t[i++].value    = 00400;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IREAD;
+#ifdef S_IREAD
+	sym2int_mode_t[i++].value    = S_IREAD;
+#else
+	sym2int_mode_t[i++].value    = 00400;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IWUSR;
+#ifdef S_IWUSR
+	sym2int_mode_t[i++].value    = S_IWUSR;
+#else
+	sym2int_mode_t[i++].value    = 00200;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IWRITE;
+#ifdef S_IWRITE
+	sym2int_mode_t[i++].value    = S_IWRITE;
+#else
+	sym2int_mode_t[i++].value    = 00200;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IXUSR;
+#ifdef S_IXUSR
+	sym2int_mode_t[i++].value    = S_IXUSR;
+#else
+	sym2int_mode_t[i++].value    = 00100;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IEXEC;
+#ifdef S_IEXEC
+	sym2int_mode_t[i++].value    = S_IEXEC;
+#else
+	sym2int_mode_t[i++].value    = 00100;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IRWXG;
+#ifdef S_IRWXG
+	sym2int_mode_t[i++].value    = S_IRWXG;
+#else
+	sym2int_mode_t[i++].value    = 00070;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IRGRP;
+#ifdef S_IRGRP
+	sym2int_mode_t[i++].value    = S_IRGRP;
+#else
+	sym2int_mode_t[i++].value    = 00040;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IWGRP;
+#ifdef S_IWGRP
+	sym2int_mode_t[i++].value    = S_IWGRP;
+#else
+	sym2int_mode_t[i++].value    = 00020;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IXGRP;
+#ifdef S_IXGRP
+	sym2int_mode_t[i++].value    = S_IXGRP;
+#else
+	sym2int_mode_t[i++].value    = 00010;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IRWXO;
+#ifdef S_IRWXO
+	sym2int_mode_t[i++].value    = S_IRWXO;
+#else
+	sym2int_mode_t[i++].value    = 00007;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IROTH;
+#ifdef S_IROTH
+	sym2int_mode_t[i++].value    = S_IROTH;
+#else
+	sym2int_mode_t[i++].value    = 00004;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IWOTH;
+#ifdef S_IWOTH
+	sym2int_mode_t[i++].value    = S_IWOTH;
+#else
+	sym2int_mode_t[i++].value    = 00002;
+#endif
+	sym2int_mode_t[i].symbolid   = s_S_IXOTH;
+#ifdef S_IXOTH
+	sym2int_mode_t[i++].value    = S_IXOTH;
+#else
+	sym2int_mode_t[i++].value    = 00001;
+#endif
+	ASSERT( i == 26 );
+	i = 0;
+	while (sym2int_mode_t[i].symbolid > 0)
+	{
+		EcPackageVariable( pkg, EcSymbolAt( sym2int_mode_t[i].symbolid ),
+						   EcMakeInt( sym2int_mode_t[i].value ),
+						   TRUE, TRUE );
+		i++;
+	}
+
+	i = 0;
+	sym2int_seek_whence[i].symbolid = s_SEEK_SET;
+#ifdef SEEK_SET
+	sym2int_seek_whence[i++].value  = SEEK_SET;
+#else
+	sym2int_seek_whence[i++].value  = 0;
+#endif
+	sym2int_seek_whence[i].symbolid = s_SEEK_CUR;
+#ifdef SEEK_CUR
+	sym2int_seek_whence[i++].value  = SEEK_CUR;
+#else
+	sym2int_seek_whence[i++].value  = 1;
+#endif
+	sym2int_seek_whence[i].symbolid = s_SEEK_END;
+#ifdef SEEK_END
+	sym2int_seek_whence[i++].value  = SEEK_END;
+#else
+	sym2int_seek_whence[i++].value  = 2;
+#endif
+	ASSERT( i == 3 );
 
 	i = 0;
 	sym2int_waitpid_options[i].symbolid = s_WNOHANG;
@@ -1649,6 +2062,18 @@ EC_API EC_OBJ ec_posix_init( void )
 #else
 		       EcFalseObject );
 #endif
+	EcHashSet( feature, EcMakeSymbol("fstat"),
+#if HAVE_UNISTD_H && HAVE_FSTAT
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("lseek"),
+#if HAVE_UNISTD_H && HAVE_LSEEK
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
 	EcHashSet( feature, EcMakeSymbol("dup"),
 #if HAVE_UNISTD_H && HAVE_DUP
 		       EcTrueObject );
@@ -1663,6 +2088,12 @@ EC_API EC_OBJ ec_posix_init( void )
 #endif
 	EcHashSet( feature, EcMakeSymbol("pipe"),
 #if HAVE_UNISTD_H && HAVE_PIPE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("mkfifo"),
+#if HAVE_UNISTD_H && HAVE_MKFIFO
 		       EcTrueObject );
 #else
 		       EcFalseObject );
