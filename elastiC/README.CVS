@@ -1,0 +1,86 @@
+			     elastiC CVS
+			     ===========
+$Id: README.CVS,v 1.1 2002/05/24 13:42:13 panta Exp $
+
+1. Access to elastiC CVS
+------------------------
+
+elastiC CVS is kindly hosted at BerliOS. Instructions on how to access
+it are available at:
+
+   http://developer.berlios.de/cvs/?group_id=394
+
+but they are repeated below in sections 1.1 and 1.2 for your convenience.
+A web interface to elastiC CVS is also available at:
+
+   http://cvs.berlios.de/cgi-bin/cvsweb.cgi/?cvsroot=elastic
+
+A generic BerliOS CVS HOWTO is available at:
+
+   http://developer.berlios.de/docman/display_doc.php?docid=32&group_id=2
+
+1.1 Anonymous access to elastiC CVS
+-----------------------------------
+
+Read-only anonymous access to the elastiC CVS is available to anyone.
+Assuming that the bash shell is beign used:
+
+  $ export CVSROOT=:pserver:anonymous@cvs.elastic.berlios.de:/cvsroot/elastic
+  $ cvs login
+      (cvs will ask for the password, just press enter, no password is required)
+  $ cvs -z3 co elastiC
+      (this will create an `elastiC' source tree in the current directory)
+
+
+1.2 Developer access to elastiC CVS (only for project developers)
+-----------------------------------------------------------------
+
+Project developers have full access to the elastiC CVS.
+A SSH2 client is necessary.
+Assuming that the bash shell is beign used:
+
+  $ CVSLOGIN=developername
+  $ export CVS_RSH=ssh
+  $ export CVSROOT=:ext:$CVSLOGIN@$cvs.berlios.de:/cvsroot/elastic
+  $ cvs -z3 co elastiC
+      (this will create an `elastiC' source tree in the current directory)
+
+where `developername' is the BerliOS user account. The site password
+is needed on each operation, unless the local ssh public key has been
+uploaded to the BerliOS shell server, as explained in:
+
+   http://developer.berlios.de/docman/display_doc.php?docid=34&group_id=2
+
+The use of DSA authentication with a non-empty pass-phrase is highly
+recommended. Use ssh-agent and ssh-add to avoid having to enter the
+passphrase every time.
+
+2. Building elastiC from CVS
+----------------------------
+
+Once the elastiC module has been checked out, there are a couple
+operations that need to be performed *before* it can be succesfully
+built. These operations are:
+
+  a. symlink re-creation (CVS doesn't store/rebuild symbolic links)
+  b. Creation of autoconf/automake related files (`configure',
+     Makefile.in, ...)
+
+The first step is accomplished by running the `tools/symlinks' script
+at toplevel after checkout. This will re-create the necessary symbolic
+links.
+The second step is accomplished by running the `build/prepare' script
+at toplevel. autoconf 2.53, automake 1.6, libtool 1.4.2 or later are
+necessary.
+
+Once these steps have been completed, it's possible to proceed in the
+usual way to compile elastiC:
+
+  $ ./configure [OPTIONS]
+  $ make
+  $ make install
+
+
+Marco Pantaleoni
+panta@elasticworld.org
+24 May 2002
