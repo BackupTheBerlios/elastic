@@ -7,7 +7,7 @@
  *
  *   Created: Sun Aug  1 18:53:27 MEST 1999
  *
- *   $Id: arithmetic.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: arithmetic.c,v 1.3 2002/06/01 21:21:04 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -315,7 +315,7 @@ static EcFloat _mod( EcFloat a, EcFloat b )
 {
 	EcInt q;
 
-	if ((a >= 0.0) && (a <= b))
+	if ((a >= 0.0) && (a < b))
 		return a;
 
 	q = (EcInt) (a / b);
