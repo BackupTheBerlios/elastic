@@ -17,6 +17,17 @@
  *      ? very low, maybe never implemented.
  */
 
+immediate_future  /* got from other sections (max ~10 points here) */
+{
+	- posix module
+	- registered C pointers
+	- packageio proper usage of C pointer register (with versioning, ...)
+	- handle versioning in modules
+	- generic I/O
+	- classes and methods for every type
+	- serialization framework
+}
+
 core
 {
 	* throw an error on wrong argcount to method `new'
@@ -34,12 +45,13 @@ core
 	* generic I/O with an elastiC high level file type acting as an
 	  abstraction built on lower levels (C streams, OO I/O API, ...)
 	o handle const flag (EC_CONSTP()).
-	* evaluate a simpler hashing scheme with doubling and simple linear
+	o evaluate a simpler hashing scheme with doubling and simple linear
 	  searching (check and benchmark `src/hashtable_new').
-	* add caching to hash tables.
+	o add caching to hash tables.
 	o add Bytecode Description Blocks (& Package Description Blocks) to
 	  describe variables, line numbers, ... in code (for debugging
 	  support).
+	o handle versioning in modules
 	* add C pointer registration (with identification, for serialization
 	  and package save/reload). Pointer info should include versioning
 	  information for runtime linking.
@@ -111,7 +123,8 @@ core
 	. cache hash values in objects [DANGEROUS ?]
 	o write more exception classes (and use them). Complete class
 	  hierarchies for existing exceptions (like IOError, ...)
-	. implement Polymorphic Inline Caches [DIFFICULT]
+	. reintroduce multiple interpreters (for things like Apache
+          mod_elastiC, ...)
 
 	DONE: * eliminate SetLineOP moving the line number information to
 	        a separate data structure, field of EcCompiled. This could
@@ -214,6 +227,7 @@ core
         . write a peephole bytecode optimizer
         . write a local bytecode optimizer
         . AST optimizer
+	. implement Polymorphic Inline Caches [DIFFICULT]
 
 	DONE: * ...
                 ...
@@ -242,6 +256,9 @@ modules
 	o a Postgres module
 	o an ODBC module
 	o a db asbtraction module
+	o a module offering pack/unpack functionality (more or less like
+	  Perl's one. I'd prefer a more flexible mechanism based on recursive
+	  definition of data-types (scheme-like? list-based?))
 
 	DONE: * add `math' module.
 	DONE: * update SWIG module and gtk module for copy construction.
@@ -280,6 +297,8 @@ packaging
 	o add rpm package support
 
    /* Win32 */
+	* update VC6 config.h & co. files
+	* update VC6 project files for new library versioning scheme
 	o update VC7 project files
 	o integrate Nullsoft NSIS installer generator in VC++ projects
 	o integrate Nullsoft NSIS installer generator in autoconf/automake
