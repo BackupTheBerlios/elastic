@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.8 2002/06/12 17:42:53 panta Exp $
+#   $Id: Makefile.am,v 1.9 2003/05/29 10:36:00 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -54,7 +54,11 @@ YACC = @YACC@ -d
 
 elasticincludedir = $(includedir)/elastic
 
+if WITH_EC2C
+bin_PROGRAMS = ec ecc ecrt ecdump ec2c
+else
 bin_PROGRAMS = ec ecc ecrt ecdump
+endif
 lib_LTLIBRARIES = libelastic-0.0.la libelasticrt-0.0.la
 
 if WIN32_SDK
@@ -93,6 +97,7 @@ static_sources = \
 	bytecode.c	\
 	compat.c	\
 	compile.c	\
+	compile2c.c	\
 	debug.c		\
 	dstring.c	\
 	elastic_p.y	\
@@ -173,6 +178,12 @@ source_headers = \
 	bitstring.h	\
 	bytecode.h	\
 	compile.h	\
+	compile2c.h	\
+	compile2c_base.h	\
+	compile2c_exec.h	\
+	compile2c_head.h	\
+	compile2c_macros.h	\
+	compile2c_tail.h	\
 	cnf.h		\
 	conf.h		\
 	debug.h		\
@@ -349,6 +360,21 @@ ecdump_LDFLAGS = -rdynamic
 endif
 #ecdump_DEPENDENCIES = libelastic-$(EC_API_VERSION).la $(ELASTIC_LIB)
 
+if WITH_EC2C
+#ec2c_SOURCES = \
+#      $(static_sources) \
+#      $(source_headers) \
+#      ec2c.c
+ec2c_SOURCES = ec2c.c
+ec2c_LDADD = $(ELASTIC_LIB_LINK) @PROFILEOBJ@
+if WIN32
+ec2c_LDFLAGS =
+else
+ec2c_LDFLAGS = -rdynamic
+endif
+#ec2c_DEPENDENCIES = libelastic.la $(ELASTIC_LIB)
+endif
+
 ##BUILT_SOURCES =
 
 # cause the built sources to be rebuild when possible, even with --include-deps
@@ -375,6 +401,9 @@ ecrt.o: ecrt.c
 ecdump.o: ecdump.c
 	$(CC) $(DEFS) $(BIN_CFLAGS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) -o $@ -c $<
 
+ec2c.o: ec2c.c
+	$(CC) $(DEFS) $(BIN_CFLAGS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) -o $@ -c $<
+
 if WIN32
 # - WIN32 -
 ec$(EXEEXT): $(ec_OBJECTS) $(ec_DEPENDENCIES) $(DLL_NAME)
@@ -389,6 +418,9 @@ ecrt$(EXEEXT): $(ecrt_OBJECTS) $(ecrt_DEPENDENCIES) $(RTDLL_NAME)
 ecdump$(EXEEXT): $(ecdump_OBJECTS) $(ecdump_DEPENDENCIES) $(DLL_NAME)
 	@rm -f ecdump$(EXEEXT)
 	$(LINK) $(ecdump_LDFLAGS) $(ecdump_OBJECTS) $(ecdump_LDADD) $(LIBS)
+ec2c$(EXEEXT): $(ec2c_OBJECTS) $(ec2c_DEPENDENCIES) $(DLL_NAME)
+	@rm -f ec2c$(EXEEXT)
+	$(LINK) $(ec2c_LDFLAGS) $(ec2c_OBJECTS) $(ec2c_LDADD) $(LIBS)
 endif
 
 #if WIN32

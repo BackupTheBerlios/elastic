@@ -16,6 +16,7 @@ elastic_p.c
 elastic_s.h
 elastic_s.c
 ec
+ec2c
 ecc
 ecrt
 ecdump

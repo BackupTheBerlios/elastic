@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: compiled.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: compiled.c,v 1.3 2003/05/29 10:36:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -109,6 +109,8 @@ EC_API EC_OBJ EcMakeCompiled( EC_OBJ package, const char *name, EcInt nargs, EcI
 	EcHashSet( EC_COMPILEDINFO(obj),							/* line number info */
 			   EcMakeSymbolFromId( PRIVATE(lineID) ),
 			   EcMakeArray( 4 ) );
+
+	EC_COMPILEDCCALLABLE(obj) = NULL;							/* #JP */
 
 	return obj;
 }
@@ -272,6 +274,8 @@ static EC_OBJ compiled_copy( EC_OBJ obj, EcCopyType type )
 	}
 	EC_COMPILEDINFO(res) = copy;
 
+	EC_COMPILEDCCALLABLE(res) = EC_COMPILEDCCALLABLE(obj);		/* #JP */
+
 	return res;
 }
 
@@ -310,6 +314,7 @@ static void compiled_free( EC_OBJ obj )
 	EC_COMPILEDNAME(obj)     = EC_NIL;
 	EC_COMPILEDISMETHOD(obj) = FALSE;
 	EC_COMPILEDINFO(obj)     = EC_NIL;
+	EC_COMPILEDCCALLABLE(obj) = NULL;							/* #JP */
 
 	ec_free( EC_COMPILED(obj) );
 	EC_COMPILED(obj) = NULL;

@@ -1,3 +1,9 @@
+2003-05-29  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/compile2c* src/ec2c.c: integrated preliminary elastiC to C
+	compiler support written by Jacopo Pantaleoni
+	<jp@lightflowtech.com> (my brother)
+
 2003-04-01  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/interp.c (EcExecute): fixed arithmetic and, or, xor

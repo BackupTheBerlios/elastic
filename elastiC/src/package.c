@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec  5 15:08:45 MET 1998
  *
- *   $Id: package.c,v 1.4 2002/06/14 10:55:37 panta Exp $
+ *   $Id: package.c,v 1.5 2003/05/29 10:36:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -441,7 +441,8 @@ static EcInt _ec_package_get_public( EC_OBJ package, EcUInt sym )
 	for (i = 0; i < EC_PACKAGENEXPORT(package); i++)
 	{
 		if (EC_PACKAGEEXPORT(package)[i].sym == sym)
-			return i;
+			return EC_PACKAGEEXPORT(package)[i].pos;			/* #JP bug fixed: it returned `i' */
+			/* return i; */
 	}
 
 	return -1;

@@ -72,7 +72,7 @@
 #define CNF_EXECPREFIX		"${prefix}"
 #define CNF_BINDIR			"${exec_prefix}/bin"
 #define CNF_LIBS			"-ldl -lm "
-#define CNF_CFLAGS			"-Wall -Winline -Wstrict-prototypes -Wno-protocols -D_GNU_SOURCE -I${top_builddir} -g -O0 -DWITH_STDIO -DEC_DEBUG"
+#define CNF_CFLAGS			"-Wall -Winline -Wstrict-prototypes -Wno-protocols -D_GNU_SOURCE -I${top_builddir} -g -O0 -DWITH_STDIO -DEC_COMPILE2C -DEC_DEBUG"
 #define CNF_CC				"gcc"
 
 #define EC_PLATFORM_ALIGNMENT	8

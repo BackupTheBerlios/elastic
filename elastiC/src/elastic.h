@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.9 2002/06/14 10:55:37 panta Exp $
+ *   $Id: elastic.h,v 1.10 2003/05/29 10:36:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -59,6 +59,9 @@
 #include <elastic/file.h>
 #endif
 #include <elastic/hash.h>
+#if EC_COMPILE2C
+#include <elastic/compile2c.h>
+#endif
 #include <elastic/stream_t.h>									/* elastiC language-level stream type */
 #include <elastic/filestream.h>									/* C level filestream support and elastiC filestream module */
 

@@ -1,3 +1,17 @@
+Overview of Changes in elastiC 0.0.38:
+
+* Added an elastiC to C compiler written by my brother Jacopo
+  (jp@lightflowtech.com). Preliminary and experimental right
+  now, but it's very promising.
+
+* Added a Generic I/O mechanism (streams).
+
+* New `posix' module.
+
+* Various improvements.
+
+* Some bugs fixed.
+
 Overview of Changes in elastiC 0.0.37:
 
 * win32 Visual C++ 6 support (VC 7 in progress) (thanks to George McBay)

@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.3 2003/04/01 09:21:53 panta Exp $
+ *   $Id: interp.c,v 1.4 2003/05/29 10:36:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -536,6 +536,11 @@ EC_API EC_OBJ EcExecute( EC_OBJ self, EC_OBJ at_class, EC_OBJ compiled, EC_OBJ s
 
 	lprivate = &_ec_private;
 
+#if EC_COMPILE2C
+	if (EC_COMPILEDCCALLABLE(compiled))							/* Check for a C-callable #JP */
+		return EC_COMPILEDCCALLABLE(compiled)( self, at_class, compiled, stack );
+#endif
+
 	/* First-time initialization */
 	code   = EC_COMPILEDCODE(compiled);
 	ncode  = EC_COMPILEDNCODE(compiled);
@@ -1020,6 +1025,43 @@ restart:
 
 /*				DMP("CallOP", frame, obj);*/
 
+#if EC_COMPILE2C
+				if (EC_COMPILEDCCALLABLE(obj))					/* Check for a C-callable #JP */
+				{
+					/* LPRIVATE(rt.compiled) = compiled; ??? #MP */
+
+					ret = EC_COMPILEDCCALLABLE(obj)( self, at_class, obj, frame );
+					if (EC_ERRORP(ret)) goto on_error;
+
+					/* #MP Why are we decrementing refernces to the current stack? */
+#if EC_STACK_RECYCLE
+					/* RECYCLE_STACK_PUT(stack); */
+					EC_STACKREF_DEC(stack);						/* this should force a recycle if needed */
+#endif
+					EC_STACKPUSH( stack, ret );
+				}
+				else
+				{
+					compiled = obj;
+					stack    = frame;
+					LPRIVATE(rt.compiled) = compiled;
+
+					code   = EC_COMPILEDCODE(compiled);
+					ncode  = EC_COMPILEDNCODE(compiled);
+					lframe = EC_COMPILEDLFRAME(compiled);
+					codepc  = code;
+					codeend = code + ncode;
+
+					BACKTRACE( stack, compiled );
+#if defined(WITH_STDIO) && TRACE_EXECUTION
+					printf("\n");
+					EcDumpCompiled( compiled, codepc - code );
+					printf("\n");
+					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+#endif
+					/* fprintf(stderr, "Restarting cycle\n"); fflush(stderr); */
+				}
+#else  /* !EC_COMPILE2C */
 				compiled = obj;
 				stack    = frame;
 				LPRIVATE(rt.compiled) = compiled;
@@ -1038,6 +1080,7 @@ restart:
 				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 				/* fprintf(stderr, "Restarting cycle\n"); fflush(stderr); */
+#endif /* end of !EC_COMPILE2C */
 			}
 			continue;
 
@@ -1292,6 +1335,44 @@ restart:
 				EC_STACKBP(frame)      = EC_STACKBASE(frame) + 1 + 2 + nargs + EC_COMPILEDVARG(obj1);
 				EC_STACKPOINTER(frame) = EC_STACKBP(frame) + EC_COMPILEDNLOC(obj1);
 
+#if EC_COMPILE2C
+				if (EC_COMPILEDCCALLABLE(obj1))					/* Check for a C-callable #JP */
+				{
+					/* LPRIVATE(rt.compiled) = compiled; ??? #MP */
+
+					ret = EC_COMPILEDCCALLABLE(obj1)( obj, receiver_class, obj1, frame );
+					if (EC_ERRORP(ret)) goto on_error;
+
+					/* #MP Why are we decrementing refernces to the current stack? */
+#if EC_STACK_RECYCLE
+					/* RECYCLE_STACK_PUT(stack); */
+					EC_STACKREF_DEC(stack);						/* this should force a recycle if needed */
+#endif
+					EC_STACKPUSH( stack, ret );
+				}
+				else
+				{
+					compiled = obj1;
+					stack    = frame;
+					LPRIVATE(rt.compiled) = compiled;
+
+					self     = obj;
+					at_class = receiver_class;
+					code   = EC_COMPILEDCODE(compiled);
+					ncode  = EC_COMPILEDNCODE(compiled);
+					lframe = EC_COMPILEDLFRAME(compiled);
+					codepc  = code;
+					codeend = code + ncode;
+
+					BACKTRACE( stack, compiled );
+#if defined(WITH_STDIO) && TRACE_EXECUTION
+					printf("\n");
+					EcDumpCompiled( compiled, codepc - code );
+					printf("\n");
+					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+#endif
+				}
+#else /* !EC_COMPILE2C */
 				compiled = obj1;
 				stack    = frame;
 				LPRIVATE(rt.compiled) = compiled;
@@ -1311,6 +1392,7 @@ restart:
 				printf("\n");
 				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
+#endif /* end of !EC_COMPILE2C */
 			}
 			continue;
 
@@ -1515,6 +1597,44 @@ restart:
 				EC_STACKBP(frame)      = EC_STACKBASE(frame) + 1 + 2 + nargs + EC_COMPILEDVARG(obj1);
 				EC_STACKPOINTER(frame) = EC_STACKBP(frame) + EC_COMPILEDNLOC(obj1);
 
+#if EC_COMPILE2C
+				if (EC_COMPILEDCCALLABLE(obj1))					/* Check for a C-callable #JP */
+				{
+					/* LPRIVATE(rt.compiled) = compiled; ??? #MP */
+
+					ret = EC_COMPILEDCCALLABLE(obj1)( receiver, receiver_class, obj1, frame );
+					if (EC_ERRORP(ret)) goto on_error;
+
+					/* #MP Why are we decrementing refernces to the current stack? */
+#if EC_STACK_RECYCLE
+					/* RECYCLE_STACK_PUT(stack); */
+					EC_STACKREF_DEC(stack);						/* this should force a recycle if needed */
+#endif
+					EC_STACKPUSH( stack, ret );
+				}
+				else
+				{
+					compiled = obj1;
+					stack    = frame;
+					LPRIVATE(rt.compiled) = compiled;
+
+					self     = receiver;
+					at_class = receiver_class;
+					code   = EC_COMPILEDCODE(compiled);
+					ncode  = EC_COMPILEDNCODE(compiled);
+					lframe = EC_COMPILEDLFRAME(compiled);
+					codepc  = code;
+					codeend = code + ncode;
+
+					BACKTRACE( stack, compiled );
+#if defined(WITH_STDIO) && TRACE_EXECUTION
+					printf("\n");
+					EcDumpCompiled( compiled, codepc - code );
+					printf("\n");
+					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+#endif
+				}
+#else /* !EC_COMPILE2C */
 				compiled = obj1;
 				stack    = frame;
 				LPRIVATE(rt.compiled) = compiled;
@@ -1534,6 +1654,7 @@ restart:
 				printf("\n");
 				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
+#endif /* !EC_COMPILE2C */
 			}
 			continue;
 
@@ -1647,6 +1768,42 @@ restart:
 
 /*			DMP("InlinedCallOP", frame, obj);*/
 
+#if EC_COMPILE2C
+			if (EC_COMPILEDCCALLABLE(obj)) /* Check for a C-callable #JP */
+			{
+				/* LPRIVATE(rt.compiled) = compiled; ??? #MP */
+
+				ret = EC_COMPILEDCCALLABLE(obj)( self, at_class, obj, frame );
+				if (EC_ERRORP(ret)) goto on_error;
+
+				/* #MP Why are we decrementing refernces to the current stack? */
+#if EC_STACK_RECYCLE
+				/* RECYCLE_STACK_PUT(stack); */
+				EC_STACKREF_DEC(stack);							/* this should force a recycle if needed */
+#endif
+				EC_STACKPUSH( stack, ret );
+			}
+			else
+			{
+				compiled = obj;
+				stack    = frame;
+				LPRIVATE(rt.compiled) = compiled;
+
+				code   = EC_COMPILEDCODE(compiled);
+				ncode  = EC_COMPILEDNCODE(compiled);
+				lframe = EC_COMPILEDLFRAME(compiled);
+				codepc  = code;
+				codeend = code + ncode;
+
+				BACKTRACE( stack, compiled );
+#if defined(WITH_STDIO) && TRACE_EXECUTION
+				printf("\n");
+				EcDumpCompiled( compiled, codepc - code );
+				printf("\n");
+				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+#endif
+			}
+#else /* !EC_COMPILE2C */
 			compiled = obj;
 			stack    = frame;
 			LPRIVATE(rt.compiled) = compiled;
@@ -1664,6 +1821,7 @@ restart:
 			printf("\n");
 			printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
+#endif /* !EC_COMPILE2C */
 			continue;
 
 		case ReturnOP:
@@ -1729,6 +1887,13 @@ restart:
 			LPRIVATE(rt.compiled) = compiled;
 
 /*			DMP("InlinedReturnOP", stack, compiled);*/
+
+			/* Returning to C code ? */ /* Needed for C-callables... #JP */
+			if (EC_NULLP(compiled))
+			{
+				LPRIVATE(rt.vm_level)--;
+				return ret;
+			}
 
 			code   = EC_COMPILEDCODE(compiled);
 			ncode  = EC_COMPILEDNCODE(compiled);

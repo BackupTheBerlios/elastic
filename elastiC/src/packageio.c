@@ -7,7 +7,7 @@
  *
  *   Created: 
  *
- *   $Id: packageio.c,v 1.4 2002/06/14 10:55:37 panta Exp $
+ *   $Id: packageio.c,v 1.5 2003/05/29 10:36:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -1918,6 +1918,7 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 			EC_COMPILEDNAME(obj)     = name;
 			EC_COMPILEDISMETHOD(obj) = ismethod;
 			EC_COMPILEDINFO(obj)     = info;
+			EC_COMPILEDCCALLABLE(obj) = NULL;
 			break;
 		}
 

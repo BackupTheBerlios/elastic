@@ -1,3 +1,7 @@
+- lframe variable in interp.c seems unused
+
+- check warnings produced by new compilers
+
 - throw an error on wrong argcount to method `new'
 
 - check order of EC_STACKPOP calls in lib.c
