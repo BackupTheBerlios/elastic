@@ -1,0 +1,22 @@
+Before assignment:
+a = 1
+b = @nil
+c = 3
+d = 4
+
+After assignment:
+a = 4
+b = 3
+c = @nil
+d = 1
+
+After 2nd assignment:
+a = 1
+b = @nil
+c = 3
+d = 4
+
+After array assignment:
+a = 6.5
+b = middle
+c = 4

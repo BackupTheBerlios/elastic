@@ -1,0 +1,155 @@
+# Generated automatically from Makefile.in by configure.
+# ==========================================================================
+# Makefile
+# ==========================================================================
+# Makefile for elastiC regression tests.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 17 Jun 1998
+#
+#   $Id: Makefile.original,v 1.1 2002/05/23 21:16:33 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1997-1999 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+.EXPORT_ALL_VARIABLES:
+
+ECPP = ./ecpp.pl
+DIFF = diff
+
+EcSrcSuffixes   = .ec
+SRCS            = $(foreach s,$(EcSrcSuffixes),$(wildcard *$(s)))
+OBJS            = $(addsuffix .ecc,$(addprefix $(OBJDIR),$(basename $(SRCS))))
+
+PRGS            = ecc ec ecdump
+
+#SUBDIRS         = regress
+
+# ------------------------------------------------------------------------
+# C O M P I L A T I O N   F L A G S
+# ------------------------------------------------------------------------
+
+OBJDIR      = obj/
+ELASTICPATH = obj
+
+# ------------------------------------------------------------------------
+# E N V I R O N M E N T
+# ------------------------------------------------------------------------
+
+ifeq (0,${MAKELEVEL})
+TOPDIR    := $(shell pwd)
+whoami    := $(shell whoami)
+host-type := $(shell arch)
+BUILDDIR  := $(TOPDIR)/build
+MAKE      := ${MAKE} host-type=${host-type} whoami=${whoami}
+endif
+
+# ------------------------------------------------------------------------
+# A U T O M A T I C   D E P E N D E N C Y   G E N E R A T I O N
+# ------------------------------------------------------------------------
+
+ifeq (.depend,$(wildcard .depend))
+.PHONY: do_it_all
+do_it_all: all
+include .depend
+else
+CONFIGURATION = depend
+.PHONY: do_it_all
+do_it_all test: depend
+endif
+
+# ------------------------------------------------------------------------
+# A U T O M A T I C   R U L E S
+# ------------------------------------------------------------------------
+
+include $(BUILDDIR)/rules.mk
+
+# ------------------------------------------------------------------------
+# R U L E S
+# ------------------------------------------------------------------------
+
+.PHONY: all
+all: $(OBJS)
+
+.PHONY: testlist
+testlist:
+	@echo $(SRCS) >tests
+	perl -i -p -e 's/([a-zA-Z0-9]+)\.ec\s*/$$1\n/g;' tests
+
+.PHONY: test
+test: all testlist .depend
+	regress.sh
+
+.PHONY: ref
+ref: all testlist
+	regress.sh make
+
+.PHONY: install
+install:
+
+.PHONY: depend
+depend dep .depend:
+	for i in $(SRCS); do $(ECPP) $$i; done >.tmpdepend
+#	perl -i -p -e 's/^(.*?\.ecc:)/obj\/$$1/g;' .tmpdepend
+	perl -i -p -e 's/([^\s]*\.ecc)/obj\/$$1/g;' .tmpdepend
+	$(MV) .tmpdepend .depend
+include .depend
+
+.PHONY: clean
+clean:
+	@$(RM) `find . -name '*.ecc' -print`
+	@$(RM) `find . -name 'core' -print`
+	@$(RM) results/* stderr/*
+
+.PHONY: distclean
+distclean: clean
+	@$(RM) results/* stderr/*
+	@$(RM) Makefile
+
+.PHONY: realclean
+realclean: clean
+	@$(RM) results/* expected/* stderr/*
+	@$(RM) Makefile
+
+ifdef CONFIGURATION
+..$(CONFIGURATION):
+	@echo
+	@echo "You have a bad or nonexistent" .$(CONFIGURATION) ": running 'make" $(CONFIGURATION)"'"
+	@echo
+	$(MAKE) $(CONFIGURATION)
+	@echo
+#	@echo "Successful. Try re-making (ignore the error that follows)"
+	@echo "Successful."
+	@echo
+#	exit 1
+
+dummy: ..$(CONFIGURATION)
+
+else
+
+dummy:
+
+endif
+# DO NOT DELETE

@@ -1,0 +1,247 @@
+# ==========================================================================
+# Makefile
+# ==========================================================================
+# Makefile for elastiC.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 17 Jun 1998
+#
+#   $Id: Makefile.in.original,v 1.1 2002/05/23 21:15:53 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1997-1999 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+.EXPORT_ALL_VARIABLES:
+
+SHELL     = /bin/sh
+MAKE      = make
+CC        = @CC@
+CPP       = @CPP@ $(INCFLAGS)
+AR        = ar
+RANLIB    = @RANLIB@
+#YACC      = byacc
+YACC      = bison
+LEX       = flex
+SDF       = sdf
+STRIP     = strip
+CP        = cp
+RM        = rm -f
+MV        = mv
+CAT       = cat
+INSTALL   = @INSTALL@
+
+prefix      = @prefix@
+exec_prefix = @exec_prefix@
+
+bindir         = @bindir@
+sbindir        = @sbindir@
+libexecdir     = @libexecdir@
+datadir        = @datadir@
+sysconfdir     = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir  = @localstatedir@
+libdir         = @libdir@
+infodir        = @infodir@
+mandir         = @mandir@
+includedir     = @includedir@
+oldincludedir  = /usr/include
+
+SUBDIRS   = doc src
+
+# Built programs
+EC       = $(TOPDIR)/src/ec
+ECC      = $(TOPDIR)/src/ecc
+ECDUMP   = $(TOPDIR)/src/ecdump
+ECLIB    = $(TOPDIR)/src/libelastiC.a
+
+# ------------------------------------------------------------------------
+# C O M P I L A T I O N   F L A G S
+# ------------------------------------------------------------------------
+
+# Symbols used for using shared libraries
+SO               = @SO@
+LDSHARED         = @LDSHARED@
+CCSHARED         = @CCSHARED@
+CXXSHARED        = @LDSHARED@
+LINKFORSHARED    = @LINKFORSHARED@
+
+# This is used for building shared libraries with a number of C++ 
+# compilers.   If it doesn't work,  comment it out.
+CXXSHARED        = @CXX@ -shared
+
+
+WITH_DEBUG       = @WITH_DEBUG@
+WITH_MEMDEBUG    = @WITH_MEMDEBUG@
+WITH_PROFILE     = @WITH_PROFILE@
+WITH_BPROFILE    = @WITH_BPROFILE@
+WITH_PENTIUM     = @WITH_PENTIUM@
+WITH_PENTIUMEGCS = @WITH_PENTIUMEGCS@
+
+ifeq ($(WITH_PROFILE),yes)
+PROFILE = -pg
+endif
+
+ifeq ($(WITH_BPROFILE),yes)
+PROFILE    = 
+CDEBUG     = -g
+PROFILEOBJ = /usr/local/lib/bmon.o
+endif
+
+ifeq ($(WITH_DEBUG),yes)
+CDEBUG = -g -DEC_DEBUG
+endif
+
+BASIC_CFLAGS = -Wall -Winline -Wstrict-prototypes -Wno-protocols 
+CFLAGS       = @CFLAGS@
+
+ifeq ($(CC),gcc)
+ADD_CFLAGS   = -D_GNU_SOURCE
+else
+ADD_CFLAGS   =
+endif
+
+ifdef CDEBUG
+
+# DEBUG
+
+CFLAGS = -O0
+OBJDIR = objdbg/
+
+else
+
+# NO DEBUG
+
+ifeq ($(WITH_PENTIUM),yes)
+CFLAGS = -s -O3 -m486 -malign-jumps=2 -malign-loops=2 -malign-functions=2
+endif
+
+ifeq ($(WITH_PENTIUMEGCS),yes)
+CFLAGS = -s -O6 -mcpu=pentium -march=pentium -mpentium -malign-jumps=2 -malign-loops=2 -malign-functions=2
+endif
+
+OBJDIR = obj/
+
+endif
+
+INC_FLAGS      = -I. -I$(TOPDIR) -I- -I$(TOPDIR) -I.
+ALL_CFLAGS     = $(INC_FLAGS) $(BASIC_CFLAGS) $(CFLAGS) $(CDEBUG) $(PROFILE) $(ADD_CFLAGS)
+YACCFLAGS      = -v -d
+LEXFLAGS       = -8
+ARFLAGS        = rvs
+LIBS           = @LIBS@
+
+GTK_CFLAGS     = @GTK_CFLAGS@
+GTK_LIBS       = @GTK_LIBS@
+GTK_LDFLAGS    = @GTK_LDFLAGS@
+
+ALL_GTK_CFLAGS = $(INC_FLAGS) $(BASIC_FLAGS) $(GTK_CFLAGS) $(CDEBUG) $(PROFILE) $(ADD_CFLAGS)
+
+SDFFLAGS       = -v
+
+#
+# Directories
+#
+
+# ------------------------------------------------------------------------
+# E N V I R O N M E N T
+# ------------------------------------------------------------------------
+
+ifeq (0,${MAKELEVEL})
+TOPDIR    := $(shell pwd)
+whoami    := $(shell whoami)
+host-type := $(shell arch)
+BUILDDIR  := $(TOPDIR)/build
+MAKE      := ${MAKE} host-type=${host-type} whoami=${whoami}
+endif
+
+# ------------------------------------------------------------------------
+# A U T O M A T I C   R U L E S
+# ------------------------------------------------------------------------
+
+include $(BUILDDIR)/rules.mk
+
+# ------------------------------------------------------------------------
+# R U L E S
+# ------------------------------------------------------------------------
+
+.PHONY: all
+all:
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i; done
+endif
+	@echo "Compilation complete."
+	@echo "Type 'make install' to install."
+
+.PHONY: install
+install:
+	@echo "Installing elastiC."
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i install; done
+endif
+	@echo "Installation completed."
+
+.PHONY: clean
+clean:
+	@$(RM) `find . -name '*.[os]' -print`
+	@$(RM) `find . -name 'core' -print`
+	@$(RM) gmon.out bmon.out
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i clean; done
+endif
+
+.PHONY: distclean
+distclean: clean
+	@$(RM) config.h cnf.h *.status *.log *.cache Makefile
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i distclean; done
+endif
+
+.PHONY: realclean
+realclean: clean
+	@$(RM) config.h cnf.h configure *.status *.log *.cache Makefile
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i realclean; done
+endif
+
+.PHONY: test
+test:
+	$(MAKE) TOPDIR=${TOPDIR} -C src/regress test
+
+.PHONY: ref
+ref:
+	$(MAKE) TOPDIR=${TOPDIR} -C src/regress ref
+
+.PHONY: depend
+depend dep:
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i depend; done
+endif
+
+.PHONY: doc
+doc:
+	@echo "Building documentation for the elastiC system."
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i doc; done
+endif

@@ -1,0 +1,780 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC quick reference manual
+#
+# >>Copyright::
+#    Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastiC"
+!define DOC_TYPE           "- elastiC quick reference"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: Description
+
+B<elastiC> is a very high level language (VHLL) aimed at the ease
+of development of large systems. It has a simple syntax, similar
+to that of the C language, so it should be very easy to learn. On the
+other side it introduces many extremely powerful features, such as:
+
+* automatic memory management with real, fast, Garbage Collection
+
+* dynamic typing
+
+* lexical scoping and first class functions, to allow full
+functional programming
+
+* many useful types: dynamic arrays, dictionaries, symbols,
+strings, ...
+
+* OOP support (styled after Smalltalk object model)
+
+* pervasive exception handling support
+
+* easy C extensibility (it's possible to add functions, classes,
+methods, packages, ...)
+
+* hierarchical namespaces
+
+* easily embeddable in larger C programs as a library
+
+* portable bytecode compilation & interpretation
+
+B<elastiC> also comes with configuration files for an elastiC emacs
+mode (with font-lock support) and an elastiC JED mode.
+
+This manual is not a complete reference document, but rather a quick
+reference.
+
+# ========================================================================
+# Chapter 1: Language
+# ------------------------------------------------------------------------
+H1: Language
+
+H2: General Syntax Rules
+
+* The syntax is inspired by the C language.
+
+* elastiC programs are defined in B<modules> (also called B<packages>).
+
+* elastiC programs are sequences of declarations, definitions,
+statements and expressions.
+
+H2: Comments
+
+C style comments:
+
+>  /*
+>   ...
+>   ... commented region
+>   ...
+>   */
+
+C++ style comments:
+
+> // commented region
+
+H2: Reserved words
+
+>  break        catch           class           continue        do              else
+>  extends      for             from            function        goto            if
+>  import       in              local           method          package         private
+>  public       return          static          super           throw           try
+>  while
+
+H2: Fundamental Types
+
+Basic types are I<integers>, I<floats> (floating point numbers), I<booleans>,
+I<characters>, I<strings>, I<symbols>, I<arrays>, I<hashes>,
+I<classes>, I<objects> (class instances), I<packages>, I<bytecode>,
+I<stacks>, I<primitive functions>, I<primitive methods>, I<handlers>.
+The last four constitute a very advanced topic and can be ignored by
+the casual elastiC user.
+
+The special value B<@nil> can be used as a I<null value> (for example
+to specify that no value is available).
+
+There are also the special types I<undefined>, I<error>, which have
+only one object instantiated. The I<undefined> object is contained in
+uninitialized variables and it produces an error when referenced. The
+I<error> object is returned by primitive functions to alert the
+interpreter that an exception is pending. These types however are of
+interest only to the extension writer and not to the casual elastiC user.
+
+In the remaining part of this section we'll give details on the single
+types and show some examples of constant values of these types.
+
+P3: Null value
+
+The null value doesn't have a type, but it is a very important value
+anyway.
+
+>  @nil
+
+P3: Integers
+
+>  12345        0x3039 (hex)    030071 (octal)
+
+P3: Floats
+
+>  123.45       123.            1.2345e2        1.2345e+2
+
+P3: Booleans
+
+>  @true
+>  @false
+
+In expressions expecting a logical value, all values are considered
+equivalent to {{EX:@true}} with the exception of {{EX:@nil}},
+{{EX:@false}}, and the integer {{EX:0}}
+
+P3: Characters
+
+>  'a' 'b' ...  Common characters 
+>  '\\'         \   - Backslash            (ASCII 92)
+>  '\n'         LF  - Linefeed             (ASCII 10)
+>  '\t'         HT  - Tab                  (ASCII 9)
+>  '\b'         BS  - Backspace            (ASCII 8)
+>  '\r'         CR  - Carriage Return      (ASCII 13)
+>  '\f'         FF  - Feed Forward         (ASCII 12)
+>  '\v'         VT  - Vertical Tab         (ASCII 11)
+>  '\a'         BEL - Bell                 (ASCII 7)
+>  '\?'         ?   - Question mark "?"    (ASCII 63)
+>  '\''         '   - Single Quote "'"     (ASCII 39)
+>  '\0'         NUL - NUL                  (ASCII 0)
+
+P3: Strings
+
+>  "abc"
+>  "This is a string"
+>  "A string with \"quotes\" too !"
+
+All the escape sequences supported by characters are available for
+strings too.
+
+P3: Symbols
+
+>  #asymbol
+>  #thisIsAnotherSymbol
+>  'anotherSymbol
+
+Symbols are translated to integers during the compilation of the
+source program, and from that point on they are always handled as
+integers. For this reason symbols are very fast and require very
+little memory if compared to strings.
+There are also library function to convert from symbols to strings
+and vice versa.
+Symbols are used as symbolic constants (like enumerations in the C
+language).
+
+P3: Arrays
+
+Arrays are ordered sequences of values.
+They can be indexed with an integer.
+Arrays can be nested, and can be initialized with non-constant
+expressions too.
+
+>  #[1, 2, 3, 4.0, 'a', "A String", #aSymbol]
+>  #[1, 3, 5, #['a', 'b', 'c'], 3 + 4, 11]
+
+P4: Array indexing
+
+>  a = #["Paris", "Rome", "Washington", "Madrid"]
+
+{{EX:  a[0]}} will give the value {{EX:"Paris"}}
+
+{{EX:  a[1]}} will give the value {{EX:"Rome"}}
+
+{{EX:  a[-1]}} will give the value {{EX:"Madrid"}}
+
+{{EX:  a[-4]}} will give the value {{EX:"Paris"}}
+
+P3: Hashes
+
+Hashes are also known as dictionaries, or tables. They associate
+values to a key. These keys can then be used later for value
+retrieval or to memorize a different value.
+
+>  %["key 1", "value 1", "key 2", "value 2"]
+
+>  %["key 1", 1,
+>    "key 2", 2,
+>    #key3,   3]
+
+>  %[1,           5,
+>    "abc",       6.6,
+>    3.4,         "ok",
+>    #[1, 2, 3],  "cool"]
+
+P4: Hash indexing
+
+>  a = %[1,           5,
+>        "abc",       6.6,
+>        3.4,         "ok",
+>        #[1, 2, 3],  "cool"]
+
+{{EX:  a[1]}} will give the value {{EX:5}}
+
+{{EX:  a["abc"]}} will give the value {{EX:6.6}}
+
+{{EX:  a[3.4]}} will give the value {{EX:"ok"}}
+
+{{EX:  a[#[1, 2, 3]]}} will give the value {{EX:"cool"}}
+
+P3: Classes and objects
+
+Classes and class instances (objects) will be explained in a
+subsequent section of this document.
+
+> public class MyClass extends basic.Object
+> {
+>     local  an_instance_variable;
+>     static a_class_variable;
+>
+>     method a_normal_method()
+>     {
+>         basic.print( an_instance_variable );
+>     }
+>
+>     class method a_class_method()
+>     {
+>         basic.print( a_class_variable );
+>     }
+> }
+>
+> local anObject = [MyClass new];
+> [anObject a_normal_method];
+> [MyClass a_class_method];
+
+P3: Packages (modules)
+
+Packages are the basic compilation unit in elastiC.
+The compiler reads the source of a package, producing a bytecode
+compiled version, suitable for execution by the interpreter.
+A package can I<import> other packages to reference variables,
+functions and classes therein contained.
+
+> package mypackage;
+>
+> import basic;
+>
+> basic.print( "Hello world !" );
+
+P3: Bytecode
+
+elastiC compiles source code into a special virtual machine sequence of
+instructions called I<bytecodes>. Modules, functions, classes are all
+compiled into bytecode. These compiled objects are values as well as
+integers or strings, and can be manipulated in almost the same ways:
+they can be memorized in variables, passed to functions, and so on.
+
+For examples the following two pieces of code, defining a function,
+are equivalent:
+
+>  public function add(a, b)
+>  {
+>      return a + b;
+>  }
+>
+>  private v = add(3, 5);
+
+and
+
+>  public add;
+>
+>  add = function (a, b)
+>  {
+>      return a + b;
+>  };
+>
+>  private v = add(3, 5);
+
+P3: Stacks, primtive functions and methods, handlers
+
+These are of interest only to C extension writers and to (very)
+advanced elastiC users.
+
+H2: Expressions
+
+Expression are syntactical units producing values.
+A formal definition of expressions in elastiC would require the
+description of a complex grammar, but simply speaking expressions can
+be constant values or combinations of operations on simpler
+expressions. Operations are identified by I<operators> and I<operands>
+(operands are the arguments of the operator, and are expressions
+again). Expressions can be grouped with parenthesis.
+
+We've already seen constant values when speaking about fundamental
+types (to be more precise, array and hash construction construction in
+the above examples are actually examples of expressions).
+
+H3: Operators
+
+P4: Array and hash construction operators
+
+The {{EX:#[...]}} syntax we've already encountered is the array
+construction operator. Similarly the {{EX:%[...]}} is the hash
+construction operators.
+
+P4: Arithmetic operators
+
+Arithmetic unary operators are the unary '+' and '-'.
+
+>  +5
+>  -4.6
+
+Arithmentic binary operators are '+', '-', '*', '/', '%' (modulus), '**' (pow).
+
+>  3 + 4
+>  "string " + "concatenation"
+>
+>  2 - 1.5
+>
+>  4.1 * 2
+>
+>  8.0 / 2.0
+>
+>  9 % 2
+>
+>  2 ** 3
+
+The arithmetic operators have the expected precedence relations and
+group from left to right.
+
+P4: Relational and equality operators
+
+Relational operators are: '<', '<=', '>', '>='
+
+Equality operators are: '==' (equality), '!=' (inequality)
+
+Equality operators have lower priority than relational ones.
+
+P4: Bit-wise logical operators
+
+Bit-wise logical operators are: '&' (arithmetic and), '|' (arithmetic
+or), '^' (arithmetic xor), '<<' (left shift), '>>' (right shift), '~'
+(one complement).
+
+P4: Logical operators
+
+Logical operators are: '&&' (logical and), '||' (logical or)
+
+Logical operators are I<short-circuited>: the evaluation stops as
+soon as possible, without evaluating operands where not needed.
+For example, in:
+
+>  @false && myfunction()
+
+the function {{EX:myfunction}} won't be called.
+
+P4: Assignment operators
+
+The assignment operator '=' assign the value on the right to the name
+(variable) on the left.
+Moreover, binary operators have a corresponding assignment operator
+form. If I<OP> is one of this operators, then the form:
+
+{{EX:  e1  I<OP>=  e2}}
+
+is equivalent to:
+
+{{EX:  e1  =  e1  I<OP>  e2}}
+
+P4: Increment and decrement operators
+
+Increment and decrement operators are respectively '++' and '--', and
+can be either I<prefix> or I<postfix>.
+These operators can applied to an expression that could stay at the
+left of an assignment expression (said I<l-value>).
+They perform an increment or decrement operation on the
+expression. The value of the expression is returned after the
+operation has been performed for the prefix form, and before the
+modification for the postfix form.
+
+After the execution of the statements:
+
+>  a = 5;
+>  b = ++a;
+
+The following conditions will hold:
+
+>  a == 6
+>  b == 6
+
+While, after:
+
+>  a = 5;
+>  b = a++;
+
+we'll have:
+
+>  a == 6
+>  b == 5
+
+P4: Conditional operator
+
+The conditional operator (also known as ternary operator) takes the
+form:
+
+>  e1 ? e2 : e3
+
+The expression {{EX:e1}} is evaluated. If it produces a non-false
+value, then the {{EX:e2}} is evaluated and returned as the global
+result value, otherwise {{EX:e3}} is evaluated and returned as the
+global result value.
+
+P4: Sequence operators
+
+The operator {{EX:in}} can be used to the the membership of a value to
+a collection such as an array (or user-defined class instances with
+support for sequence operations).
+
+>  "red" in #[1, 2, "green", "yellow", "red"]
+
+will return {{EX:@true}}
+
+P4: Function call
+
+The function call is a valid expression. The syntax is:
+
+{{EX:  I<function>(I<argument-list>)}}
+
+where I<argument-list> is a (possibly empty) comma separated list of
+expressions and I<function> is an expression returning a callable
+bytecode object (usually created with the B<function> statement).
+
+P4: Method call
+
+The method call is a valid expression. The allowed syntactical forms
+are:
+
+{{EX:  [I<object> I<methodname> I<argument-list>]}}
+
+{{EX:  [I<object> I<keyword-argument-list>]}}
+
+
+{{EX:  [B<super> I<methodname> I<argument-list>]}}
+
+{{EX:  [B<super> I<keyword-argument-list>]}}
+
+In the first two forms, I<object> is an expression returning a class
+instance or a class. I<methodname> is a name identifying a method in
+the class of the called object.
+I<argument-list> is a (possibly empty) comma separated list of
+expressions.
+I<keyword-argument-list> is sytactic form that specifies both the
+method name and its arguments. For example, in:
+
+>  [anObject moveToX: 5 andY: 6]
+
+the method name is {{EX:moveToX:andY:}} and the arguments are {{EX:5}}
+and {{EX:6}}.
+
+The B<super> keyword must be explained after some concepts of OOP have
+been introduced.
+
+H3: Function definition
+
+Another kind of expression is the I<function definition>.
+As its name implies it produces a new function, returning a callable
+bytecode object, that can be used with the I<function call> defined
+above.
+
+XXX TODO
+
+H2: Statements
+
+As we've seen, elastiC programs are sequences of declarations,
+definitions, statements and expressions. Of these, roughly speaking,
+statements are the basic units of the language producing effects
+during the execution of the program.
+
+Expressions can become statements when followed by a semicolon ';'.
+For example:
+
+>  a = 5;
+
+is an statement composed by an assignment expression.
+
+H3: Blocks
+
+Blocks are groups of statements to be executed in sequence. A block
+constitutes a I<compound statement>. Blocks can be placed wherever a
+simple statement would be considered legal.
+The syntax of a block is:
+
+>  {
+>      statement-1
+>      ...
+>      statement-N
+>  }
+
+Blocks can be nested.
+
+H3: Control statements
+
+P4: Selection statements
+
+P4: Looping statements
+
+H2: Functions
+
+P3: Function definition
+
+P3: Function invocation
+
+H2: Variables
+
+elastiC makes a strong distinction between B<values> and
+B<variables>. Variables are essentially locations in memory,
+identified by a name, where the address of a value can be stored.
+Note that a variable contains the I<address> of a value, not the value
+itself ! This implies that a value can be referenced by more than one
+variable.
+elastiC variables are not typed: a variable can contain a value of any
+type. Stated differently:
+
+B<in elastiC type is a characteristic of values, not variables>
+
+This said, in elastiC we can have different kind of variables:
+
+* package variables
+
+* function / method variables
+
+* Variables introduced in classes
+
+When declared, variables can be also be initialized.
+
+P3: Package variables
+
+Package variables are the ones declared at the top level of a package,
+and are visible in the package starting from the point where they are
+introduced.
+They can be of two kinds: B<public> or B<private> (for package
+variables, B<local> is a synonym for B<private>).
+Private variables are local to this module and cannot be accessed from
+the outside.
+Public variables are visible from other modules through I<importing>
+and I<qualification>.
+
+>  package testpackage;
+>
+>  public var1;
+>  public var2 = 5;
+>
+>  private var3;
+>  private var4 = 1;
+
+Note: function names are variables. The syntax to introduce a named
+function is only a shorthand for the sequence of variable declaration,
+and assignment of the function to the variable (as already mentioned
+above, functions are first-class objects, like all other values).
+
+P3: Function and method variables
+
+Variables defined inside function and method bodies are visible
+only there and from the point where they are introduced.
+There are two kinds of these variables: B<local> and B<static>.
+Local variables exist only during the execution of the function or
+method where they have been introduced (but see B<lexical scoping>
+below for a noteworthy exception) and don't retain the value across
+successive calls.
+Static variables work in the same way as local ones except that they
+retain their value across successive calls. Initialization for static
+variables is performed only once, during the first invocation of their
+enclosing function/method.
+
+>    function localexample()
+>    {
+>        local v = 5;          // a local variable
+>
+>        v = v + 1;
+>        basic.print( v, '\n' );
+>    }
+>
+>    localexample();
+>    localexample();
+>    localexample();
+
+will produce the output:
+
+>    6
+>    6
+>    6
+
+N:While:
+
+>    function staticexample()
+>    {
+>        static v = 5;          // a static variable
+>
+>        v = v + 1;
+>        basic.print( v, '\n' );
+>    }
+>
+>    staticexample();
+>    staticexample();
+>    staticexample();
+
+will produce the output:
+
+>    6
+>    7
+>    8
+
+
+P3: Variables introduced in classes
+
+Also said class-introduced, or class-scoped, are not to be
+confused with class variables (which are a only subset of
+class-introduced variables).
+Variables introduced inside class declarations are visible only inside
+the class body.
+There are two kind of these variables: B<instance> variables and
+B<class> variables.
+
+Instance variables are introduced with the keyword B<local>: every
+class instance (B<object> in the narrower acception) has its own
+set of private members identified by instance variables. Instance
+variables can be referenced only from methods.
+
+Class variables are introduced with the keyword B<static> and they
+introduce members common to every instance of the class: they are a
+property of the entire class and not of the single instances.
+Class variables can be referenced from normal methods and from class
+methods.
+
+H2: Lexical scoping
+
+elastiC is a lexically scoped language.
+XXX TODO
+
+H2: Object Oriented Programming
+
+P3: Class definition
+
+P3: Method definition
+
+P3: Method invocation
+
+H2: Defining a Module
+
+H2: Closures
+
+H2: Exceptions
+
+# ========================================================================
+# Chapter 2: Standard Library
+# ------------------------------------------------------------------------
+H1: Standard Library
+
+H2: {{EX:basic}} module
+
+H2: {{EX:sys}} module
+
+H2: {{EX:math}} module
+
+H2: {{EX:string}} module
+
+H2: {{EX:list}} module
+
+H2: {{EX:array}} module
+
+H2: {{EX:re}} module
+
+# ========================================================================
+# Chapter 3: Tools
+# ------------------------------------------------------------------------
+H1: Tools
+
+H2: The {{EX:ec}} interpreter
+
+H2: The {{EX:ecc}} compiler
+
+H2: The {{EX:ecdump}} bytecode disassembler
+
+# ========================================================================
+# Chapter 4: Final Considerations
+# ------------------------------------------------------------------------
+H1: Final Considerations
+
+H1: See Also
+
+L<ec(1)>: for the elastiC interpreter
+
+L<ecc(1)>: for the elastiC compiler
+
+L<ecdump(1)>: for the bytecode disassembler
+
+{{N[id='cox86'][Cox86]}}: Brad J. Cox, I<Object Oriented Programmingm An Evolutionary
+Approach>, Productivity Products International, Inc.
+
+H1: Author
+
+[[EC_AUTHOR]]
+
+H1: Credits
+
+I wish to thank the following people:
+
+B.W. Kernighan, D.M. Ritchie, K. Thompson, R. Pike, for giving us the
+C programming language and Unix.
+
+L. Torvalds and the other kernel hackers, for letting us common mortals
+to use a real operating system.
+
+Bill, for letting us to demonstrate how much superior Unix is.
+
+And all the others, that I can't cite in a manual page.
+
+H1: Copyright
+
+Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
+
+The contents of this file are subject to the elastiC License version 1.0
+(the "elastiC License"); you may not use this file except in compliance
+with the elastiC License. You may obtain a copy of the elastiC License at
+http://www.elasticworld.org/LICENSE
+
+IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+See the elastiC License for the specific language governing rights and
+limitations under the elastiC License.

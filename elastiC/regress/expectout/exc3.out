@@ -1,0 +1,11 @@
+*** Exception return test ***
+A1
+B1
+BT
+5
+A1
+B1
+BT
+MEMORY INIT
+BC3
+7

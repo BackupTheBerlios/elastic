@@ -1,0 +1,21 @@
+--- /usr/share/jed/lib/site.sl	Sat Mar 11 16:37:42 2000
++++ /usr/local/share/jed/lib/site.sl	Thu Mar 29 12:56:02 2001
+@@ -593,6 +593,7 @@
+ 	    "verilog_mode",		"verilog",
+ 	    "tcl_mode",			"tclmode",
+ 	    "hook_add_hook",		"hooks",
++	    "elastic_mode",		"elastic",
+ 
+ %%
+ %% By default, tabs are every TAB columns (default 8).  Calling this function
+@@ -1464,8 +1465,8 @@
+    0;
+ }
+ 
+-variable Mode_List_Exts = "c,h,cc,cpp,hpp,sl,txt,doc,tex,f,for,pro,idl,1,pl,v,verilog,vhd,vhdl,vt,sp,cir,spice,ps,py,cxx,tcl";
+-variable Mode_List_Modes = "c,c,c,c,c,slang,text,text,tex,fortran,fortran,idl,idl,nroff,perl,verilog,verilog,vhdl,vhdl,vhdl,spice,spice,spice,ps,python,c,tcl";
++variable Mode_List_Exts = "c,h,cc,cpp,hpp,sl,txt,doc,tex,f,for,pro,idl,1,pl,v,verilog,vhd,vhdl,vt,sp,cir,spice,ps,py,cxx,tcl,ec";
++variable Mode_List_Modes = "c,c,c,c,c,slang,text,text,tex,fortran,fortran,idl,idl,nroff,perl,verilog,verilog,vhdl,vhdl,vhdl,spice,spice,spice,ps,python,c,tcl,elastic";
+ 
+ #ifdef MSDOS OS2 IBMPC_SYSTEM
+ Mode_List_Exts += ",rc,bat,htm";     %  resource file

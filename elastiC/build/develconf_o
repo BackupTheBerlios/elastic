@@ -1,0 +1,12 @@
+#!/bin/sh
+
+for d in . .. ../.. ; do
+    if [ -f $d/configure ] ; then
+	topdir=$d;
+	break;
+    fi
+done
+
+configdir=${topdir}
+
+${configdir}/configure --enable-devel=yes --enable-debug=no --enable-static=yes --disable-shared --enable-pentium=gcc --prefix ${HOME}/usrlocal

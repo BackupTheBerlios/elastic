@@ -1,0 +1,4 @@
+ParameterCountError - DONE
+CompileError
+TargetError         - DONE
+CallError       - when calling non-callable objects

@@ -1,0 +1,25 @@
+/* tsize.h.in */
+
+/* The number of bytes in a char.  */
+#undef SIZEOF_CHAR
+
+/* The number of bytes in a double.  */
+#undef SIZEOF_DOUBLE
+
+/* The number of bytes in a float.  */
+#undef SIZEOF_FLOAT
+
+/* The number of bytes in a int.  */
+#undef SIZEOF_INT
+
+/* The number of bytes in a long.  */
+#undef SIZEOF_LONG
+
+/* The number of bytes in a short.  */
+#undef SIZEOF_SHORT
+
+/* The number of bytes in a unsigned char.  */
+#undef SIZEOF_UNSIGNED_CHAR
+
+/* The number of bytes in a void *.  */
+#undef SIZEOF_VOID_P

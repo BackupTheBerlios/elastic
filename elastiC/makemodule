@@ -1,0 +1,175 @@
+#!/bin/sh
+#
+# ==========================================================================
+# makemodule
+# ==========================================================================
+# A script to build dynamically loadable shared modules for elastiC.
+# Takes care of architecture differences.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 20 Feb 2000
+#
+#   $Id: makemodule,v 1.1 2002/05/23 21:15:52 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+
+# ========================================================================
+#
+# M A I N
+#
+# ========================================================================
+
+usage="\
+Usage: makemodule [-h] [--help]
+    [-c elastic-config] [--config=elastic-config]
+    [--def=inputdef] [--elastic-import=elasticimportlibrary]
+    [--] modulename objects libs"
+
+if test $# -eq 0; then
+    echo "${usage}" 1>&2; exit 0 ;
+fi
+
+elastic_config=""
+def_in=""
+elasticimp=""
+
+while test $# -gt 0; do
+    case "${1}" in
+	-h | --help | --h* )
+	    echo "${usage}" 1>&2; exit 0 ;;
+	--config=* | --c*=* )
+	    elastic_config="`echo \"${1}\" | sed -e 's/^[^=]*=//'`"
+	    shift ;;
+	-c | --config | --c* )
+	    shift
+	    test $# -eq 0 && { echo "${usage}" 1>&2; exit 1; }
+	    elastic_config="${1}"
+	    shift ;;
+	--def=* | --defin=* | --def-in=* )
+	    def_in="`echo \"${1}\" | sed -e 's/^[^=]*=//'`"
+	    shift ;;
+	--elastic-import=* | --elasticimport=* | --elastic-imp=* | --elasticimp=* )
+	    elasticimp="`echo \"${1}\" | sed -e 's/^[^=]*=//'`"
+	    shift ;;
+	-- )      # Stop option processing
+	    shift; break ;;
+	- )       # Use stdin as input.
+	    break ;;
+	-* )
+	    echo "${usage}" 1>&2; exit 1 ;;
+	* )
+	    break ;;
+    esac
+done
+
+modulename=$1; shift
+
+objs=""
+libs=""
+while test $# -gt 0; do
+    case "${1}" in
+	-l* | -L* )
+	    libs="${libs} ${1}"
+	    shift ;;
+	* )
+	    objs="${objs} ${1}"
+	    shift ;;
+    esac
+done
+
+if test "x$elastic_config" = "x"; then
+    # Search elastic-config
+    elastic_config=""
+    for d in . .. ../.. $PATH ; do
+	if test -f ${d}/elastic-config ; then
+	    elastic_config="${d}/elastic_config";
+	    break;
+	fi
+    done
+
+    if test "x$elastic_config" = "x"; then
+	elastic_config="elastic-config";
+    fi
+fi
+
+# we need to call /bin/sh because elastic-config is not
+# marked as executable if not installed
+
+build=`/bin/sh $elastic_config --build`
+host=`/bin/sh $elastic_config --host`
+target=`/bin/sh $elastic_config --target`
+
+libdir=`/bin/sh $elastic_config --libdir`
+
+makemodule_dir=`echo $0|sed 's%/[^/][^/]*$%%'`
+case "${target}" in
+    *mingw32* )
+	if test "x$elasticimp" = "x"; then
+	    # Set default import library
+	    elasticimp="$libdir/libelastic.a"
+	fi
+	# Search makedll
+	makedll=""
+	for d in ${makemodule_dir} `dirname $elastic_config`/.. . .. ../.. $PATH ; do
+	    if test -f ${d}/mingw32-makedll ; then
+		makedll="${d}/mingw32-makedll";
+		break;
+	    fi
+	done
+	cmdline="${makedll} ${modulename} \"${def_in}\" \"${libs} ${elasticimp}\" ${objs}"
+	echo "${cmdline}"
+	${makedll} ${modulename} "${def_in}" "${libs} ${elasticimp}" ${objs}
+	;;
+    *cygwin* )
+	if test "x$elasticimp" = "x"; then
+	    # Set default import library
+	    elasticimp="$libdir/libelastic.a"
+	fi
+	# Search makedll
+	makedll=""
+	for d in ${makemodule_dir} `dirname $elastic_config`/.. . .. ../.. $PATH ; do
+	    if test -f ${d}/cygwin-makedll ; then
+		makedll="${d}/cygwin-makedll";
+		break;
+	    fi
+	done
+	cmdline="${makedll} ${modulename} \"${def_in}\" \"${libs} ${elasticimp}\" ${objs}"
+	echo "${cmdline}"
+	${makedll} ${modulename} "${def_in}" "${libs} ${elasticimp}" ${objs}
+	;;
+    * )
+	if test "x$libs" = "x"; then
+	    # Set default libraries
+	    libs=`/bin/sh $elastic_config --libs`
+	fi
+	ldshared=`/bin/sh $elastic_config --ldshared`
+	linkforshared=`/bin/sh $elastic_config --linkforshared`
+	cmdline="${ldshared} ${linkforshared} -o ${modulename} ${objs} ${libs}"
+	echo "${cmdline}"
+	${ldshared} ${linkforshared} -o ${modulename} ${objs} ${libs}
+	;;
+esac

@@ -1,0 +1,284 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC manual: INSTALL
+#
+# >>Copyright::
+#    Copyright (C) 1999 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastiC"
+!define DOC_TYPE           "INSTALLATION INSTRUCTIONS"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+#!define DOC_TOC            2
+#!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: Supported platforms
+
+elastiC has been tested only on linux with glibc, but it should
+compile fine (or with modest adjustments) on all modern unix
+variants.
+
+H1: Installation for the impatient
+
+>  % gzip -cd @PACKAGE@-@VERSION@.tar.gz | tar xvf -  # unpack the sources
+>  % cd @PACKAGE@-@VERSION@                           # change to toplevel directory
+>  % ./configure                                 # run the `configure' script
+>  % make                                        # build all
+>  [ Become root if necessary ]
+>  % make install
+
+H1: Rebuilding documentation
+
+Along with the package are distributed pre-built documentation files.
+If you want to rebuild them you need the SDF tool
+(http://www.mincom.com/mtr/sdf).
+
+H1: Installation directories
+
+The location of the installed files is determined by the --prefix
+and --exec-prefix options given to configure (default is /usr/local
+as a base). Documentation is installed under the `share' subdirectory
+of the given prefix directory, (share/html for HTML docs, share/txt for
+plain text, ...).
+
+H1: Regression tests
+
+It is possible to run some regression tests, to check that all works
+as expected. Note however that some tests are prone to fail on
+machines with different setups (with respect to mine), for example
+it is highly probable that testenv fails, since it dumps the PATH
+environment variable. So ignore these peculiar tests. Take into
+account also that expected results for regression tests shipped with
+the package are obtained with debugging enabled, so they won't be
+suitable to test non-debugging versions of the tools.
+To run regression tests, issue the command:
+
+>  % make check
+
+H1: Specific options
+
+elastiC support the following specific configure options.
+
+* `--enable-shared'                 - build shared libraries [default=yes]
+
+* `--disable-shared'                - build statically linked binaries
+
+* `--enable-devel=[no/yes]'         - turn on options useful when developing the
+  core of the system (warning messages and so on)
+
+* `--enable-debug=[no/minimum/yes]' - set debug level [default=minimum]
+
+* `--enable-memdebug=[no/yes]'      - turn on memory coerency checks [default=no]
+
+* `--enable-profile=[no/yes]'       - turn on profiling [default=no]
+
+* `--enable-bprofile=[no/yes]'      - turn on bprof profiling [default=no]
+
+* `--enable-pentium=[no/gcc/egcs]'  - turn on pentium specific optimizations [default=no]
+
+When compiling for production, I suggest:
+
+>  % ./configure --enable-debug=no --enable-pentium=gcc
+
+H1: Detailed installation instructions
+
+elastiC uses autoconf and automake, so generic autoconf installation
+instructions apply.
+
+H2: Basic Installation
+
+   These are generic installation instructions.
+
+   The `configure' shell script attempts to guess correct values for
+various system-dependent variables used during compilation.  It uses
+those values to create a `Makefile' in each directory of the package.
+It may also create one or more `.h' files containing system-dependent
+definitions.  Finally, it creates a shell script `config.status' that
+you can run in the future to recreate the current configuration, a file
+`config.cache' that saves the results of its tests to speed up
+reconfiguring, and a file `config.log' containing compiler output
+(useful mainly for debugging `configure').
+
+   If you need to do unusual things to compile the package, please try
+to figure out how `configure' could check whether to do them, and mail
+diffs or instructions to the address given in the `README' so they can
+be considered for the next release.  If at some point `config.cache'
+contains results you don't want to keep, you may remove or edit it.
+
+   The file `configure.in' is used to create `configure' by a program
+called `autoconf'.  You only need `configure.in' if you want to change
+it or regenerate `configure' using a newer version of `autoconf'.
+
+The simplest way to compile this package is:
+
+  ^  `cd' to the directory containing the package's source code and type
+     `./configure' to configure the package for your system.  If you're
+     using `csh' on an old version of System V, you might need to type
+     `sh ./configure' instead to prevent `csh' from trying to execute
+     `configure' itself.
+     Running `configure' takes awhile.  While running, it prints some
+     messages telling which features it is checking for.
+
+  +  Type `make' to compile the package.
+
+  +  Optionally, type `make check' to run any self-tests that come with
+     the package.
+
+  +  Type `make install' to install the programs and any data files and
+     documentation.
+
+  +  You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.  To also remove the
+     files that `configure' created (so you can compile the package for
+     a different kind of computer), type `make distclean'.  There is
+     also a `make maintainer-clean' target, but that is intended mainly
+     for the package's developers.  If you use it, you may have to get
+     all sorts of other programs in order to regenerate files that came
+     with the distribution.
+
+H2: Compilers and Options
+
+   Some systems require unusual options for compilation or linking that
+the `configure' script does not know about.  You can give `configure'
+initial values for variables by setting them in the environment.  Using
+a Bourne-compatible shell, you can do that on the command line like
+this:
+>     CC=c89 CFLAGS=-O2 LIBS=-lposix ./configure
+
+Or on systems that have the `env' program, you can do it like this:
+>     env CPPFLAGS=-I/usr/local/include LDFLAGS=-s ./configure
+
+H2: Compiling For Multiple Architectures
+
+   You can compile the package for more than one kind of computer at the
+same time, by placing the object files for each architecture in their
+own directory.  To do this, you must use a version of `make' that
+supports the `VPATH' variable, such as GNU `make'.  `cd' to the
+directory where you want the object files and executables to go and run
+the `configure' script.  `configure' automatically checks for the
+source code in the directory that `configure' is in and in `..'.
+
+   If you have to use a `make' that does not supports the `VPATH'
+variable, you have to compile the package for one architecture at a time
+in the source code directory.  After you have installed the package for
+one architecture, use `make distclean' before reconfiguring for another
+architecture.
+
+H2: Installation Names
+
+   By default, `make install' will install the package's files in
+`/usr/local/bin', `/usr/local/man', etc.  You can specify an
+installation prefix other than `/usr/local' by giving `configure' the
+option `--prefix=PATH'.
+
+   You can specify separate installation prefixes for
+architecture-specific files and architecture-independent files.  If you
+give `configure' the option `--exec-prefix=PATH', the package will use
+PATH as the prefix for installing programs and libraries.
+Documentation and other data files will still use the regular prefix.
+
+   In addition, if you use an unusual directory layout you can give
+options like `--bindir=PATH' to specify different values for particular
+kinds of files.  Run `configure --help' for a list of the directories
+you can set and what kinds of files go in them.
+
+   If the package supports it, you can cause programs to be installed
+with an extra prefix or suffix on their names by giving `configure' the
+option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
+
+H2: Optional Features
+
+   Some packages pay attention to `--enable-FEATURE' options to
+`configure', where FEATURE indicates an optional part of the package.
+They may also pay attention to `--with-PACKAGE' options, where PACKAGE
+is something like `gnu-as' or `x' (for the X Window System).  The
+`README' should mention any `--enable-' and `--with-' options that the
+package recognizes.
+
+   For packages that use the X Window System, `configure' can usually
+find the X include and library files automatically, but if it doesn't,
+you can use the `configure' options `--x-includes=DIR' and
+`--x-libraries=DIR' to specify their locations.
+
+H2: Specifying the System Type
+
+   There may be some features `configure' can not figure out
+automatically, but needs to determine by the type of host the package
+will run on.  Usually `configure' can figure that out, but if it prints
+a message saying it can not guess the host type, give it the
+`--host=TYPE' option.  TYPE can either be a short name for the system
+type, such as `sun4', or a canonical name with three fields:
+>     CPU-COMPANY-SYSTEM
+
+See the file `config.sub' for the possible values of each field.  If
+`config.sub' isn't included in this package, then this package doesn't
+need to know the host type.
+
+   If you are building compiler tools for cross-compiling, you can also
+use the `--target=TYPE' option to select the type of system they will
+produce code for and the `--build=TYPE' option to select the type of
+system on which you are compiling the package.
+
+H2: Sharing Defaults
+
+   If you want to set default values for `configure' scripts to share,
+you can create a site shell script called `config.site' that gives
+default values for variables like `CC', `cache_file', and `prefix'.
+`configure' looks for `PREFIX/share/config.site' if it exists, then
+`PREFIX/etc/config.site' if it exists.  Or, you can set the
+`CONFIG_SITE' environment variable to the location of the site script.
+A warning: not all `configure' scripts look for a site script.
+
+H2: Operation Controls
+
+   `configure' recognizes the following options to control how it
+operates.
+
+> `--cache-file=FILE'
+>      Use and save the results of the tests in FILE instead of
+>      `./config.cache'.  Set FILE to `/dev/null' to disable caching, for
+>      debugging `configure'.
+
+> `--help'
+>      Print a summary of the options to `configure', and exit.
+
+> `--quiet'
+> `--silent'
+> `-q'
+>      Do not print messages saying which checks are being made.  To
+>      suppress all normal output, redirect it to `/dev/null' (any error
+>      messages will still be shown).
+
+> `--srcdir=DIR'
+>      Look for the package's source code in directory DIR.  Usually
+>      `configure' can determine that directory automatically.
+
+> `--version'
+>      Print the version of Autoconf used to generate the `configure'
+>      script, and exit.
+
+`configure' also accepts some other, not widely useful, options.

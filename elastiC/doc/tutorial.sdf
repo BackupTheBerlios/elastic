@@ -1,0 +1,133 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Copyright::
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastiC"
+!define DOC_TYPE           "Tutorial"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+!block abstract
+elastiC is a powerful and elegant high level language.
+It has been designed with programmer freedom in mind and
+its main objective is to allow the development of very complex
+systems with the minimum effort possible. To accomplish
+this daunting task, many powerful facilities are provided:
+automatic memory management (full garbage collection), a
+uniform and extensible type system, a package mechanism,
+support for OOP paradigm, support for functional programming,
+object passivation, and many more.
+It is easily extensible and embeddable, and with its small
+footprint is ideal also in everyday programming tasks.
+!endblock
+
+H1: Introduction
+
+After many years of research for the ultimate language,
+I came up with a quite rich biblioteque, but with no
+clear and tangible result. All languages I tried had
+their strenghts, but also their weaknesses.
+
+So [[EC]] came to life.
+
+Scope of this manual is to let you dive into real programming
+with elastiC as fast as is conceivable.
+For a more detailed reference and/or a more complete manual,
+please take a look at {{REF:EC-DOCS}}.
+
+H1: Features
+
+As I pointed out before, elastiC is feature packed.
+Here it is the full scoop:
+
+* Interpreted
+* Portable byte code compilation
+* C-like syntax
+* Dynamically typed
+* Wide range of useful types: dynamic arrays, dictionaries, symbols, ...
+* Automatic real Garbage Collection
+* Object Oriented a la Smalltalk
+* Full functional programming support (Scheme-like closures with lexical scoping)
+* Hierarchical Name Spaces
+* Extensible with C (you can add functions, types, classes, methods, packages, ...)
+* Embeddable in C
+
+H1: An example
+
+Only to wet your appetite, here it is a small example:
+
+!block example; lang='elastic'
+package basictour;
+
+import basic;
+import string;
+
+// Array manipulation
+
+private anArray, el;
+
+anArray = #[ 12, "Hello world !", 5.5, 4 * 3, "ABC" + "def" ];
+
+basic.print( "An array:\n" );
+for (el in anArray)
+    basic.print( el, "\n" );
+
+// String handling
+
+private s;
+
+s = "thks is a string";         // oops !
+s[2] = 'i';                     // Ok, better
+basic.print( "And the string is:\n" + s, "\n" );
+
+s = "A multi-pieced" " string.\n"
+    "It can span multiple lines also !\n";
+basic.print( s );
+
+/*
+ * A little function
+ *
+ * Here we demonstrate how you can create
+ * objects inside functions and pass around
+ * them without memory handling concerns.
+ */
+private function makearray( u )
+{
+    local a, i;
+
+    a = #[ ];               // an empty array
+    for (i = 0; i < 10; i++)
+        a[i] = i;
+
+    return a;
+}
+
+basic.print( makearray( 10 )[2], '\n' );
+!endblock

@@ -1,0 +1,64 @@
+#!/usr/bin/perl -w
+
+use strict;
+use Cwd;
+use File::Basename;
+
+open(CMD, "|sh") or die "can't run shell: $!";
+my ($findcmd) = "find . -type f -name .symlinks -print";
+open(FINDCMD, "$findcmd|") or die "can't run find command: $!";
+while (<FINDCMD>) {
+    chomp;
+
+    my %tobuild = ();
+
+    my ($symlfile) = $_;
+    my ($symldir)  = dirname($symlfile);
+
+    open(SYMLINKS, "$symlfile") or die "can't open '$symlfile': $!";
+    while (<SYMLINKS>) {
+	chomp;
+	next if (/^\s*\#/);
+        if (/^\s*(\S+)\s+([^\/\t ]+)\s*$/) {
+	    my ($src, $dst) = ($1, $2);
+	    my $abs_src;
+	    if (substr($src, 0, 1) eq "/") {
+		$abs_src = $src;
+	    } else {
+		$abs_src = "$symldir/$src";
+	    }
+
+            $tobuild{$dst} = $abs_src;
+        }
+    }
+    close(SYMLINKS);
+
+    my ($pathname, $src, $dst);
+
+    opendir(DIR, $symldir) or die "can't read directory '$symldir': $!";
+    while ($pathname = readdir(DIR)) {
+        if (-l "$symldir/$pathname") {
+            $src = readlink("$symldir/$pathname");
+
+            if (exists($tobuild{$pathname})) {
+		if ($tobuild{$pathname} ne $src) {
+		    print CMD "( cd $symldir ; rm $pathname ; ln -s $tobuild{$pathname} $pathname )\n";
+		}
+		delete($tobuild{$pathname});
+	    }
+	}
+    }
+    closedir(DIR);
+
+    if (keys(%tobuild)) {
+        print CMD "( cd $symldir "; 
+        while (($dst, $src) = each(%tobuild)) {
+            if (! -e "$symldir/$dst") {
+                print CMD "; ln -s $src $dst ";
+            }
+        }
+        print CMD ")\n";
+    }
+}
+close(FINDCMD);
+close(CMD);

@@ -1,0 +1,73 @@
+#!/bin/bash
+#
+# A simple script to ease DLL compilation on cygwin
+# (cross) compilation environment.
+#
+# Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
+#
+
+# ========================================================================
+#
+# M A I N
+#
+# ========================================================================
+
+#cygwin_prefix=i386-cygwin-
+cygwin_prefix=
+
+AS=${cygwin_prefix}as
+LD=${cygwin_prefix}ld
+NM=${cygwin_prefix}nm
+GCC=${cygwin_prefix}gcc
+
+dllname=$1; shift
+def=$1; shift;
+linkwith=$1; shift
+objects="$*"
+
+INPUT_DEF_SWITCH=""
+[ -n "$def" -a "x$def" != "x" ] && INPUT_DEF_SWITCH="--def $def"
+
+LINKWITH_SWITCH=""
+[ -n "$linkwith" -a "x$linkwith" != "x" ] && LINKWITH_SWITCH="$linkwith"
+
+objs=""
+for F in $objects; do
+    case $F in
+	*.[ao])	objs="$objs $F";;
+    esac
+done
+
+basename=`basename $dllname .dll`
+DLL_NAME=${basename}.dll
+DLL_EXP_LIB=lib${basename}.a
+DLL_IMP_LIB=lib${basename}.dll.a
+if [ -n "$def" -a "x$def" != "x" ] ; then
+    DLL_EXP_DEF=""
+    OUTPUT_DEF_SWITCH=""
+else
+    DLL_EXP_DEF=${basename}.def
+    OUTPUT_DEF_SWITCH="--output-def ${DLL_EXP_DEF}"
+fi
+
+DLL_OBJS="$objs"
+DLL_LDFLAGS=""
+DLL_LDLIBS="${LINKWITH_SWITCH}"
+
+#echo "generating symbol list for `libcdll.la'"
+#$NM -B  $DLL_OBJS | sed -n -e 's/^.*[ 	]\([ABCDGISTW][ABCDGISTW]*\)[ 	][ 	]*\(_\)\([_A-Za-z][_A-Za-z0-9]*\)$/\1 \2\3 \3/p' | sed 's/.* //' | sort | uniq > $DLL_EXP_DEF
+#$GCC -shared  $DLL_OBJS -o $DLL_NAME -Wl,-retain-symbols-file -Wl,${DLL_EXP_DEF} -Wl,--out-implib,${DLL_IMP_LIB}
+
+# Link DLL
+$GCC -shared -Wl,--out-implib=${DLL_IMP_LIB} -o $DLL_NAME $DLL_OBJS $DLL_LDLIBS -Wl,--export-all-symbols
+#ar cru .libs/libcdll.a  .libs/cdll.o   cdll.o
+#ranlib .libs/libcdll.a
+#creating libcdll.la
+
+# Finally, also build import libraries for the Microsoft linker. You
+# will either need to have some decent version of MSVC, or get lib.exe
+# (and link.exe) from the (freely downloadable) Microsoft Platform SDK.
+
+#if type -p lib.exe && [ -n "$def" -a "$def" != '-' ]; then
+#    lib -name:${DLL_NAME} -def:${DLL_EXP_LIB} -out:${basename}.lib
+#fi

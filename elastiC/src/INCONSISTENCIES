@@ -1,0 +1,9 @@
+EcTypeName but EcObjectTypeName (the latter should be EcTypeNameObject)
+
+When calling promotion method for objects we must distinguish between @nil
+return value and UnknownMethod exception. This implies that in types/object.c
+we must check EcDoesUnderstand() for promote method before calling it, eventually
+returning EC_NIL. This break the rule of not checking for method before calling
+it (this would break invocation of doesNotUnderstand => proxy implementation could
+not be always possible)
+

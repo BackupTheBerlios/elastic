@@ -1,0 +1,7 @@
+
+BACKTRACE (stack depth 1):
+     1 (l:  11) test_param.test_param_code()
+
+FATAL: uncaught exception (package: test_param, test_param.ec, line: 11)
+	 <instance of basic.ParameterCountError>: Wrong # of parameters to <bytecode `test_param.sum' req.args:2 nlocals:0 maxtemps:2> (got 1, expected 2)
+

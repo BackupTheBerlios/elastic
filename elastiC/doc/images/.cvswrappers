@@ -1,0 +1,6 @@
+*.xcf -k 'b'
+*.jpg -k 'b'
+*.png -k 'b'
+*.tga -k 'b'
+*.tif -k 'b'
+*.gif -k 'b'

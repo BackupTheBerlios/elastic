@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for d in . .. ../.. ; do
+    if [ -f $d/configure ] ; then
+	topdir=$d;
+	break;
+    fi
+done
+
+configdir=${topdir}
+win32dir=${topdir}/win32
+
+CONFIG_SITE=${win32dir}/config.site CC=i386-mingw32msvc-gcc ${configdir}/configure --host=i486-linux --target=i386-mingw32msvc --enable-devel=yes --enable-debug=yes --disable-static --prefix ${HOME}/usrlocal-win32

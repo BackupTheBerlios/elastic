@@ -1,0 +1,15 @@
+
+HASH !
+======
+
+Topolino
+World
+9
+Pippo
+World
+3
+5
+12
+Paris
+keys  : [2, 6, "Mickey", "Goofy", "Rome", 4.5, 4.2, 2, "Hello"]
+values: [3, 71, "Topolino", "Pippo", "Paris", 9, 12, 5, "World"]

@@ -1,0 +1,10 @@
+--- /usr/share/jed/lib/preparse.sl	Sat Mar 11 16:37:41 2000
++++ /usr/local/share/jed/lib/preparse.sl	Thu Mar 29 12:54:41 2001
+@@ -15,6 +15,7 @@
+ () = evalfile ("shmode.sl");
+ () = evalfile ("texcom.sl");
+ () = evalfile ("tpascal.sl");
++() = evalfile ("elastic.sl");
+ 
+ #endif
+ 

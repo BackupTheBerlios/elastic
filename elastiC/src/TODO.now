@@ -1,0 +1,163 @@
+- clean-up warnings produced with --enable-devel=paranoid
+   (mainly signed vs unsigned comparisons)
+
+- fix exception handling in compiler (for basic.compile())
+
+- add hooks to specify behavior for uncaught exceptions
+  (asked by Anton A.Khorkov)
+
+- add named argument support in string % operator
+
+- iterators
+
+- named arguments in ec_*printf() functions (fetching from hashes)
+                                                                 DONE
+
+- (for Yuri) add the full path to errors/exceptions              DONE
+
+- (for Yuri) make the source extension (.ec) configurable        DONE
+
+- add the possibility of stripping debug info
+
+- change 2nd argument from 0 to -1 in EcMakeString()
+
+- evaluate possibility of externally include (as dynamic modules),
+  iconv (libiconv) and/or IBM ICU for Unicode.
+
+- modify hash function for floating point values                 DONE
+
+- multiple simultaneous assignment from an array                 DONE
+
+- rename makemodule to ec_makemodule, ...
+
+- inlined small stack space, recycle stacks, stack space pool    DONE
+  (great performance improvement)
+
+- Eliminate all EcParseStack*() calls in bundled libraries.
+
+- Try to speed up function/method invocation                     DONE
+
+- Add prefixes to (unprefixed) global symbols
+
+- Syntax to add methods outside class declarations
+
+- Add classes to primitive types.
+
+- API IO functions. Convert all libc io functions invocations.
+
+- handle const flag (EC_CONSTP())
+
+method catalogs
+
+move globals in private context structure (LINE, COLUMN, ...)
+
+for 0.0.25: option for separating the compiler and the interpreter
+run-time.                                                        DONE
+
+for 0.0.24: hash tables API                                      DONE
+
+*** [BUG] Test nested packages written in C !!!                  DONE
+
+check EC_DEFAULTLIBPATH issue in cnf.h.in
+
+Eliminate SetLineOP (adding debug sections): it causes
+otherwise equal bytecodes to appear different.                   DONE
+
+Support for \nnn (octal) and \xnn (hex) in characters and
+strings.
+
+Change tc_compiled to tc_bytecode (and compiled to
+bytecode).
+Change object to instance (tc_object -> tc_instance, ...)
+
+Why some parts in the object union are not using the generic
+`usr' struct (like C Primitive and C Method) ?
+
+Add support integers bigger than 4 bytes (for Alpha and
+other 64bit processors). On these platforms package
+save/reload doesn't work right.
+
+Add a configuration API, so that Win32 can use the registry
+and env. variables, while Unix can use env. variables and/or
+configuration files, ...
+--------------------------------------------------------------------
+FILE STRUCTURE REORGANIZATION:
+   1. move files like hash.h and file.h in types/
+   2. make a separate subdirectory for library primitives & classes
+      (lib.[hc] & co.)
+   3. separate subdirectory for utilities ?
+   4. separate subdirectory for compiler ?
+--------------------------------------------------------------------
+Add a prefix to LINE, COLUMN, CHARNUM
+  moved to private sructure
+--------------------------------------------------------------------
+Add caching to hash tables.
+
+Some inlined math operations could be performed without
+extraction (e.g. comparisons, ...). Do it.                       DONE
+
+Implement Polymorphic Inline Caches
+
+Cache hash values in objects
+
+Remove old non-inlined code. Change when possible from
+EC_TYPE to EC_OBJTYPE (for example in gc.c, ...)
+
+Remove boolean, ints, symbols implementations from object
+structure. Use only pointer comparison for undefined and
+booleans.
+
+Move tc_undefined, tc_error and tc_bool away from the
+beginning of type codes (so to have tc_inum == 1,
+tc_symbol == 2).
+
+Check instance trueness code                                     DONE
+
+BUG: a buggy _print method does not generate an exception but
+     is ignored.
+
+Check printing of arrays (seems like that "[" is printed
+instead of "#[")
+
+Check possible bug: indexing nil not detected !                  DONE
+
+Empty methods don't work. Fix it                                 DONE
+
+EcMemoryError() cause infinite recursion. Preallocate stack
+& object to avoid this behavior.                                 DONE
+
+IMPORTANT !!! Disable key & value copy on hash expansion !!!     DONE
+
+Change generic hashtable API names to ec_* convention.           DONE
+Change EcStrTable* to ec_strtable*, ...                          DONE
+
+Change ec_find_upper_prime to ec_prime_next
+
+Check & correct method names without ending colon ':'
+
+Finish adding copy construction to:
+    handler.c, hash.c, object.c, package.c, stack.c, string.c    DONE
+
+Add CopyOP bytecode (1 parameter: type, 1 operand: object)       DONE
+
+Correct compileConstant for compiled objects                     DONE
+
+Add object copy construction methods (class methods)             DONE
+
+Add basic.copy(...), basic.shallowcopy(...), basic.deepcopy(...) DONE
+
+Update SWIG module and gtk module for copy construction          DONE
+
+----
+
+Check static variables                                           DONE
+
+----
+
+Add elastiC version number in code (and also print it in ec, ecc) DONE
+
+----
+
+Change package search in packageio.c (use EC_ELASTICLIBVAR + an
+autoconfigured default path) and update accordingly elastic-config DONE
+

@@ -1,0 +1,7 @@
+
+BACKTRACE (stack depth 1):
+     1 (l:  15) outofmem.outofmem_code()
+
+FATAL: uncaught exception (line: 15)
+	 <instance of basic.MemoryError>: Out of memory
+

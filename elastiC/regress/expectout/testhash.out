@@ -1,0 +1,13 @@
+Wall
+Ritchie
+Exception: (shash.ec: 36  IN: <bytecode `shash.Hash::_getitem' req.args:3>)
+	key "Lorry" not found
+    index: Lorry
+World
+16 -> o
+Hello -> World
+Larry -> Wall
+12.6 -> [8, "Goofy", 4.4]
+Dennis -> Ritchie
+9.9
+Ciao

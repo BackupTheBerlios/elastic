@@ -1,0 +1,14 @@
+*** Exception inlined-return test ***
+A1
+B1
+BT
+MARK1
+B2
+BT
+IOError INIT
+BC2
+MARK2
+B3
+IOError INIT
+ARGH !
+OUT

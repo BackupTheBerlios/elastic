@@ -1,0 +1,7 @@
+
+BACKTRACE (stack depth 1):
+     1 (l:  51) testarray2.testarray2_code()
+
+FATAL: uncaught exception (package: testarray2, testarray2.ec, line: 15)
+	 <instance of basic.IndexError>: Index 120 out of bounds for object [@nil 5 times , 5.5, #ThisIsASymbol, #This:Is:Another-symbol, 'm' ... ]
+

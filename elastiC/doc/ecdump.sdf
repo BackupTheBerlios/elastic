@@ -1,0 +1,97 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC manual: ecdump
+#
+# >>Copyright::
+#    Copyright (C) 1999 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "ecdump"
+!define DOC_TYPE           "- elastiC bytecode disassembler"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: SYNOPSIS
+
+B<ecdump> S<[ B<-a> ]> [ I<bytecode file> ]
+
+H1: DESCRIPTION
+
+B<ecdump> is the disassembler for elastiC bytecode. It is primarily
+intended as a debugging tool for developing elastiC compiler.
+
+H1: OPTIONS
+
+* B<-a> dump all (not only top-level procedures)
+
+H1: RETURN VALUE
+
+On a fatal error, the program returns an exit code greater than 0.
+
+H1: EXAMPLES
+
+> ecdump hello.ecc
+>
+> ecdump -a hello.ecc
+
+H1: SEE ALSO
+
+L<ecc(1)>: for the bytecode compiler
+
+H1: BUGS
+
+None known.
+
+H1: AUTHOR
+
+[[EC_AUTHOR]]
+
+H1: COPYRIGHT
+
+Copyright (C) 1997-1999 Marco Pantaleoni. All rights reserved.
+
+The contents of this file are subject to the elastiC License version 1.0
+(the "elastiC License"); you may not use this file except in compliance
+with the elastiC License. You may obtain a copy of the elastiC License at
+http://www.elasticworld.org/LICENSE
+
+IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+See the elastiC License for the specific language governing rights and
+limitations under the elastiC License.

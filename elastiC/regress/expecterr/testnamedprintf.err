@@ -1,0 +1,7 @@
+
+BACKTRACE (stack depth 1):
+     1 (l:  32) testnamedprintf.testnamedprintf_code()
+
+FATAL: uncaught exception (package: testnamedprintf, testnamedprintf.ec, line: 32)
+	 <instance of basic.TypeError>: Wrong argument type for %g specifier (pos: 5), expected a float (got "sdsda")
+

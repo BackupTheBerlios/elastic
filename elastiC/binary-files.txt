@@ -1,0 +1,8 @@
+doc/images/ecbig.jpg
+doc/images/eclogo.jpg
+doc/images/elastic1.xcf
+src/modules-dynamic/re/pcre/testdata/testinput1
+src/modules-dynamic/re/pcre/testdata/testoutput1
+src/modules-dynamic/re/pcre/testdata/testinput4
+src/modules-dynamic/re/pcre/testdata/testoutput4
+src/libltdl-orig.tar.gz

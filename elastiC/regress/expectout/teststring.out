@@ -1,0 +1,15 @@
+s        = '   ABCabcDEFdef   '
+ltrim(s) = 'ABCabcDEFdef   '
+rtrim(s) = '   ABCabcDEFdef'
+trim(s)  = 'ABCabcDEFdef'
+
+s = 'Nel mezzo del cammin di nostra vita, mi ritrovai per una selva oscura...'
+   (Dante, "Divina Commedia")
+
+find(s, "mezzo" ) = 4
+find(s, "del"   ) = 10
+find(s, "Nel"   ) = 0
+find(s, "a..."  ) = 68
+["Nel", "mezzo", "del", "cammin", "di", "nostra", "vita,", "mi" ... ]
+["Nel", "mezzo", "del", "cammin", "di", "nostra", "vita,", "mi" ... ]
+Nel:mezzo:del:cammin:di:nostra:vita,:mi:ritrovai:per:una:selva:oscura...

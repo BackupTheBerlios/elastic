@@ -1,0 +1,742 @@
+2002-05-21  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* object.c packageio.c types/stack.c: made 64-bit clean.
+
+	* object.h: made 64-bit clean.
+
+	* strtod.c: new version. Taken from today's freebsd commit
+	(derived from netbsd). This version is finally alpha compatible.
+
+2002-05-??  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* dl/dl-dl.c: added. This is a dynamic loading backend which uses
+	directly dlopen()/dlsym() without resorting to libltdl.
+	It is possible to choose the backend with the `configure' option
+	"--with-dlbackend".
+
+2002-01-08  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/object.c (EcMakeObject): properly initializes to
+	@undefined newly allocated instance variables (closes a bug
+	uncovered by disabling EC_PARANOID_CODE).
+
+	* stack.c (EcMakeStack): properly initializes to @undefined newly
+	allocated stack space (closes a bug uncovered by disabling
+	EC_PARANOID_CODE).
+
+	* packageio.c (read_object): properly initializes fields in newly
+	allocated bytecode object (closes a bug uncovered by disabling
+	EC_PARANOID_CODE).
+
+	* memory.c dstring.c: conditionalized paranoid memory
+	initializations with EC_PARANOID_CODE.
+
+2001-11-28  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* basic.h: changes to enhance portability on 64 bit platforms like
+	Alpha.
+
+	* elastic.c (EcCompileError): fixed.
+
+	* elastic.h compile.c lib.[hc]: first implementation of
+	basic.compile(), which allows to compile a string at run-time and
+	obtain a callable bytecode object. The resulting object can be
+	invoked as a normal function. This provides the so-called `eval'
+	functionality.
+
+2001-11-25  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic_p.y ast.[hc] compile.c: "import ..." and "from
+	... import ..." are now regular statements. Now it's possible to
+	import a package anywhere. (Feature needed to implement
+	"eval"). The compiler is now totally re-entrant.
+
+2001-11-24  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* modules-dynamic/re/re_m.c: fixed some things. Added re.info(),
+	re.match_re(), re.match_subject()
+
+	* modules/string_m.c: added string.range()
+
+2001-11-22  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* debug.h stackrecycle.h interp.c sprintf.c: fixed #if conditions
+	that caused erratic behaviour (defined() was not used...).
+
+2001-11-21  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* strtod.c: now correctly sets architecture macros also with -ansi
+	option of gcc
+
+	* sprintf.c: changed implementation of positional argument
+	handling. Now it doesn't require taking the address of va_arg()
+	(which wasn't portable and it didn't work in newer versions of gcc
+	as 2.96 and 3.x). The current implementations should also be ANSI
+	C safe.
+
+2001-11-18  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Makefile.am (libelastic_la_LDFLAGS): switched back to -release
+	versioning scheme instead of -version-info, waiting to find a
+	correct numbering scheme.
+
+2001-11-14  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/string.c: added '%' syntax to create strings with
+	printf-like specifiers:
+
+	   "%d %s %-10s %.2f" % #[6, 1.2, "hey", 12.1]
+
+	* compile.c (compileFunction, ...) interp.c elastic_p.y object.h
+	elastic.h: added default values for function and method
+	parameters. Now it is possible to specify something like:
+
+		private m = 8;
+
+		private function f1(a, b, c = a * b + m)
+		{
+			return a + b + c;
+		}
+
+	(the default values are evaluated at function call time inside the
+	function scope).
+
+2001-11-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c (EcExecute): Improved error messages for uncaught
+	exceptions (now the package and the filename are printed, in
+	addition to the line number).
+
+2001-11-03  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* packageio.c ec.c ecrt.c: using EC_SOURCESUFFIX and EC_COMPILEDSUFFIX.
+
+	* lib.[hc]: added basic.printf
+
+	* sprintf.c: better error messages.
+
+	* elastic.h sprintf.c: added named conversion specifiers (ala
+	Python): as in %(name)s, %12(name)s, %(name)12s, %4.1(name)f,
+	%(name)4.1f, ...
+
+2001-10-29  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ecdump.c (dump_bytecode): removed a reference to elastiC private
+	data (which is stripped from the shared library).
+
+	* elastic_p.y compile.c: multiple simultaneous assignment and
+	sequence assignment are now expressions.
+
+	* elastic_p.y compile.c: implemented sequence assignment to
+	multiple lvalues:
+	   [lvalue1, ..., lvalueN] = expression
+	where `expression' produces a sequence of length >= N
+
+	* elastic_p.y compile.c: changed syntax of multiple simultaneous
+	assignment: now uses brackets ([...] = [...]) instead of
+	parenthesis to avoid a reduce/reduce conflict in the grammar.
+
+2001-10-28  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* libltdl: updated to version 1.2
+
+2001-10-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c: added dumpScope()
+
+2001-10-25  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* added debug data to bytecode objects. Removed SetLineOP
+	bytecode: now line information is stored in debug info.
+
+	* packageio.c (write_object): fixed bug: only hash keys were saved
+	before.
+
+2001-10-24  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* hashfunc.[hc]: improved hashing for floating point values (it
+	should give the same results on architectures with the same FP
+	representation, even if with different endianness).
+
+	* sprintf.c: made somewhat more ANSI friendly. Still not completed
+	because of &va_arg() in __find_arguments().
+
+	* stackrecycle.h interp.c: made ANSI-friendly.
+
+	* types/char.c (EcMakeChar): fixed (for a strange coincidence it
+	worked on i86, but not on Sparc, ...).
+
+2001-10-23  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* sprintf.c: rewritten using vfprintf.c from FreeBSD 4.4 libc as
+	the code base. Now it doesn't depend anymore on ecvt() (this
+	should make elastiC more portable, for example on BSD :). Some
+	other conversion specifiers are implemented: %b for booleans
+	(EcBool) and %I for elastiC integers (EcInt).
+
+	* strtod.c: added (this adds _ec_strtod() and _ec_dtoa()
+	functions).
+
+	* elastic.h symbol.c: added EcSymbolExists() API function.
+
+	* compat/*.c: new versions of compatibility functions.
+
+	* elastic_p.y ast.[hc] compile.c: multiple simultaneous assignment.
+
+2001-10-19  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* upgraded to PCRE 3.5 (which includes preliminary UTF-8 support)
+
+	* moved globals LINE, COLUMN, CHARNUM to interpreter structure
+	(and renamed to `line', `column', `charnum')
+
+	* interp.c arithmetic/arithmetic.c: still some speed improvements
+
+2001-10-18  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* bitstring.h stackrecycle.h: applied fixes suggested by Alexander
+	Bokovoy (missing comments on #endif's).
+
+	* arithmetic/arithmetic.c: applied fixes suggested by Alexander
+	Bokovoy (improper preprocessor string concatenation operator
+	usage).
+
+2001-10-16  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Stack objects are now recycled through a pool. This avoids
+	massive allocations and greatly speeds up function calls. It is
+	delicate though because it requires to maintain a reference count
+	on stack objects.
+
+2001-10-15  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Stack objects now contain a small inlined space (configured in
+	conf.h) to avoid an allocation for small stack spaces. Good
+	speed-up.
+
+	* unix/os.c (ec_get_times): fixed. This fixes elastiC function
+	basic.times().
+
+2001-10-14  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* switched back to old union style for subtypes to avoid gnu-isms
+	in accessor macros. Changes to allow smooth compilation on
+	strictly ANSI compilers.
+
+2001-10-08  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c (compileRoot): added proper (re)initialization of the
+	compilation environment. This fixes a bug that appeared only when
+	calling multiple times EcCompile() (noticed by James Skarzinskas).
+
+	* compile.c: Fixed check for function/method return
+	(hasReturned).
+
+	* packageio.c (write_object, read_object, patch_bytecode): Now
+	also hash objects are saved/loaded.
+
+	* packageio.c (write_object, read_object): Now also stack objects
+	are saved/loaded. Class code is executed when a class is loaded.
+
+2001-10-05  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ec.c (main) ecc.c (main) ecdump.c (main) ecrt.c (main): The
+	return value of getopt is now saved in an 'int' (instead of a
+	'char') to avoid bogus comparison on platforms where 'char's are
+	unsigned by default.
+
+2001-10-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Added proper cast in ctype.h macros (is...()).
+
+	* cnf.h.in memory.[hc] ast.c: Now the pool allocator takes into
+	account alignment issues. This should fix alignment problems on
+	platforms like Sparc, MIPS, m68k, ...
+
+	* compat.[hc] compat/getsetenv.c: added getenv, setenv, unsetenv
+	compatibility functions.
+
+2001-10-03  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Makefile.am: Fixed bug in static-only versions of elastiC. The
+	-rdynamic flag has been added, so that symbols in the elastiC
+	executables can be referenced from shared objects (like C
+	packages).
+
+	* Makefile.am: Adapted to automake-1.5
+
+	* A new elastiC library without the compiler is built
+	(elasticrt). Also a new run-time only executable (capable of
+	executing only pre-compiled packages) has been added: ecrt.
+	This latter one, compiled without debugging, optimized and
+	stripped is only 166 Kb in size (on x86).
+
+2001-09-30  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic.h types/hash.c: Added API functions to manipulate
+	elastiC hash tables: see EcHash...() functions.
+
+	* Changed API names for C hash-tables and string-tables from
+	EcHash... to ec_hash_... and from EcStrTable... to
+	ec_strtable_...
+
+2001-09-29  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* packageio.c (load_shared_package): Fixed support for nested
+	C packages.
+
+	* Makefile.am: switched to libtool versioning, with -version-info
+	option.
+
+2001-09-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* added user data to primitive functions. User data is passed in
+	when creating/registering a new primitive function, and then on
+	each invocation the user data is passed to the C function.
+	The user data can be an EcAny value or an elastiC object: in the
+	latter case the object will be marked and/or garbage collected as
+	needed (you specify if it is an object through a parameter).
+	This feature turns out to be useful in FFI mechanisms.
+
+	* unix/os.c: CLOCKS_PER_SEC wasn't a good substitute for
+	CLK_TCK. Fixed (but would need a more elegant/portable solution).
+
+	* types/array.c (array_copy): fixed.
+
+2001-09-26  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic.h oop.c: added EcGetClassVariable() and
+	EcSetClassVariable().
+
+2001-09-23  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* unix/os.c: switched from CLK_TCK to more modern CLOCKS_PER_SEC
+
+2001-03-22  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic_s.l elastic_p.y: Added assign-ops (**=, *=, /=, +=,
+	...).
+	Added also a suitable test source for regression testing.
+
+2000-11-22  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* hashtable.[ch] primes.h: now primes for hash expansion are
+	distributed more intelligently. Tables up to 10^9 ca. entries are
+	now supported.
+
+2000-11-08  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ec.c ecc.c ecdump.c: changed version option to -V, and added
+	verbose option on -v.
+
+2000-11-07  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c: generates an UnimplementedException when trying to
+	execute a non-bytecode object.
+
+	* elastic.h builtin.c lib.c ...: added UnimplementedException, to
+	be able to use an exception even when a proper class for that
+	exception has not been yet implemented :-)
+
+2000-02-20  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic-config: Added options for 'makemodule' script.
+
+	* Added 'makemodule' and support for it in makefiles and automake
+	macros.
+
+2000-02-19  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compat.c: added a missing #if (preventing compilation on RedHat/Alpha
+	for example)
+
+2000-02-18  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Improved support for cross compilation in different subdirectories.
+
+2000-02-13  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Finished initial support for Win32:
+	All basic functionality is there, even dynamic C module loading
+	(with DLLs).
+	Compilation is done with Mingw32 compiler toolchain by Mumit Khan
+	<khan@xraylith.wisc.edu>
+	(http://www.xraylith.wisc.edu/~khan/software/gnu-win32/)
+	but cross-compiling from linux (thanks to Allin Cottrell for the
+	hints on setting up the environment; see enclosed mingw.sh script
+	for more info).
+	Native compilation from Cygwin + Mingw32 from Win32 should be
+	possible, but presently untested.
+	There is even embrional, unfinished support for Microsoft Visual
+	C++ 6.0 compilers.
+
+2000-01-21  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Started basic Win32 support.
+
+	* Added C++ compiler compatibility support (extern "C" { ... }).
+
+	* Added EC_API macro prefix on public API symbols (variables and
+	functions).
+
+2000-01-19  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* gc.c private.h: Modified heap handling. GC was very misbehaved:
+	in some situations we had GC happening over and over, freeing only 
+	one or two objects at a time. Now it seems to work much better.
+	(Only to give some numbers: gtk module generator had a speed
+	increase of 943% ! Over nine times faster !).
+
+	* object.h ...: added inlined symbols. Inlined chars are more
+	problematic, since the tc_char type is defined in a module.
+
+	* Introduced dynamic loading API and an implementation based on
+	libltdl (should work on most Unixes and on Windows).
+
+	* Makefile.am ...: switched to libtool convenience libraries for
+	arithmetic, types and modules directories (requires automake 1.4
+	or later). Now we can avoid installing unused libraries.
+
+2000-01-16  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c (EcExecute): Some optimizations: avoiding temporaries
+	in bytecode like PushHereOP, common case duplication for
+	PushLiteralOP, ...
+
+	* object.h (EC_MAKE_INT) ...: switched to inlined integer objects
+	(switchable with EC_INLINED_INUM (flag which will go away if the
+	system proves stable enough)). Performance gain is great: >30% for 
+	integer loops. Doing integer math we also avoid object creation:
+	great memory saving too ! Stay tuned for inlined chars, symbols,
+	...
+
+2000-01-15  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Integrated libltdl (from libtool-1.3.4) to dynamically open
+	modules. Should greatly improve portability. However I want to
+	introduce a specific elastiC API, avoiding direct contact with
+	libltdl.
+
+2000-01-10  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c (backtrace): backtrace now prints line number if
+	available.
+
+2000-01-09  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/array.c (array_copy): fixed a typo causing copy not being
+	performed.
+
+	* types/hash.c (hash_copy): fixed a typo causing copy not being
+	performed.
+
+	* interp.c (backtrace): print backtrace on uncaught exception.
+
+2000-01-06  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lib.c (EcLibTargetErrorClass_New): fixed parameter count: caused 
+	bogus error on TargetError exception.
+
+	* compile.c (compileStmtList, compileFunction, compileMethod):
+	fixed for empty methods and functions.
+
+	* types/object.c (object_true): fixed to make logic value testing
+	work also for instances of classes without a '_true' method.
+
+2000-01-05  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lib.c (EcLibCopy, EcLibShallowCopy, EcLibDeepCopy): fixed
+	a typo in parameter parsing (basic.*copy() functions didn't work).
+
+2000-01-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* sprintf.c (cvt): changed modification in cvt(): caused serious
+	bug in floating point printing.
+
+2000-01-02  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/stack.c (EcMakeStackForCompiled): Now appropriately set
+	EC_STACKLEXICAL for the created frame (the bug showed up on
+	callbacks called by EcCallArgs() & friends, where lexical scoping
+	didn't work (C called bytecode)).
+
+2000-01-01  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* modules/string_m.c (EcLibString_Split): fixed string.split()
+	(now correctly handles zero-length substrings and max splits
+	semantics).
+
+	* elastic_p.y: Fixed syntax for varargs (now allows for no
+	mandatory parameters, in other words only optional parameters).
+
+	* modules/string_m.c (EcLibString_Find): string.find() returns
+	false when no match is found.
+
+	* elastic.c (EcInit): Now we preallocate exception for memory
+	errors, to prevent recursion on low memory conditions.
+
+	* lib.h lib.c builtin.c elastic.h: Added MathError and IOError
+	exception classes.
+
+1999-12-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/stack.c (EcParseStackV): now on error skip parameter count 
+	check (avoiding wrong error signalling).
+
+	* oop.h elastic.h oop.c ...: changed API of class definition: now
+	EcAddClassDef() gets a structure (this way code looks less messy).
+
+1999-12-25  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* gc.c (EcAllocObject): Since GC happens only at top-level (to
+	avoid C stack scanning), EcAllocObject() now tries to expand the
+	heap if no space is available.
+
+1999-12-11  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* packageio.c: Moved objectmap used for patching bytecodes to
+	global context (in private datastructure), since it have to
+	remember for the whole package loading context, which is longer
+	than a single (even if toplevel) package loading.
+
+	* elastic.h interp.c: Added EcSequenceSetElement()
+
+	* modules/array_m.c: Added 'array' module, with length(), push(),
+	pop(), shift(), unshift(), sub(), find()
+
+	* types/string.c (string_setitem): Now string exapands on lvalue
+	indexing.
+
+	* elastic.c (EcInit) private.h: Updated for element removal.
+
+	* types/string.c types/stack.c types/compiled.c types/object.c
+	types/hash.c types/array.c: Updated for element removal.
+
+	* elastic.h interp.c: Added EcSequenceDelElement(),
+	EcSequenceDelItem(), EcArrayDel()
+
+	* user.h (EcSequenceCallbacks): Added delitem_fcn
+
+	* interp.c (EcSequenceNormalizeIndex): now normalize only for
+	sequences with length_fcn (for example hashes _can_ have negative
+	indexes as keys)
+
+1999-12-10  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/array.c types/char.c types/string.c: added *_true()
+	callbacks.
+
+	* interp.c (EcExecute): Corrected behavior for LNotOP (didn't
+	check for error after ec_unaryop_true).
+
+1999-12-05  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c elastic_p.y elastic_s.l elastic.c: split compilation
+	in two phases (well, the second one is not really a phase, since
+	it does not scan the AST, but it could easily do). So I added
+	labels and goto.
+
+	* hashtable.c: corrected an undetected bug: on expansion we
+	_copied_ keys and values, when we had better simply copied their
+	pointers.
+
+	* list.c list.h: added.
+
+1999-12-02  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* builtin.c (EcObjectClass_Methods) lib.*: Added
+	'doesUnderstand' method to basic.Object.
+
+	* elastic_p.y: Added varargs for keyword methods.
+
+	* types/stack.c: Added some more checks for proper number of
+	parameters. I should find a cleaner solution though.
+
+	* builtin.c (EcObjectClass_ClassMethods) lib.*: Added class method 
+	'fullname' to basic.Object returning qualified class name and made
+	'name' method returning unqualified name.
+
+	* elastic.h lib.*: added basic.send(), which calls a method for an 
+	object (better: sends a message to an object), given the receiver
+	object, the method symbol and the parameters to pass. Added also
+	basic.sendwith(), which performs the same task as basic.send but
+	receiving parameters for the method as an array.
+
+1999-12-01  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c (EcExecute): Now ReturnOP properly re-establish self
+	and at_class (this bug caused erratic method and instance
+	references upon return from a method call).
+
+	* elastic.c (EcCallArgs): Now EcCallArgs set caller, self and
+	at_class slots in stack in every case (this bug caused 'self' to
+	be @nil in init method).
+
+1999-11-28  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* packageio.c (write_object) (read_object): Fixed
+	CallSuperMethodOP saving/loading (previously we saved the id for
+	the method symbol, which is obviously wron; now we do the same as
+	for CallOP).
+
+	* bytecode.c: Fixed stack growth values for CallMethodOP and
+	CallSuperMethodOP (it's 1, not 0 as for CallOP, since we don't pop
+	anything from the stack, aside from parameters)
+
+1999-11-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* modules/string_m.c (EcLibString_ToUpper) (EcLibString_ToLower): 
+	corrected a bug (previously a string undersized by 1 char was
+	allocated, and the corresponding object wasn't created using its
+	length).
+
+	* compile.c (getQualifiedSymbol): Now we correctly use
+	EC_PACKAGEEXPORT(pkgObj)[i].pos (the saved position) for exported
+	symbols in other packages, instead of sequential position in
+	export list, since in the package frame there are also
+	non-exported values and so position in package frame != position
+	in export list. This bug showed up when inserting private
+	variables in packages *loaded* by other packages. When the loading 
+	one referenced a public variable in the incriminated package, an
+	offset was observed, making the compiler choose the wrong value
+	(see regression test prog.ec+used.ec). (MAJOR BUG FIX)
+
+	* elastic.h: Changed API interface for argc, argv passing. The
+	mode of operation, setted sys.args at initialization time, thus
+	causing a potential shift for object loading when loading compiled 
+	packages. This buggy behavior was observable only when passing
+	parameters to a compiled package that loaded other packages. Now
+	parameters have to be passed just before EcMainExecute(), *after*
+	all loading! (MAJOR BUG FIX)
+
+1999-11-26  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* tsize.h basic.h: Added 'configure' dependant image sizes.
+
+1999-11-25  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* types/file.c (file_free): now doesn't close std* files on free
+
+	* packageio.c: Now correctly saves PRIVATE(ncoreglobals) instead
+	of PRIVATE(nglobals) in packages, to deal with dynamically loaded
+	C modules.
+
+	* elastic.c (EcCleanup): Moved code for cleanup of dynamically
+	loaded packages after object table release (otherwise an user
+	defined object with release code in the module would segfault on
+	release code execution). Also corrected its behavior, now performs 
+	a final GC, after a removal of toplevel references, then frees
+	objects.
+
+	* elastic-config.in: Added --ccshared, --ldshared,
+	--linkforshared, --so
+
+	* packageio.c: now uses default search path for modules.
+
+1999-11-24  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* modules/re/re_m.c ...: Added regular expression 're' module
+	(based on pcre-2.08)
+
+1999-11-22  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* dstring.h: Added ec_string_prepare()
+
+	* modules/string_m.c: Added string.ltrim(), string.rtrim(),
+	string.trim(), string.split(), string.join(), string.find()
+
+1999-11-21  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* numeric.c (EcLibEq): Added check for @nil
+
+1999-11-20  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic-config.in: Added.
+
+	* ecdump.c (main): Added option 'v'
+
+	* ecc.c (main): Added option '-v'
+
+	* ec.c (main): Added option '-v'
+
+	* elastic.h elastic.c cnf.h.in: Add library versioning API
+
+1999-11-16  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lib.c (EcLibString_ToUpper/Lower): Now handle strings, not only
+	characters.
+
+1999-11-10  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ecdump.c (main): Added option 'h'
+
+	* ecc.c (main): Added option '-h'
+
+	* ec.c (main): Added option support and '-h' option (doesn't
+	understant --help, but tolerates it), after a suggestion by David
+	N. Welton (davidw@linuxcare.com)
+
+1999-11-07  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* lib.c ...: added basic.copy, basic.shallowcopy,
+	basic.deepcopy. Reorganized a little the initialization process.
+
+	* types/file.c: now we don't reintern symbols for every
+	invocation.
+
+	* interp.c: now uses the right frame traversing, by using
+	EC_STACKCALLED(). Now static variable reference in upper
+	environments from closures works ok.
+
+	* types/stack.c (stack_mark): corrected a undetected bug:
+	EC_STACKIMM* entries were not marked !
+
+	* object.h (_stack) ...: added EC_STACKCALLED() (called bytecode
+	is saved in stack frame structure). This is *needed* to get to the 
+	right literal in environment traversing at run-time (in fact the
+	implementation used before was wrong, and showed up in static var.
+	reference in closures :))
+
+1999-11-05  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c (compileDecl) ...: added static variable support
+	(initialization stuff, ...)
+
+	* object.h object.c ...: added tc_undefined (@undefined)
+
+1999-11-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c (compileFunction): corrected a bug on closure
+	creation. Before closure creation always returned the code object
+	on the literal frame, but saving lexical context modified the same
+	literal over and over. Now we make a copy and return that copy.
+	The bug showed up for example, when referring from a closure to a
+	parameter of the enclosing function (it was referenced always the
+	last used frame (=> last used parameter), giving the illusion of
+	predicting the future !
+
+	* user.h user.c ...: added copy construction to user-defined types
+	(shallow and deep). Everything must support copy construction, but 
+	some types could be peculiar in this regard (see doc/devel/OBJECTCOPY).
+
+1999-08-05  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compile.c (compileConstant): corrected a bug: now constant
+	strings are copied when created (creation/modify loop with
+	constant strings now work)
+
+1999-08-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* oop.c (EcSendMessageVA): added self and at_class to the stack
+	when sending a message (before this it was buggy: method
+	implementation didn't received self !)
+
+1999-08-01  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ec.c ecc.c (main): Modified for sys.argv
+
+	* builtin.c (_ec_register_builtin): Added sys.argv
+
+	* elastic.y: Added anonymous package (no more need for declaring a 
+	package).
+

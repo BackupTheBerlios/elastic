@@ -1,0 +1,34 @@
+The Language
+
+elastiC mutuates a great deal of its memory model from the Scheme
+programming language. In particular, there are strong similarities in
+the way memory locations are bound to symbols. In fact the set of
+memory locations reachable from a given point in the program source
+text is known as "environment", or better the current environment. The
+environment is the scope of visibility of program variables in the
+specific textual location. An environment is organized in frames
+exactly as in Scheme.
+
+
+
+Implementation Notes
+
+
+Scope
+
+A scope is a compile-time environment frame.
+An environment is defined by a chain of scopes (from inner scope to outer scope).
+Location of a symbol in an environment is determined by a pair of integers
+(up, pos), where 'up' says how many scopes to pass over in the chain from the current,
+and pos is the position in that scope of the symbol. This pair parallels the location
+of a variable in a run-time context.
+
+A scope also has an additional purpose: it serves during the code
+generation phase as a reference for the destination of bytecodes (if
+the scope is relative to a function) or for the module we are
+dealing with (if we are compiling a package).
+When compiling a function (more precisely, a functional form), we need
+to know which is the destination of the bytecodes and which is the
+literal frame in which we put the constants.
+When compiling a module we must have a precise knowledge of the import
+and export lists of the module.

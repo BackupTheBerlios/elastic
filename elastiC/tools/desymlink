@@ -1,0 +1,3 @@
+#!/bin/bash
+
+for i in `find . -type l`; do src=`readlink $i`; rm $i; cp $src $i; done

@@ -1,0 +1,1135 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC manual
+#
+# >>Copyright::
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastiC"
+!define DOC_TYPE           "- elastiC language"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: SYNOPSIS
+
+See L<ec(1)> and L<ecc(1)>
+
+H1: DESCRIPTION
+
+B<elastiC> is a very high level language (VHLL) aimed at the ease
+of development of large systems. It has a simple syntax, similar
+to that of the C language, so it should be very easy to learn. On the
+other side it introduces many extremely powerful features, such as:
+
+* automatic memory management with real, fast, Garbage Collection
+
+* dynamic typing
+
+* lexical scoping and first class functions, to allow full
+functional programming
+
+* many useful types: dynamic arrays, dictionaries, symbols,
+strings, ...
+
+* OOP support (styled after Smalltalk object model)
+
+* pervasive exception handling support
+
+* easy C extensibility (it's possible to add functions, classes,
+methods, packages, ...)
+
+* hierarchical namespaces
+
+* easily embeddable in larger C programs as a library
+
+* portable bytecode compilation & interpretation
+
+For a closer look at the details of these topics, we must refer the
+reader to the other technical documentation that comes with the
+elastiC package.
+But, let's dive into a quick tour of the language.
+
+H2: Mandatory Stuff
+
+Before getting involved with language details we have to see an actual
+example of an elastiC program, and what's better than classics ? So
+here it is our first snippet:
+
+>    package hello;
+>
+>    // Import the `basic' package
+>    import basic;
+>
+>    // Define a simple function
+>    function hello()
+>    {
+>        // Print hello world
+>        basic.print( "*** Hello world! ***\n" );
+>    }
+>
+>    /*
+>     *  Here we start to execute package code
+>     */
+>
+>    // Invoke the `hello' function
+>    hello();
+
+If you put this stuff in a file named F<hello.ec> and issue from
+the shell the command:
+
+>    % ec hello.ec
+
+you'll get the output:
+
+>    *** Hello world! ***
+
+Quite easy, but you'll be asking yourself the meaning of what we have
+done so far. So let's have a closer look at the example.
+
+The first line is related to the structure of programs in elastiC, as
+we'll explain later in greater detail, and introduces a I<package> (also
+known as I<module>). Every program must reside in a module, and our is
+named C<hello>, in fact compiling this will give us an object file
+F<hello.ecc>.
+As a side note, this line gives us the chance to note that in elastiC
+every statement (excluding compound ones) is terminated by a
+semicolon, as in C.
+
+Immediately after the package declaration, there is a line that
+informs the compiler that we need the functionality offered by the
+module C<basic>, since we'll be using its function C<print>.
+
+So we define our simple function with no parameters, named, again,
+C<hello>. The only thing this function does is printing the string "*** 
+Hello world! ***" followed by a newline, by invoking the function
+C<print> of the module C<basic>, as we anticipated before; the
+string in question is a parameter for the function C<basic.print>, as
+it will be explained later.
+
+Then comes the top-level code of the package, in our case a
+simple call to the newly defined function C<hello>, and nothing more.
+
+Intermixed with actual code there are comments. elastiC features two
+flavours of them: one line comments, starting at C<//> and ending
+at the end of the line, and block comments, starting at C</*> and
+ending at C<*/>, as in C++
+
+Now that you have a less vague idea of what elastiC looks like, we
+can go on with a more sistematic exploration of the language.
+
+H2: Program Structure
+
+You have already encountered modules. Every elastiC program is built
+up of modules. Leaving a more accurate description to reference
+documentation, modules are essentially pieces of code. Among the most
+important characteristics of modules is that of introducing functions,
+classes, variables (more precisely, in this regard, only variables,
+since in elastiC everything is an object, so everything can be put
+into a variable). The writer of a module has the ability of
+restricting the visibility of the variables he or she introduces to
+the module itself, or giving broader access to these variables to
+other modules.
+
+As we have already seen in our example, modules can include other
+modules, in order to refer to their public variables (functions,
+classes, ... as you know).
+
+elastiC runtime system comes with many builtin modules (think of them
+as the foundation for the system and for the programs you
+write). These builtin modules offer basic services such as string
+manipulation, file handling, and so on.
+
+H2: Types
+
+elastiC is a dynamically typed language, which means that there is no
+such thing as a typed variable. There are types of course, but the
+type is a property of values, not variables. Variables act as mere
+name for values (objects), so that the same variable can reference
+an integer object now and a string at a later time. This is in
+contrast with statically typed languages, like C, C++, Java and many
+others, where you must declare the type along with the variable name.
+Dynamically typed languages give programmers greater flexibility (you
+can easily make I<generic> data structures, such as lists, trees), at
+the expense of losing compile-time type checks, since these checks are
+possible only at run-time. I think that the added flexibility greatly
+recompenses the shortcomings, but for intellectual honesty I must
+advise you that many people disagree with me.
+
+However, leaving philosophical questions to later times, here it is a
+sample of basic types in elastiC:
+
+* integer numbers
+
+* floating point numbers
+
+* characters
+
+* booleans
+
+* symbols
+
+* strings
+
+* arrays
+
+* hash tables (dictionary)
+
+* class instances (objects)
+
+* classes
+
+there are also other, more esoteric, types, but for the purpose of
+this small introduction they are inessential.
+Here is a sample code displaying representatives of these types, with
+the exclusion of classes and class instances:
+
+>    package types;
+>
+>    import basic;
+>
+>    // make a variable
+>    local v;
+>
+>    // an integer
+>    basic.print( 5, '\n' );
+>
+>    // a float
+>    basic.print( 12.45, '\n' );
+>
+>    // a character
+>    basic.print( 'a', '\n' );
+>
+>    // a boolean
+>    basic.print( @true, '\n' );
+>
+>    // a symbol
+>    basic.print( #aSymbol, '\n' );
+>
+>    // a string
+>    basic.print( "A simple string", '\n' );
+>
+>    // an array
+>    v = #[ 1, 'a', 20.5, "ABCD" ];
+>    basic.print( v, '\n' );
+>    basic.print( v[3], '\n' );
+>
+>    // an hash table
+>    v = %[ "color",  "orange",
+>           "weight", 12 ];
+>    basic.print( v["weight"], '\n' );
+>    basic.print( v["color"], '\n' );
+
+The output will be:
+
+>    5
+>
+>    12.45
+>
+>    a
+>
+>    @true
+>
+>    #aSymbol
+>
+>    A simple string
+>
+>    [1, 'a', 20.5, "ABCD"]
+>
+>    ABCD
+>
+>    12
+>
+>    orange
+
+Perhaps all of these types are quite familiar to the reader, with the
+possible exception of the symbols and hash tables.
+
+Symbols are atomic entities, useful to represent symbolic names. They
+are quite different from strings: strings can be seen as a collection
+of characters, and they allow to address every single character in
+them; on the other side, symbols are atomic, in that they can be
+manipulated as indivisible entities. Symbols are useful for
+representing symbolic names. Their utility in this respect reside in
+the fact that they consume much less memory than strings and they are
+a lot faster (symbols are internally represented as integers).
+Symbols are written in the code with an initial # (Smalltalk style) or
+' (LISP style) and a string consisting of an alphabetic character
+followed by alphanumeric characters with the addition of the
+underscore, the colon and the minus sign.
+
+Hash tables, or dictionaries, are a sort of generalized array: they
+associate an index (key) to a value, only that the index has not to be
+an integer. You can associate a value to a key of whatever type you
+desire. For example one could do:
+
+>    local map;                // introduce variable `map'
+>
+>    map = %[ ];               // store in variable `map' an empty
+>                              // hash table
+>
+>    map[1] = "orange";        // here we use the hash table like an
+>                              // ordinary array
+>
+>    map["color"] = "orange";  // here we associate the string "orange"
+>                              // to the key "color", a string also
+>
+>    map[12.5] = 0;            // associate the integer 0 to the real
+>                              // value 12.5
+
+It is also possible to do fancy things like using a complex type like
+an array, a function, a class, or whatever you want, as a key:
+
+>    local arr;                // introduce variable `arr'
+>    local map;                // introduce variable `map'
+>
+>    arr = [1, 2, 3];          // store an array in `arr'
+>    map = %[ ];               // store an empty hast table in `map'
+>
+>    map[arr] = ["A", "B", "C"];  // map `arr' array to another array !
+
+\... only to get a taste of the flexibility you'll get addicted to in
+elastiC ...
+
+You'll have noticed that in the examples above we never worried about
+memory allocation and deallocation for the objects that we used.
+This is not a bad programming habit, as it would be in other
+languages, but it is the way to go in elastiC, since it is the
+run-time system to account for these boring tasks.
+
+In the above code we had to use variables, which gives us the
+occasion to speak about the next topic: variable scoping.
+
+H2: Variable scoping
+
+We have seen that variables in elastiC act as simple containers for
+objects. This is certainly true, but there are other important issues
+concerning variables. The main issue is variable scoping.
+
+The scoping of a variable, also known as visibility, is the set of
+places in the source code text that can reach that variable. In every
+language there are rules governing variable scoping. elastiC rules are 
+quite similar to those of Scheme, for the readers acquainted with this 
+language (for all the others, these rules are not too different from
+those of C, in their basic form, but they present some interesting
+additions).
+
+Package variables
+
+Variables declared at the top level in a package (i.e. not inside any
+function or class) can be of two flavours: B<public> or
+B<private>. The former are visible also from other modules through
+qualification (think to the use of the variable C<print> in the
+package C<basic> that we have made so far), while the latter are only
+local to the package, and can't be referenced from the outside world.
+As you might guess, public variables are introduced by the keyword
+C<public>, while private ones by the keyword C<private> (in this
+context, C<local> is a synonym for C<private>):
+
+>    public foo;  // "foo" is a public variable
+>    private bar; // "bar" is a private one
+
+Since in elastiC functions and classes are first class objects
+(i.e. you can store them, use them as parameters, ...), you can
+declare even a function or a class with the same scoping attributes:
+
+>    public function hello()
+>    {
+>        basic.print( "Hello, world!\n" );
+>    }
+>
+>    private function how()
+>    {
+>        basic.print( "How are you ?\n" );
+>    }
+
+in fact, this is equivalent to the following:
+
+>    public hello;
+>    hello = function()
+>    {
+>        basic.print( "Hello, world!\n" );
+>    };
+>
+>    private how;
+>    how = function()
+>    {
+>        basic.print( "How are you ?\n" );
+>    };
+
+If a function has no scoping attribute, it defaults to C<private>.
+
+Function variables
+
+Variables introduced inside the body of a function can also have two
+scoping attributes: C<local> and C<static>. Local variables are
+visible only inside the defining function and they exist only for the
+duration of function execution (with a noteworthy exeception, as we'll 
+see in a while). Static variables are also visible only inside the
+defining function, but once their lifetime is the same of the defining 
+function (which is I<very> different from the I<execution> of the
+function), and they maintain the value across invocations of the
+function.
+So you can have:
+
+>    function squarecount()
+>    {
+>        static val = 0;    // a static variable
+>        local  v;          // a local variable
+>
+>        val = val + 1;
+>        v = val * val;
+>        basic.print( v, '\n' );
+>    }
+>
+>    squarecount();
+>    squarecount();
+>    squarecount();
+
+producing the output:
+
+>    1
+>
+>    4
+>
+>    9
+
+We have just seen that in elastiC functions are objects in the same
+regard as integers or floats, or else. So it turns out that the
+following code is perfectly legal:
+
+>    function trunky()
+>    {
+>        local funky;
+>
+>        funky = function() {
+>            basic.print( "BUH !\n" );
+>        }
+>
+>        funky();
+>    }
+
+But this is not too interesting, if we can't access variables in the
+outer function from the inner one, so we have arranged things to make
+possible something as:
+
+>    package trunky;
+>
+>    import basic;
+>
+>    function trunky()
+>    {
+>        local funky;
+>        local v;
+>
+>        v = 5;
+>
+>        funky = function() {
+>            basic.print( v, '\n' );
+>        };
+>
+>        funky();
+>    }
+>
+>    trunky();
+
+Which produces a shining:
+
+>    5
+
+But now you could (and should) ask yourself what would happen doing
+something like:
+
+>    package curious;
+>
+>    import basic;
+>
+>    function trunky()
+>    {
+>        local funky;
+>        local v;
+>
+>        v = 5;
+>
+>        funky = function() {
+>            basic.print( v, '\n' );
+>        };
+>
+>        // we return the function stored in the variable funky
+>        return funky;
+>    }
+>
+>    local func;
+>    func = trunky();
+>
+>    // func is the function returned by trunky() ...
+>    // ... call it !
+>    func();
+
+What will happen ? We call a function that refers to a variable that
+was active at the time of its I<creation>, and apparently not active at
+the time of its I<call> ! Well, the output is just:
+
+>    5
+
+This is because the system is made to allow such a programming style.
+This is the exception to variable lifetime we alluded before when we
+introduced local variables. The rule could be specified in this
+intuitive form: variables remain active for the entire time they could 
+reveal necessary for a computation. This rule proves of invaluable
+power.
+
+Parameters
+
+Another variable type is given by function parameters. There is no
+black magic here. The visibility of function parameters is the body of 
+the function, like with local variables.
+A function simply has to specify a list of accepted parameters, as in
+the following excerpt:
+
+>    function sum(p1, p2, p3)
+>    {
+>        return p1 + p2 + p3;
+>    }
+>
+>    local res;
+>    res = sum(5, 6, 7);
+>
+>    basic.print( res, '\n' );
+
+You can also pass a variable number of arguments, using the ellipsis (...):
+
+>    function show(a, args ...)
+>    {
+>        // print first argument
+>        basic.print( "First argument: ", a, '\n' );
+>
+>        // print remaining arguments
+>        basic.print( "Remaining arguments: ", args, '\n' );
+>    }
+>
+>    show(1, 2, "Hello", 4.4);
+
+which will produce:
+
+>    First argument: 1
+>
+>    Remaining arguments: [2, "Hello", 4.4]
+
+and you can see that remaining arguments are passed in the array
+"args" (notice that the name "args" is not special in any way).
+
+Other rules
+
+There are other scoping rules, valid for class and class instance
+member variables, but they will be introduced at a later time, along
+with OOP discussion.
+
+H2: Syntax
+
+Now that we master the basic notions on modules, data types and
+variables, we can look at common syntactic forms (see the reference
+manual for a more accurate description).
+
+Blocks
+
+Blocks are groups of statements to be executed in sequence (a block
+constitue a compound statement). Blocks can be put everywhere a simple
+statement would be legal, by enclosing the sequence in braces:
+
+>    {
+>        statement-1
+>        statement-2
+>        ...
+>        statement-N
+>    }
+
+would execute statements from I<statement-1> to I<statement-N>.
+Without introducing control structures such as C<if>, C<while> or
+C<for> blocks cannot be appreciated for their real usefulness, so stay 
+tuned.
+
+If statement
+
+The C<if> statement is used to alter the flow of code execution based
+on the value assumed by an expression. The form of the C<if> statement 
+is as follows:
+
+>    if (expression)
+>        statement-1
+>    [ else
+>        statement-2 ]
+
+where the part enclosed in brackets is optional. The meaning is the
+following: if the evaluation of I<expression> gives a value considered 
+logically true, execute I<statement-1>, else continue, eventually
+executing I<statement-2> if present.
+Many C<if> statements can be chained, to get a multi-way decision:
+
+>    if (expression)
+>        statement-1
+>    else if (expression-2)
+>        statement-2
+>    else if (expression-3)
+>        statement-3
+>    ...
+>    else
+>        statement-N
+
+A precisation on the meaning of logically true is necessary: in
+elastiC the following are considered to be logically false:
+
+* the boolean value @false
+
+* the numerical value 0
+
+* the @nil object
+
+and everything else is considered equivalent to true
+(@nil is the value used for expressing "no object").
+
+A real example:
+
+>    if (x == y)
+>    {
+>        basic.print( "x and y are equal !\n" );
+>        return 0;
+>    }
+>    else
+>    {
+>        basic.print( "x and y are different.\n" );
+>        return x / y;
+>    }
+
+where we have the opportunity of noting that in elastiC (as in C), the 
+assignment is very different from equality test (as it is also in
+math): the assignment operator is the equal sign, while the equality
+test is `=='.
+
+While statement
+
+The C<while> statement permits the repeated execution of the same
+piece of code until a given expression remains true. It assumes the
+form:
+
+>    while (expression)
+>        statement
+
+that executes I<statement> until I<expression> remains true.
+A simple example could be:
+
+>    public function sum_to( upper )
+>    {
+>        local i, result;
+>
+>        i      = 0;
+>        result = 0;
+>
+>        while (i <= upper)
+>        {
+>            result = result + i;
+>            i = i + 1;
+>        }
+>
+>        return result;
+>    }
+>    basic.print( "1 + 2 + ... + 10 = ", sum_to( 10 ), '\n' );
+
+where the function I<sum_to> computes the sum 1 + 2 + ... + upper,
+which perhaps you'll remember being equal to upper * (upper + 1) / 2.
+
+For statement
+
+The C<for> statement is analogous to C<while>, in that it allows to
+perform an iteration. Its basic form is:
+
+>    for (init; test; update)
+>        statement
+
+which is equivalent to:
+
+>    init;
+>    while (test)
+>    {
+>        statement
+>        update;
+>    }
+
+Such a construction is handy to count over a range, as in:
+
+>    for (i = 0; i < 10; i = i + 1)
+>        basic.print( "i = ", i, '\n' );
+
+equivalent to:
+
+>    i = 0;
+>    while (i < 10)
+>    {
+>        basic.print( "i = ", i, '\n' );
+>        i = i + 1;
+>    }
+
+(as a side note, here you should understand why the lack of the
+semicolon above in the for-while equivalence is not an error...).
+
+It is possible to omit the I<init>, the <test> and also the I<update>
+part of the C<for> statement, individually or together. For example, a 
+common idiomatic form for an infinite cycle is:
+
+>    for (;;)
+>        statement
+
+although I prefer the following:
+
+>    while (@true)
+>        statement
+
+There is also another form of the C<for> statement, allowing to
+iterate over a sequence, such as an array:
+
+>    local state;
+>    local states = #["Italy", "England", "France", "Germany", "Spain"];
+>
+>    for (state in states)
+>    {
+>        basic.print( state, '\n' );
+>    }
+
+Do while statement
+
+A syntactic form quite similar to C<while> is the C<do>-C<while>
+statement. It allows reiterating the execution of a statement while a
+condition remains true, but evaluating the condition B<after> the
+body of the cycle, not before, thus executing at least once the
+statement. The form is:
+
+>    do
+>        statement
+>    while (condition);
+
+Its use is quite rare.
+
+The break statement
+
+At times, it could be useful to exit from a cycle (C<for>, C<while>,
+or whatever) from its body, without resorting to the evaluation of the 
+condition.
+The syntax is:
+
+>    break [ level ];
+
+where level is an optional integer denoting the number of nested
+cycles to exit (defaults to 1).
+For example:
+
+>    local l, n, num;
+>    l = 0;
+>    n = 1;
+>    num = 1024;
+>    while (@true)
+>    {
+>        if (n >= num) break;
+>
+>        l = l + 1;
+>        n = n * 2;
+>    }
+>    basic.print( "l = ", l, '\n' );
+
+producing:
+
+>    l = 10
+
+and also:
+
+>    local i, j;
+>    for (i = 0; i < 10; i = i + 1)
+>    {
+>        for (j = 0; j < 10; j = j + 1)
+>        {
+>            if (i == 5) break 2;
+>        }
+>    }
+>
+>    basic.print( "i = ", i, ", j = ", j, '\n' );
+
+giving:
+
+>    i = 5, j = 0
+
+Labels and goto statement
+
+At times it is necessary to perform an unconditional jump to a location
+in code. To accomplish this task, the C<goto> statement is provided.
+Syntax is:
+
+>    goto label;
+
+where label is a symbol defining the point in code to jump to. Each
+form of statement can be labeled:
+
+>    label:
+>     statement
+
+For example:
+
+>    for (task in tasks)
+>    {
+>        if (! init_task( task )) goto ouch;
+>        basic.print( "Task ", task, " OK\n" );
+>    }
+>
+>    basic.print( "All tasks OK\n" );
+>    return @true;
+>
+>    ouch:
+>    basic.print( "Ouch: initialization failed\n" );
+>    return @false;
+
+H2: Object Oriented Programming
+
+We have seen that elastiC is aimed at the development of large and
+complex programs. To achieve this it's necessary to have powerful
+tools, like good basic datatypes and control structures, but
+experience shows that these are no way sufficient. B<Complexity> is
+mastered by means of B<subdivision>. In fact, the only way to handle
+complex projects is B<divide and conquer>: I<identify> the subproblems,
+I<attach> each subproblem (with the same, recursive, technique).
+This strategy leads naturally to a component driven approach: desing
+separate modules, with clean interfaces to the outside world and clear
+dependencies on other modules. This philosophy is heavily used in the
+field of electronic engineering and proved very effective.
+The analogous in software engineering is B<Object Oriented
+Programming> (B<OOP> for short). Sadly enough, OOP has not been fully
+understood when came to life and losed its full meaning, reducing
+itself to a abused buzzword. Many languages claim to be object
+oriented, but they are only minimal affected by OO philosophy, while
+elastiC embraces the whole spirit of component oriented development.
+
+To provide a minimal understanding to the uninitiated, we'll briefly
+recall what classes and objects are and what OOP is about:
+
+* a B<class> is the conceptual model describing a family of
+  computational entities (sharing structure and properties) along with
+  the operations (B<methods>) working on the istances of this family (the
+  entities). For the people having experience with traditional
+  data-structured languages, the class is the sum of a data structure
+  and its operations. Please note that a data structure is very
+  different from its instances: it's like the difference between the
+  apple concept and a specific apple.
+
+* an B<object> is a specific instance of a class. This is the entity
+  on which operate the methods.
+
+* classes can be arranged in a hierarchy (sort of genealogical tree).
+  Like the apple concept belongs to the greater family of the fruit
+  concept (which also contemplates the orange concept, the lemon
+  concept and so on), so a class can be a particularization of a more
+  general one, inheriting properties and behaviors but adding of its
+  own (this is called, as you correctly guess, B<inheritance>). An
+  object I<I>, instance of a class I<C2> inheriting from class I<C1>,
+  share all the properties and methods of class I<C1> and I<C2>.
+
+It is possible to write entire books about object oriented
+programming, and this is not our intention. There are many other
+relevant aspects and the reader not acquainted with them should refer
+to a good text, such as {{N[jump='#cox86'][Cox86]}}.
+
+We are going instead to explain what are the basic principles that
+inspired the OO infrastructure in elastiC:
+
+* components (objects) should be B<reusable>, allowing interaction
+  with diverse types. It should be possible to mix and match
+  components designed by different people with different intents.
+
+* components should be B<opaque>. Their implementation should be
+  hidden and uninteresting to the programmer using them. A component
+  should be identified by its B<interface>.
+
+* a component interface should be B<minimal>.
+
+The second point is a strong prerequisite for the first one.
+Traditional languages, like C++ or Java fail in the first two points,
+and sometimes in the third also. It is left as an exercise to the
+reader to figure out why (hint: strong typing could have a role !).
+
+elastiC object orientation allows to fulfill to all these points,
+thanks to a fundamental property:
+
+I<OOP subsystem is designed around the dynamic typing system: it's
+possible to use classes and instances without having access to their 
+definition or implementation. This is true for both inheritance and
+direct use.>
+
+This way objects are completely opaque (second property), thus
+enabling the developer to ensure that the first one is also
+satisfied. The third property is also much more easy to achieve,
+thanks to the use of generic interfaces (C++ had to introduce
+templates to avoid static typing limits, with questionable results).
+
+After this too long (or too short ?) introduction, we finally get to
+the details. The syntax for a class definition is:
+
+>    SCOPE class NAME extends SUPERCLASS
+>    {
+>        CLASS_STATEMENT
+>        ...
+>    }
+
+where SCOPE can be either C<private> or <public>, NAME is the
+name the class being defined and SUPERCLASS is the direct superclass
+from which we derive. The class body consists of zero or more class
+statements, and each statement can be either a variable declaration or
+a method definition.
+
+Variable declarations
+
+Variables can be declared like everywhere else, with the constraint
+that only C<local> and C<static> attributes are accepted. The former
+indicates an I<instance variable>: every instance object has a
+private, personal, member with this name. The latter instead
+introduces a I<class variable>, which is a class-wide variable: every
+instance can use it, but its value is shared by all instances.
+
+Method definitions
+
+Like with variables, there are two flavors of methods: I<normal methods>
+and I<class methods>. Normal methods operate on a specific instance
+object, while class methods are operations interesting the whole
+class, not its single instances.
+Normal methods are introduced with one of the following syntaxes:
+
+E:    method I<NAME>( I<PARAMETERS> )
+E:       I<BODY>
+
+E:    method I<KEYWORDPARAMETERS>
+E:        I<BODY>
+
+where I<NAME>, I<PARAMETERS> and I<BODY> have exactly the same meaning
+and syntax they have in ordinary functions. The novelty here is
+I<KEYWORDPARAMETERS>, which is an alternative way of specifying method 
+name and parameters; since it would be too cumbersome to specify its
+formal syntax, we give an example:
+
+>    drawLineFrom: pointA To: pointB
+
+here the method name is C<drawLineFrom:To:> and parameters are pointA
+and pointB: the name is the concatenation of all keywords, where a
+keyword is an identifier followed by a colon introducing a single
+parameter. Another example could be:
+
+>    connectTo: hostname withProtocol: protocol onPort: port
+
+the name is C<connectTo:withProtocol:onPort:>, and parameters are
+hostname, protocol and port.
+Like with functions, it's possible to pass a variable number of
+arguments, resorting to the ellipsis:
+
+>    method print(format, data ...)
+>    {
+>        ...
+>    }
+
+or
+
+>    method drawPolygon: points ...
+>    {
+>        ...
+>    }
+
+Finally, class methods are introduced exactly in the same way, but
+with a C<class> prefix:
+
+>    class method getShapeName()
+>    {
+>        ...
+>    }
+
+We have not yet specified how methods can refer to variables. These
+are the rules:
+
+* I<normal methods> can refer to I<instance variables> and I<class
+  variables> (by using their name).
+
+* I<class methods> can refer to I<class variables> (by using their
+  name).
+
+* otherwise methods (normal and class) are subject to ordinary
+  visibility rules for functions when referring to ordinary variables.
+
+* I<instance variables> and I<class variables> take precedence over
+  ordinary variables: if both a variable defined in the class and a
+  global variable with the same name are potentially visible by a
+  method, the one defined in the class is used.
+
+* I<normal methods> can refer to the implicit variable C<self>,
+  indicating the object receiving the method call (like C<this> in
+  C++).
+
+* methods can refer to the implicit variable C<super>, indicating the
+  direct superclass of the object receiving the method call.
+
+Note that variables defined in a class are visibile only from inside
+methods: this prevents all the problems of having public, private and
+protected variables as in C++ and, what's most important, ensures
+that the class implementation is not used as interface to the outside
+world. If yoy want to provide access to a property of an instance, use
+methods pairs like C<getX>, C<setX>.
+
+A final note on method definitions: you can return whatever you want
+from a method, like in ordinary functions, but if the return statement
+is omitted, by default C<self> is returned (useful for chaining method
+calls, as you'll understand after the following section).
+
+Method calls
+
+Suppose we have just defined a method for a class I<Foo> with the
+following code:
+
+>    method moveTo( x, y )
+>    {
+>        ...
+>    }
+
+which moves the object of class I<Foo> (or one derived from this
+class) in the location specified. Now we have an object I<obj> (of
+class I<Foo>, or derived from class I<Foo>), and want to move it to
+the point (30, 20). We simply I<send the message moveTo to obj>:
+
+>    [obj moveTo 30, 20];
+
+If we have a method defined with keywords, like:
+
+>    method moveToX: x Y: y
+>    {
+>        ...
+>    }
+
+we do:
+
+>    [obj moveToX: 30 Y: 20];
+
+Method calls can be nested, like in:
+
+>    [[Foo getMainObject] moveToX: 30 Y: 20];
+
+(where we suppose that the class method C<getMainObject> in class
+I<Foo> returns a I<Foo> object instance)
+or in:
+
+>    [obj moveToX: 30 Y: [obj getCurrentY]];
+
+(which supposedly moves I<obj> on the x axis).
+
+From inside a method it is possible to call other methods on the same
+object (the I<receiver> of the current method), by using C<self>:
+
+>    method draw()
+>    {
+>        // Draw the border
+>        [self drawBorder];
+>
+>        // Draw the inside
+>        [self drawInside];
+>    }
+
+It is also possible to call methods defined in the superclass (or one
+of its ancestors), by using C<super>:
+
+>    method draw()
+>    {
+>        // Call method draw defined in the super class
+>        [super draw];
+>
+>        // Draw our specific stuff
+>        ...
+>    }
+
+note that in this example, if we used C<self> instead of C<super>, we'd
+found ourselves trapped in an endless recursive call. Sending the
+message C<draw> to C<super> instead, we call the method with name
+C<draw> for the same object, but starting the search in its superclass.
+(For more insight in OOP issues like this, please refer to a good book
+on the subject).
+
+H1: SEE ALSO
+
+L<ec(1)>: for the elastiC interpreter
+
+L<ecc(1)>: for the elastiC compiler
+
+L<ecdump(1)>: for the bytecode disassembler
+
+{{N[id='cox86'][Cox86]}}: Brad J. Cox, I<Object Oriented Programmingm An Evolutionary
+Approach>, Productivity Products International, Inc.
+
+H1: BUGS
+
+None known.
+
+H1: AUTHOR
+
+[[EC_AUTHOR]]
+
+H1: CREDITS
+
+I wish to thank the following people:
+
+B.W. Kernighan, D.M. Ritchie, K. Thompson, R. Pike, for giving us the
+C programming language and Unix.
+
+L. Torvalds and the other kernel hackers, for letting us common mortals
+to use a real operating system.
+
+Bill, for letting us to demonstrate how much superior Unix is.
+
+And all the others, that I can't cite in a manual page.
+
+H1: COPYRIGHT
+
+Copyright (C) 1997-2000 Marco Pantaleoni. All rights reserved.
+
+The contents of this file are subject to the elastiC License version 1.0
+(the "elastiC License"); you may not use this file except in compliance
+with the elastiC License. You may obtain a copy of the elastiC License at
+http://www.elasticworld.org/LICENSE
+
+IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+See the elastiC License for the specific language governing rights and
+limitations under the elastiC License.

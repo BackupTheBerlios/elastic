@@ -1,0 +1,33 @@
+Self: <class class1.cl2>   J: 15
+j  : 15
+val: 3
+i: 3
+i: 4
+i: 5
+i: 6
+i: 7
+i: 8
+i: 9
+i: 10
+i: 11
+i: 12
+i: 13
+i: 14
+i: 15
+i: 16
+i: 17
+i: 18
+i: 19
+val: 3
+OINC !
+CL2 PRINT 
+i: 20
+Self: <class class1.cl2>   J: 3
+UNKNOWN METHOD: #gosfy in target: <instance of class1.cl2>
+       message: (class1.ec: 62  IN: <bytecode `class1.$ANONYMOUS$' req.args:0>)
+	Method gosfy not found for object <instance of class1.cl2>
+goofy val: 4
+CL2 PRINT 
+i: 20
+a: 3  b: 2  c: 1
+o2 class: cl2

@@ -1,0 +1,4 @@
+*.tar.gz -k 'b'
+*.tgz -k 'b'
+*.tar.bz2 -k 'b'
+*.tar.Z -k 'b'

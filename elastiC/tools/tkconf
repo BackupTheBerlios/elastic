@@ -1,0 +1,279 @@
+#!/bin/sh
+# -*-tcl-*-
+# the next line restarts using wish \
+exec wish "$0" "$@"
+
+# ==========================================================================
+# tkconf
+# ==========================================================================
+# Graphical frontend to 'configure' script.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 19 Feb 2000
+#
+#   $Id: tkconf,v 1.1 2002/05/23 21:20:30 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+
+#  ========================================================================
+# |                                                                        |
+# | G U I                                                                  |
+# |                                                                        |
+#  ========================================================================
+
+proc buildGUI {top} {
+	global font
+
+	catch {destroy $top}
+	toplevel $top
+	wm title $top "TKConf - 'configure' frontend"
+
+	# Options/Buttons frame
+
+	set wtop $top.top
+	frame $wtop -bd 2 -relief raised
+
+	# Options frame
+
+	set w $wtop.opts
+	frame $w
+
+	global options
+
+	set i 0
+	foreach opt $options {
+		set type      [lindex $opt 0]
+		set optname   [lindex $opt 1]
+		set labeltext [lindex $opt 2]
+		switch $type {
+			c {
+				set defvalue    [lindex $opt 3]
+				set cfg_options [lindex $opt 4]
+			}
+
+			o {
+				set choices     [lindex $opt 3]
+				set defvalue    [lindex $opt 4]
+				set cfg_options [lindex $opt 5]
+			}
+		}
+
+		global $optname
+		set $optname $defvalue
+
+		set wname_l "$w.l[expr $i + 1]"
+		set wname_o "$w.o[expr $i + 1]"
+		grid [label $wname_l -text $labeltext -width 65 -fg DarkBlue -anchor w] -column 0 -row $i -sticky {nw}
+
+		switch $type {
+			c {
+				grid [checkbutton $wname_o -variable $optname] -column 1 -row $i -sticky {nw}
+			}
+
+			o {
+				grid [frame $wname_o -bd 2 -relief ridge] -column 1 -row $i -sticky {nsew} -padx 2 -pady 2
+
+				set j 0
+				foreach c $choices {
+					set rname_l "$wname_o.l[expr $j + 1]"
+					set rname_o "$wname_o.o[expr $j + 1]"
+
+					grid [label       $rname_l -text  $c -fg DarkBlue -anchor w] -column 0 -row $j -sticky {nw}
+					grid [radiobutton $rname_o -value $c -variable $optname]     -column 1 -row $j -sticky {nw}
+
+					set j [expr $j + 1]
+				}
+			}
+		}
+
+		set i [expr $i + 1]
+	}
+
+	pack $w -side top -expand t -fill both
+
+	# Button frame
+
+	set w $wtop.btns
+	frame $w
+
+	button $w.go   -text "Configure !" -width 20 -command {cmd_configure} -foreground "DarkBlue"
+	button $w.quit -text "Quit"        -width 20 -command {cmd_quit} -foreground "Red"
+	pack $w.go   -side left -expand t -fill x
+	pack $w.quit -side left -expand t -fill x
+
+	pack $w -side top -fill both
+
+	pack $wtop -side top -fill both
+
+	# Log frame
+
+	set w $top.log
+	frame $w
+
+	global logwindow
+	text $w.text -width 100 -height 30 -yscrollcommand "$w.vscroll set" -font $font(fixed) -setgrid 1 -background FloralWhite
+	scrollbar $w.vscroll -orient vertical -command "$w.text yview"
+	pack $w.vscroll -side right -expand f -fill y
+	pack $w.text    -side top   -expand t -fill both
+	set logwindow $w.text
+
+	$w.text tag configure t_title      -font "-b&h-lucidatypewriter-medium-r-normal-*-*-140-*-*-m-*-iso8859-1"
+    $w.text tag configure t_normal   -font $font(fixed)     -foreground DarkBlue
+    $w.text tag configure t_bold     -font $font(fixedBold) -foreground DarkBlue
+	$w.text tag configure t_comment  -font $font(fixedBold) -foreground gray40
+	$w.text tag configure t_chdir    -font $font(fixedBold) -foreground DarkGreen
+	$w.text tag configure t_create   -font $font(fixedBold) -foreground sienna1
+	$w.text tag configure t_error    -font $font(fixedBold) -foreground red
+
+	$w.text configure -state disabled
+
+	pack $w -side top -expand t -fill both
+}
+
+proc cmd_configure {} {
+	global options
+
+	# Build configure command line arguments
+
+	set configure_args ""
+
+	foreach opt $options {
+		set type      [lindex $opt 0]
+		set optname   [lindex $opt 1]
+		set labeltext [lindex $opt 2]
+
+		global $optname
+		set curvalue [set $optname]
+
+		switch $type {
+			c {
+				set defvalue    [lindex $opt 3]
+				set cfg_options [lindex $opt 4]
+
+				if {$curvalue} {
+					append configure_args " ${cfg_options}=yes"
+				} else {
+					append configure_args " ${cfg_options}=no"
+				}
+			}
+
+			o {
+				set choices     [lindex $opt 3]
+				set defvalue    [lindex $opt 4]
+				set cfg_options [lindex $opt 5]
+
+				append configure_args " ${cfg_options}=${curvalue}"
+			}
+		}
+	}
+
+	# Search configure path
+
+	set configure ""
+	foreach dir {"." ".." "../.."} {
+		set pathname "${dir}/configure"
+		if {[file exists $pathname]} {
+			set configure $pathname
+			break
+		}
+	}
+
+	# Execute
+
+	global logwindow
+	set cmdline "$configure $configure_args"
+	$logwindow configure -state normal
+	$logwindow delete 1.0 end
+	$logwindow insert end "$cmdline\n\n" "t_title"
+	set fh [open "|$cmdline" "r"]
+	fconfigure $fh -buffering none
+	while {! [eof $fh]} {
+		gets $fh line
+
+		if {[regexp {(.*checking.*\.\.\.[ ]+)(.*)} $line "" p1 p2]} {
+			$logwindow insert end "$p1" "t_normal"
+			$logwindow insert end "$p2\n" "t_bold"
+		} elseif {[regexp {^(configuring in )(.*)} $line "" p1 p2]} {
+			$logwindow insert end "$p1" "t_normal"
+			$logwindow insert end "$p2\n" "t_chdir"
+		} elseif {[regexp {^(creating )(.*)} $line "" p1 p2]} {
+			$logwindow insert end "$p1" "t_normal"
+			$logwindow insert end "$p2\n" "t_create"
+		} else {
+			$logwindow insert end "$line\n" "t_normal"
+		}
+		$logwindow see end
+		update
+	}
+	catch {
+		close $fh
+	} errval
+
+	if {$errval != ""} {
+		$logwindow insert end "$errval\n" "t_error"
+		$logwindow see end
+		update
+	} else {
+		$logwindow insert end "DONE.\n" "t_comment"
+		$logwindow see end
+		update
+	}
+
+	$logwindow configure -state disabled
+}
+
+proc cmd_quit {} {
+	catch {destroy .}
+}
+
+#
+# MAIN
+#
+
+wm withdraw .
+
+if {! [winfo exists .main]} {
+	# ----------------------------------------
+	# G L O B A L   V A R I A B L E S
+	# ----------------------------------------
+	set font(fixed)     "-misc-fixed-medium-r-normal--13-100-100-100-c-70-iso8859-1"
+	set font(fixedBold) "-misc-fixed-bold-r-normal--13-100-100-100-c-70-iso8859-1"
+
+	set options {
+		{c enableshared    "Build shared libraries" 1 "--enable-shared"}
+		{c enablestatic    "Build static libraries" 1 "--enable-static"}
+		{c enabledevel     "Enable developer mode"  1 "--enable-devel"}
+		{o enabledebug     "Enable compiling with debugging information"          {"no" "minimum" "yes"} "no" "--enable-debug"}
+		{c enablememdebug  "Enable compiling with memory coerency checks"         0                           "--enable-memdebug"}
+		{c enableprofile   "Enable compiling with profiling information"          0                           "--enable-profile"}
+		{c enablebprofile  "Enable compiling with 'bprof' profiling information"  0                           "--enable-bprofile"}
+		{o enablepentium   "Enable pentium optimizations"                         {"no" "gcc" "egcs"}    "no" "--enable-pentium"}
+	}
+
+	set initialized "OK"
+	buildGUI .main
+}

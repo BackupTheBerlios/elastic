@@ -1,0 +1,132 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC manual: elastic-config
+#
+# >>Copyright::
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastic-config"
+!define DOC_TYPE           "- elastiC configuration tracker"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: SYNOPSIS
+
+B<elastic-config> S<[ B<--prefix> ]> S<[ B<--exec-prefix> ]> S<[ B<--prefix> ]>
+	S<[ B<--bindir> ]> S<[ B<--libs> ]> S<[ B<--cflags> ]> S<[ B<--ccshared> ]>
+	S<[ B<--ldshared> ]> S<[ B<--linkforshared> ]> S<[ B<--so> ]>
+	S<[ B<--cc> ]> S<[ B<--version> ]>
+
+H1: DESCRIPTION
+
+B<elastic-config> purpose is to give information on the installed
+version of [[ELASTIC]] and on compilation flags to use when creating modules.
+For an example of a complete module, see the 'skeleton' module.
+
+H1: OPTIONS
+
+* B<--prefix> display elastiC `configure' time --prefix option
+
+* B<--exec-prefix> display elastiC `configure' time --exec-prefix option
+
+* B<--bindir> display elastiC `configure' time --bindir option
+
+* B<--libs> display compiler flags to link elastiC modules
+
+* B<--cflags> display compiler flags to compile elastiC modules
+
+* B<--ccshared> display additional compiler flags necessary to compile
+dynamically loadable elastiC modules
+
+* B<--ldshared> display compiler command necessary to link a
+dynamically loadable elastiC module
+
+* B<--linkforshared> display compiler switches necessary to link a
+dynamically loadable elastiC module
+
+* B<--so> display shared objects extension (for dynamically loadable modules)
+
+* B<--cc> display compiler command used to compile elastiC
+
+* B<--version> display elastiC version
+
+H1: RETURN VALUE
+
+On a fatal error, the program returns an exit code greater than 0.
+
+H1: EXAMPLES
+
+> elastic-config --prefix
+>
+> CFLAGS=`elastic-config --cflags`
+>
+> CCSHARED=`elastic-config --ccshared`
+>
+> LDSHARED=`elastic-config --ldshared`
+>
+> LDFLAGS=`elastic-config --libs`
+>
+> SO=`elastic-config --so`
+
+H1: SEE ALSO
+
+L<elastic(1)>: for the language
+
+H1: BUGS
+
+None known.
+
+H1: AUTHOR
+
+[[EC_AUTHOR]]
+
+H1: COPYRIGHT
+
+Copyright (C) 1997-2000 Marco Pantaleoni. All rights reserved.
+
+The contents of this file are subject to the elastiC License version 1.0
+(the "elastiC License"); you may not use this file except in compliance
+with the elastiC License. You may obtain a copy of the elastiC License at
+http://www.elasticworld.org/LICENSE
+
+IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+See the elastiC License for the specific language governing rights and
+limitations under the elastiC License.

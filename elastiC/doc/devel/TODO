@@ -1,0 +1,117 @@
+* dynamic loading of elastiC modules and elastiC functions to resolve
+  a symbol (asked by Yuri).
+
+* Unload functionality for dynamic loading of elastiC modules (asked by Yuri).
+
+* FFI                                                              - DONE
+
+* Key filtering on dictionaries (hooks for key comparison and hashing, on
+  the elastiC side).
+
+* General iteration support.
+
+* Syntax: slices a[l..h]
+
+* Syntax: invariants (pre,post-conditions, assertions) and code
+  documentation support.
+
+* Syntax: multiple simultaneous assignment: (a, b, c) = (b, c, a)  - DONE
+
+* Install dynamically loadable C modules in ${libdir}/elastic-x.y.z
+  instead of ${libdir}/elastic
+
+* Eliminate SetLineOP moving the line number information to a separate
+  data structure, field of EcCompiled. This could be a list (byte code
+  index, line number). Could (should) be part of debugging information.
+                                                                   - DONE
+
+* Switch to more simple hashing scheme with doubling and simple linear
+  searching.
+
+* Add array.concat(), ...
+
+* Integrate GNU libltdl & use a machine independent shared module layer. DONE
+
+* Adapt byacc || bison || zyacc to code re-entrancy and/or elastiC output.
+
+* Add Bytecode Description Blocks (& Package Description Blocks) to
+  describe variables, line numbers, ... in code.
+
+* Add object serialization framework (with optional filtering).
+  It should be implemented taking into account registration of new
+  named streaming engines. Two built-in streaming modes are required
+  ("binary", "text"). Support for streaming delegates ?
+
+* First class type ?
+
+* Method support for every type ?
+  Subclassable basic types ?
+
+* Every type an instance ?
+
+Switch to 'configure' dependent basic types  - DONE
+
+! Evaluate the possibility of incorporating nargs into stack
+  structure.  - DONE
+
+! Make string construction at run-time.  - DONE
+
+Finish hash table expansion (use next prime calculation)
+
+Change tc_compiled to tc_bytecode
+Change object to instance (tc_object -> tc_instance, ...)
+
+Evaluate the possibility of using bound functions & methods.
+
+Add license file. Add --license (-L) option to programs: ec, ecc, ecdump,
+ecgtk, ...
+
+Includes: <elastiC/*.h>                      - DONE
+
+*** Change ELASTICLIBPATH to ELASTICPATH.    - DONE
+Add -l ELASTICPATH to ec, ecc, ecdump.
+
+Add construct (???):
+     for i in sequence where condition
+
+Add expression 'in' (ala Python)  - DONE
+
+Add function pointers "getitem", "setitem", "promote" to user data-types   - DONE
+
+Implement generic math operations   - DONE
+
+Add math.*                          - DONE
+
+Handle circular reference problem in printing, passivating, ... (hash table)
+
+Add 'switch', ++, --, +=, -=, *=, ... etc. - DONE, still missing 'switch'
+
+Add 'break' in exception handlers (jumping to the end) ?
+
+Add 'finally' block
+
+Add 'precodition', 'postcondition', 'invariant'('assert'), 'doc'
+
+Add linux kernel module for elastiC executables !!!
+
+Add generic construction
+
+========================================================================
+PROBLEM:
+
+When saving a package, we can save objects coming from imported
+packages too. In a future run, when loading the previously saved
+package, we'll load its imported packages, then load the objects.
+This means that objects coming from imported packages will be
+duplicated (they were loaded once when loading imported packages, then
+a second time when loading objects saved). This happens for example
+with super classes coming from imported objects.
+The problem is that, apart being a waste of space, for classes a
+loaded class doesn't get its class code executed when loaded, so that
+static variables don't get set.
+
+Solution: saving/loading also stacks in packageio.c and executing
+class code whenever a class is loaded (this was necessary anyway).
+
+Complete solution: full passivation implementation. Packages should
+stream completely also imported packages.

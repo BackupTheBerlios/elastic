@@ -1,0 +1,440 @@
+Overview of Changes in elastiC 0.0.37:
+
+[UNRELEASED YET]
+
+* Alpha compatibility.
+  (elastiC should be 64-bit clean now).
+
+* Some steps toward Cygwin build-ability.
+
+* Now uses automake 1.6, autoconf 2.53, libtool 1.4.2
+
+Overview of Changes in elastiC 0.0.36:
+
+* `eval' functionality, provided by the new function
+  `basic.compile()'. It compiles elastiC source code contained in a
+  string returning a bytecode object. This bytecode object can be
+  executed at any time by invoking it as a normal function.
+
+     private source = "basic.print(\"value: \", val, \"\\n\");\n";
+
+     public val = "Hello World!";
+     private compiled = basic.compile( source );
+
+     compiled();
+
+* "import ..." and "from ... import ..." are now ordinary
+  statements. This allows to import a package from everywhere (not
+  only at the beginning of the current package, as before). This
+  feature was needed also to implement the `eval' functionality.
+
+* The compiler is now totally re-entrant. A big step towards totaly
+  re-entrancy, since the compiler is the most big and complex
+  subsystem.
+
+* Fixed some things related to the regular expression module. Added
+  `re.info()', `re.match_re()', `re.match_subject()'. An
+  object-oriented wrapper to regexps is under way.
+
+* Added `string.range()'
+
+* Bug fixes.
+
+Overview of Changes in elastiC 0.0.35:
+
+* Fixed compilation problems.
+
+Overview of Changes in elastiC 0.0.34:
+
+* Now compiles with newer versions of gcc (2.96 and 3.x). And the code
+  should be totally ANSI C compatible.
+
+Overview of Changes in elastiC 0.0.33:
+
+* Added '%' syntax to create strings with printf-like specifiers:
+
+    "%d %s %-10s %.2f" % #[6, 1.2, "hey", 12.1]
+
+* Added default values for function and method parameters. Now it is
+  possible to specify something like:
+
+    private m = 8;
+
+    private function f1(a, b, c = a * b + m)
+    {
+        return a + b + c;
+    }
+
+  (the default values are evaluated at function call time inside the
+   function scope).
+
+* misc/elastic.st: initial version of an enscript stats
+  filter. Put this file in your $HOME/.enscript directory and you
+  can pretty-print elastiC code with the command:
+
+    enscript -o OUTPUT.html -W html -Eelastic --color FILENAME.ec
+
+Overview of Changes in elastiC 0.0.32:
+
+* Improved regression testing.
+
+* Improved error messages for uncaught exceptions (package name,
+  filename and line number are printed).
+
+* Fixed suffix (`.ec' and `.ecc') configurability.
+
+* Added basic.printf().
+
+* Better error messages in ec_*printf() family of functions.
+
+* Added named conversion specifiers (ala Python) to printf() & co: as
+  in %(name)s, %12(name)s, %(name)12s, %4.1(name)f, %(name)4.1f, ...
+  The named argument is fetched from a sequence, which must be
+  specified as the next argument to the *printf() function and which
+  must contain an entry with a symbol or a string equal to the used
+  named:
+
+     basic.sprintf("%d %(city)s %(age)d %(score)g\n",
+                   1, %[#city,   "Rome",
+                        #age,    21,
+                        "score", 3.2]);
+
+* Fixed a bug in ecdump that prevented its compilation on some
+  architectures.
+
+Overview of Changes in elastiC 0.0.31:
+
+* Implemented sequence assignment to multiple lvalues:
+
+     [lvalue1, ..., lvalueN] = expression
+
+  where `expression' produces a sequence of length >= N
+
+* Changed syntax of multiple simultaneous assignment: now uses
+  brackets ([...] = [...]) instead of parenthesis to avoid a
+  reduce/reduce conflict in the grammar.
+
+* Added debug data to bytecode objects. Removed SetLineOP bytecode:
+  now line information is stored in debug info.
+  This has the great benefit of allowing to keep line number
+  information in optimized versions of elastiC without any performance
+  degradation (so regression tests won't fail when compiling without
+  optimizations).
+
+* Improved hashing for floating point values.
+
+* Updated libltdl to version 1.2
+
+* Bug fixes.
+
+Overview of Changes in elastiC 0.0.30:
+
+* Multiple simultaneous assignment. In a nutshell:
+
+    (a, b, c, d) = (1.5, a - 1, b + 1, "Hi there");
+
+  (Note that syntactically it is a statement, not an expression).
+
+* More omogeneous printing support (ec_*printf*() family of
+  functions).
+
+* New API functions EcSymbolExists().
+
+* Portability improvements.
+
+* Bug fixes.
+
+Overview of Changes in elastiC 0.0.29:
+
+* Upgraded to PCRE 3.5 (which includes preliminary UTF-8 support).
+  This should enable Unicode regular expressions.
+
+* Some cleanups.
+
+* Still some speed improvements.
+
+* Applied fixes suggested by Alexander Bokovoy.
+
+Overview of Changes in elastiC 0.0.28:
+
+* *Big* speed-up in elastiC function calls.
+
+* Minor general speed improvements.
+
+* Fixed basic.times().
+
+* Now should compile on ANSI compilers.
+
+Overview of Changes in elastiC 0.0.27:
+
+* Fixed a bug: multiple calls to EcCompile() could fail due to
+  improper (re)initialization.
+
+* Fixed a bug: static members were not initialized in imported super
+  classes. This was caused by the fact that class code were not
+  executed for imported classes, since these classes were loaded two
+  times (see doc/devel/TODO).
+
+* Works on IBM S/390
+
+* Fixed some minor things.
+
+Overview of Changes in elastiC 0.0.26:
+
+* Fixed some minor things.
+
+* Fixed alignment problems on platforms like Sparc, MIPS, m68k, ...
+
+* Added getenv, setenv, unsetenv compatibility functions.
+
+Overview of Changes in elastiC 0.0.25:
+
+* Fixed bug in static-only versions of elastiC.
+  The -rdynamic flag has been added, so that symbols in the elastiC
+  executables can be referenced from shared objects (like C
+  packages).
+
+* Adapted to automake-1.5
+
+* A new elastiC library without the compiler is built
+  (elasticrt). Also a new run-time only executable (capable of
+  executing only pre-compiled packages) has been added: ecrt.
+  This latter one, compiled without debugging, optimized and
+  stripped is only 166 Kb in size (on x86).
+
+Overview of Changes in elastiC 0.0.24:
+
+* Added API functions to manipulate elastiC hash tables: see
+  EcHash...() functions declared in src/elastic.h
+
+* Changed API names for C hash-tables and string-tables from
+  EcHash... to ec_hash_... and from EcStrTable... to
+  ec_strtable_...
+
+Overview of Changes in elastiC 0.0.23:
+
+* Fixed support for nested C packages.
+  Bear in mind that if you have a nested C package called, for
+  example, 'planet.earth', then the initialization and cleanup
+  functions shall need to be called respectively:
+    ec_planet__earth_init()
+    ec_planet__earth_cleanup()
+  The compiled package shall be searched as "planet/earth.so" (if .so
+  is the extension for shared objects on this platform).
+
+* Changed versioning scheme. Now it uses libtool versioning
+  strategy (with option -version-info).
+
+* Added new quick reference manual: doc/quickref.*
+
+Overview of Changes in elastiC 0.0.22:
+
+* added user data to primitive functions. User data is passed in
+  when creating/registering a new primitive function, and then on
+  each invocation the user data is passed to the C function.
+  The user data can be an EcAny value or an elastiC object: in the
+  latter case the object will be marked and/or garbage collected as
+  needed (you specify if it is an object through a parameter).
+  This feature turns out to be useful in FFI mechanisms.
+
+* src/unix/os.c: CLOCKS_PER_SEC wasn't a good substitute for
+  CLK_TCK. Fixed (but would need a more elegant/portable solution).
+
+Overview of Changes in elastiC 0.0.21:
+
+* Added EcGetClassVariable() and EcSetClassVariable().
+
+* Fixed implementation of copy for arrays.
+
+Overview of Changes in elastiC 0.0.20:
+
+* Now compiles under recent GNU libc (2.2.x)
+
+Overview of Changes in elastiC 0.0.19:
+
+* Added `elastic.el' (see `misc' subdir), that adds an elastiC
+  major mode with font-lock support to (x)emacs.
+
+* Added JED files to add an elastiC mode (see `misc'
+  subdirectory).
+
+Overview of Changes in elastiC 0.0.18:
+
+* Added assign-ops, like **=, *=, /=, +=, ...
+  Added also a suitable test source for regression testing
+  (see regress/test_assign.ec).
+
+Overview of Changes in elastiC 0.0.17:
+
+* Faster hash table expansion. Tables up to 10^9 entries are now
+  supported.
+
+Overview of Changes in elastiC 0.0.16:
+
+* Command line tools are now quieter by default. Previous behavior
+  is enabled by -v switch. (Version is on -V).
+
+* Added a generic UnimplementedException exception.
+
+* Improved tkconf
+
+* Improved support for cross-compilation: added autoconf/automake
+  Makefile macros + makemodule script + elastic-config options to
+  build dynamically loadable modules.
+
+* Fixed elastic.m4 macro file.
+
+Overview of Changes in elastiC 0.0.15:
+
+* Added tkconf, first attempt to a graphical front-end to 'configure'
+
+* Improved support for cross-compilation.
+
+* Fixed silly bugs preventing compilation on some platforms (RedHat/Alpha
+  for example).
+
+Overview of Changes in elastiC 0.0.14:
+
+* Started WIN32 basic support.
+  All basic functionality is there, even dynamic C module loading
+  (with DLLs).
+
+  Compilation is done with Mingw32 compiler toolchain by Mumit Khan
+  <khan@xraylith.wisc.edu>
+	http://www.xraylith.wisc.edu/~khan/software/gnu-win32/
+  but cross-compiling from linux (thanks to Allin Cottrell for the
+  hints on setting up the environment; see enclosed mingw.sh script
+  for more info).
+  Native compilation from Cygwin + Mingw32 from Win32 should be
+  possible, but presently untested.
+
+  There is even embrional, unfinished support for Microsoft Visual C++
+  6.0 compilers.
+
+* Added C++ compiler compatibility support (extern "C" { ... }).
+
+* Added EC_API macro in front of public API symbols (variables and
+  functions).
+
+Overview of Changes in elastiC 0.0.13:
+
+* Eliminated bad GC anomaly causing continuous collection on some
+  circumstances. This behavior caused very poor performance for memory 
+  intensive programs (gtk module generator now runs 943% faster !).
+
+Overview of Changes in elastiC 0.0.12:
+
+* Added and interface for dynamic loading of C code and an implementation
+  based on libltdl.
+
+* Doesn't install anymore unneeded libraries.
+
+* Other optimizations in interpreter.
+
+* Switched to inlined integers. Performance in integer math is much
+  better: integer loops are >30% faster. And we don't even allocate
+  memory for integers ! Added also inlined symbols. Maybe I'll implement
+  inlined chars in the future.
+
+* Integrated libltdl (from libtool-1.3.4) to dynamically open
+  modules. Should greatly improve portability.
+
+Overview of Changes in elastiC 0.0.11:
+
+* fixed TargetError exception creation.
+
+* fixed to allow empty methods and functions.
+
+* fixed truth testing for objects of classes without a '_true' method.
+
+* fixed basic.*copy() (inadvertently these functions didn't work
+  because of a typo).
+
+* fixed a bug in floating point printing.
+
+* started a document on elastiC internal architecture.
+
+* added a section on OOP in elastiC documentation.
+
+Overview of Changes in elastiC 0.0.10:
+
+* fixed a bug in lexical scoping for C called bytecode. (Critical to
+  proper working of gtk callbacks).
+
+Overview of Changes in elastiC 0.0.9:
+
+* fixed string.split() behavior.
+
+* fixed syntax to allow for all optional parameters in varargs.
+
+* string.find() returns false when no match is found.
+
+* Preallocated low memory exception object.
+
+* Added MathError and IOError exception classes.
+
+Overview of Changes in elastiC 0.0.8:
+
+* Minor bug fixes.
+
+Overview of Changes in elastiC 0.0.7:
+
+* Better object allocation.
+
+* New 'array' module, with: length(), push(), pop(), shift(),
+  unshift(), sub(), find().
+  Apart from sub() it works on every ordered sequence.
+
+* Strings expand on lvalue indexing.
+
+* API updated to account for element removal.
+
+* Minor bug fixes.
+
+Overview of Changes in elastiC 0.0.6:
+
+* Added labels and 'goto' (Sorry, I need it to implement lex &
+  yacc in/for elastiC).
+
+* Added 'doesUnderstand' method to basic.Object
+
+* Added varargs also to keyword methods.
+
+* Added basic.send() and basic.sendwith(). These two functions
+  send a message to an object given the receiver object, the method
+  symbol and the parameters for the method (the former as direct
+  parameters, the latter as an array).
+
+* Two (major) bug fixes related to OOP.
+
+Overview of Changes in elastiC 0.0.5:
+
+* Two bug fixes related to method calls, which caused hard to track
+  problems.
+
+* Corrected a bug in string.toupper() and string.tolower()
+
+* Two major bug fixes related to compilation and package loading. API has
+  changed slightly (see EcInit() and EcSetArgs()).
+
+* Switched to 'configure' dependent basic type sizes.
+
+Overview of Changes in elastiC 0.0.4:
+
+* Added regular expression module 're' (based on pcre-2.08).
+* Added string.ltrim, string.rtrim, string.trim, string.split,
+  string.join, string.find
+* Many bugs corrected
+* Default path for modules (C and elastiC)
+* New options for elastic-config for dynamically loadable C modules
+* New elastic.m4 for automake, with AM_PATH_ELASTIC macro, useful when
+  creating dynamically loadable modules in C.
+
+Overview of Changes in elastiC 0.0.3:
+
+* Switched to automake/libtool
+* Changed version number scheme (see configure.in)
+* Some documentation enhancements and bug fixes
+* Some additions to string module
+* Versioning in utilities & in API.
+* Added elastic-config tool

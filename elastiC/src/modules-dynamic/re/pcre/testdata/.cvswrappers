@@ -1,0 +1,4 @@
+testinput1 -k 'b'
+testoutput1 -k 'b'
+testinput4 -k 'b'
+testoutput4 -k 'b'

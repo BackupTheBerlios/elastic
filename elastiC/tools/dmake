@@ -1,0 +1,272 @@
+#!/usr/bin/perl -w
+# ==========================================================================
+# dmake
+# ==========================================================================
+# Make wrapper for .
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 21 Nov 1999
+#
+#   $Id: dmake,v 1.1 2002/05/23 21:20:29 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+use strict;
+use Carp;
+
+# ========================================================================
+# ANSI output
+# ------------------------------------------------------------------------
+
+my %color = (
+	     'black'     =>	0,
+	     'red'       =>	1,
+	     'green'     =>	2,
+	     'yellow'    =>	3,
+	     'blue'      =>	4,
+	     'magenta'   =>	5,
+	     'cyan'      =>	6,
+	     'white'     =>	7,
+	     'b_black'   =>	8,
+	     'b_red'     =>	9,
+	     'b_green'   =>	10,
+	     'b_yellow'  =>	11,
+	     'b_blue'    =>	12,
+	     'b_magenta' =>	13,
+	     'b_cyan'    =>	14,
+	     'b_white'   =>	15,
+	    );
+
+my %attr = (
+	    'normal'     =>	0,
+	    'bold'       =>	1,
+	    'underscore' =>	2,
+	    'blink'      =>	3,
+	    'reverse'    =>	4,
+	    'invisible'  =>	5,
+	   );
+
+sub ANSI_cup {
+    my ($a, $b) = @_;
+
+    print sprintf("\x1b[%d;%dH", $a, $b);
+}
+
+sub ANSI_up {
+    my ($a) = @_;
+
+    print sprintf("\x1b[%dA", $a);
+}
+
+sub ANSI_down {
+    my ($a) = @_;
+
+    print sprintf("\x1b[%dB", $a);
+}
+
+sub ANSI_right {
+    my ($a) = @_;
+
+    print sprintf("\x1B[%dC", $a);
+}
+
+sub ANSI_left {
+    my ($a) = @_;
+
+    print sprintf("\x1B[%dD", $a);
+}
+
+sub ANSI_locate {
+    my ($a, $b) = @_;
+
+    print sprintf("\x1B[%d;%df", $a, $b);
+}
+
+sub ANSI_savecurs {
+    print sprintf("\x1B[S");
+}
+
+sub ANSI_restcurs {
+    print sprintf("\x1B[U");
+}
+
+sub ANSI_cls {
+    print sprintf("\x1B[2J");
+}
+
+sub ANSI_cleol {
+    print sprintf("\x1B[K");
+}
+
+sub ANSI_margins {
+    my ($a, $b) = @_;
+
+    print sprintf("\x1B[%d;%dr", $a, $b);
+}
+
+sub ANSI_attr {
+    my ($a) = @_;
+
+    print sprintf("\x1B[%dm", $attr{$a});
+}
+
+sub ANSI_fg {
+    my ($a) = @_;
+
+    my $num = $color{$a};
+    my $bri;
+    if ($num > 7) {
+	$num = $num - 8;
+	$bri = 1;
+    } else {
+	$bri = 0;
+    }
+    print sprintf("\x1B[%d;%dm", $bri, $num + 30);
+}
+
+sub ANSI_bg {
+    my ($a) = @_;
+
+    my $num = $color{$a};
+    print sprintf("\x1B[%dm", $num + 40);
+}
+
+# ========================================================================
+# Real stuff
+# ------------------------------------------------------------------------
+
+my %warning_color = (
+		     'file'    => 'b_yellow',
+		     'line'    => 'yellow',
+		     'type'    => 'yellow',
+		     'message' => 'b_white',
+		    );
+my %error_color = (
+		   'file'    => 'b_red',
+		   'line'    => 'red',
+		   'type'    => 'red',
+		   'message' => 'b_red',
+		  );
+my %make_color = (
+		   'level'     => 'b_white',
+		   'directory' => 'magenta',
+		  );
+
+my $log_file = "dmake.output";
+
+ANSI_fg('red');
+print "d";
+ANSI_fg('yellow');
+print "make v0.9\n\n";
+ANSI_fg('white');
+
+my ($nwarnings, $nerrors) = (0, 0);
+
+my $cmd = sprintf("make %s 2>&1 |", join($", @ARGV));
+print $cmd . "\n";
+open(OUT, $cmd) || die "can't run make command: $!";
+open(LOG, ">$log_file") || die "can't open file `$log_file': $!";
+while (<OUT>) {
+    chomp;
+
+    print LOG $_ . "\n";
+    if (/^([a-zA-Z0-9_,.\/]+)\:\s+In\s+function\s+\`(.+)\'\:/x) {
+	ANSI_fg('b_yellow');
+	print STDOUT $1;
+	ANSI_fg('white');
+	print STDOUT ": In function ";
+	ANSI_fg('yellow');
+	print STDOUT $2;
+	ANSI_fg('white');
+	print STDOUT ":\n";
+	ANSI_fg('white');
+    } elsif (/^([a-zA-Z0-9_,.\/]+)\:([0-9]+)\: \s+ warning\: \s+ (.+)/x) {
+	$nwarnings++;
+	ANSI_fg($warning_color{'file'});
+	print STDOUT $1;
+	ANSI_fg('white');
+	print STDOUT ":";
+	ANSI_fg($warning_color{'line'});
+	print STDOUT $2;
+	ANSI_fg('white');
+	print STDOUT ": ";
+	ANSI_fg($warning_color{'type'});
+	print STDOUT "warning";
+	ANSI_fg('white');
+	print STDOUT ": ";
+	ANSI_fg($warning_color{'message'});
+	print STDOUT "$3\n";
+	ANSI_fg('white');
+    } elsif (/^([a-zA-Z0-9_,.\/]+)\:([0-9]+)\: \s+ (.+)/x) {
+	$nerrors++;
+	ANSI_fg($error_color{'file'});
+	print STDOUT $1;
+	ANSI_fg('white');
+	print STDOUT ":";
+	ANSI_fg($error_color{'line'});
+	print STDOUT $2;
+	ANSI_fg('white');
+	print STDOUT ": ";
+	ANSI_fg($error_color{'type'});
+	print STDOUT "error";
+	ANSI_fg('white');
+	print STDOUT ": ";
+	ANSI_fg($error_color{'message'});
+	print STDOUT "$3\n";
+	ANSI_fg('white');
+    } elsif (/^make\[([0-9]+)\]\:\s+(Entering|Leaving)\s+directory\s+\`(.+)\'/x) {
+	print "make[";
+	ANSI_fg($make_color{'level'});
+	print STDOUT $1;
+	ANSI_fg('white');
+	print "]: $2 directory ";
+	ANSI_fg($make_color{'directory'});
+	print "$3\n";
+	ANSI_fg('white');
+    }
+    else {
+	print STDOUT $_ . "\n";
+    }
+}
+
+print "\n";
+if ($nwarnings > 0) {
+    ANSI_fg($warning_color{'file'});
+    print STDOUT "# WARNINGS: ";
+    ANSI_fg('white');
+    print "$nwarnings\n";
+    ANSI_fg('white');
+}
+if ($nerrors > 0) {
+    ANSI_fg($error_color{'file'});
+    print STDOUT "# ERRORS  : ";
+    ANSI_fg('white');
+    print "$nerrors\n";
+    ANSI_fg('white');
+}
+
+close(LOG);
+close(OUT);

@@ -1,0 +1,21 @@
+14.2
+14.2
+6
+9.2
+Hello World
+Result: 10.1
+HERE IT IS: ["f", 1, 2, "Ok"]
+[1, 2, 3, "four", "five", #six]
+abcd
+abcd
+e
+I: 0  Array: [0, 2, 3, 4, 5]
+I: 1  Array: [1, 1, 3, 4, 5]
+I: 2  Array: [1, 2, 2, 4, 5]
+I: 3  Array: [1, 2, 3, 3, 5]
+I: 4  Array: [1, 2, 3, 4, 4]
+I: 0  String: aello
+I: 1  String: Hallo
+I: 2  String: Healo
+I: 3  String: Helao
+I: 4  String: Hella

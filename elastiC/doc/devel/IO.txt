@@ -1,0 +1,7 @@
+layered IO system
+
+C API:
+
+   plain C-stream based IO API      -> elastiC file type   |
+                                                           |--> implementation independent IO API
+   object oriented IO API (channel) -> elastiC file type   |

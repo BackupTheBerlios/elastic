@@ -1,0 +1,5 @@
+Going to throw an EXCEPTION !
+a: 6
+CAUGHT EXCEPTION: (exc1.ec: 19  IN: <bytecode `exc1.$ANONYMOUS$' req.args:0>)
+	Test exception. Don't worry !
+OUT

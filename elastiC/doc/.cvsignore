@@ -1,0 +1,12 @@
+bak
+old
+Uncategorized
+Makefile
+Makefile.in
+INSTALL.sdf
+dmake.output
+*.1
+*.html
+*.pod
+*.sgml
+*.txt

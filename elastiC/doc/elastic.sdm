@@ -1,0 +1,253 @@
+# ==========================================================================
+# elastic.sdm
+# ==========================================================================
+# SDF module for elastiC.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 1999
+#
+#   $Id: elastic.sdm,v 1.1 2002/05/23 21:16:23 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+# $Id: elastic.sdm,v 1.1 2002/05/23 21:16:23 panta Exp $
+#
+# >>Title::     elastiC Module
+#
+# >>Copyright::
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+#
+# >>History::
+# $History$
+#
+# >>Purpose::
+# {{MOD:elastic}} is the [[SDF]] library module for building
+# the [[EC]] documentation suite.
+#
+# >>Description::
+# The EC_ROOT variable is prepended to relative paths, so that
+# documents in different directories can access files in a relative
+# manner.
+#
+# >>Limitations::
+#
+
+# The default EC_ROOT is the current directory
+#!default EC_ROOT           './'
+!default EC_ROOT           ''
+
+# Set up the default location for images
+!define IMAGES_BASE "images/"
+
+# Logos
+!define DOC_LOGO            "images/eclogo"
+#!define DOC_LOGO_BASE       EC_ROOT
+!define DOC_LOGO_BASE       "images/"
+!define DOC_TITLE_LOGO      "images/ecbig"
+
+# Title page details
+!define DOC_DISTRIBUTION    "UNLIMITED CIRCULATION"
+!define DOC_PRODUCT         "elastiC Language"
+!define DOC_PROJECT         "elastiC $var{'EC_VERSION'}"
+!define DOC_OWNER           "Marco Pantaleoni"
+!define DOC_TITLE           "elastiC manual"
+
+# HTML configuration variables
+!define HTML_BG_COLOR       COLOR_WHITE
+#!define HTML_LINK_COLOR     COLOR_BLUE
+#!define HTML_VLINK_COLOR    COLOR_RED
+#!define HTML_URL_HOME       $var{'EC_ROOT'} . "index.html"
+#!define HTML_URL_CATALOG    $var{'EC_ROOT'} . "catalog.html"
+#!define HTML_URL_SEARCH     $var{'EC_ROOT'} . "search.html"
+!define HTML_URL_HOME       "http://www.elasticworld.org"
+#!define HTML_TEXT_HOME      "elastiC WEB site"
+
+# Define the documents within this documentation suite.
+!include "document.reg"; references; data; root=EC_ROOT
+
+# Add the bugs database, etc. as references
+!block references; data; root="http://www.elasticworld.org/"
+Reference       Jump                    Document
+EC-HOME         index.html              elastiC Web Site
+EC-DOCS         catalog.html            elastiC Document Catalog
+EC-DOWNLOAD     download.html           elastiC Download Page
+EC-BUGS         bugs/index.html         elastiC Bug Database
+EC-SAMPLES      samples/index.html      elastiC Sample Showcase
+EC-RESOURCES    resources/index.html    elastiC Resource Center
+EC-NEWS         news/index.html         elastiC Latest News
+!endblock
+
+# Make some things easier to reference
+!define EC_AUTHOR   "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define EC_DOWNLOAD "http://www.elasticworld.org/download.html"
+
+# Include commonly referenced objects
+!use "objects"
+
+# Commonly used phrase styles
+!block phrasestyles
+Name            To
+CLASS           =1
+DSTYLE          =1
+VAR             =1
+FMT             =1
+FILT            =1
+MAC             =1
+MOD             =1
+SUB             =1
+SUBR            =1
+OATTR           =1
+OSTYLE          =N
+PATTR           =1
+PSTYLE          =N
+TSTYLE          =N
+TPARAM          =1
+RPARAM          =1
+CPARAM          =1
+!endblock
+
+# Commonly referenced organisations
+!block organisations; data
+Name            Long                                    Jump
+!endblock
+
+# Commonly referenced products
+!block products; data
+Name            Jump
+Acrobat         http://www.adobe.com/prodindex/acrobat/
+Emacs           http://www.fsf.org
+PDF             http://www.adobe.com
+gcc             http://www.gnu.org
+elastiC         http://www.elasticworld.org
+!endblock
+
+# Make the most commonly referenced objects variables
+!define EC              "{{PRD:elastiC}}"
+!define GCC             "{{PRD:GCC}}"
+!define EMACS           "{{PRD:EMACS}}"
+!define SDF             "{{PRD:SDF}}"
+
+# Document summary variables
+!define EC_DOC_WP   "{{DOC:The elastiC Language}} - an overview of the language"
+!define EC_DOC_QR   "{{DOC:elastiC Quick Reference}} - a concise reference to {{PRD:EC}} language"
+!define EC_DOC_UG   "{{DOC:elastiC User Guide}} - detailed tutorial style manual"
+!define EC_DOC_REF  "{{DOC:elastiC Reference}} - detailed reference material on {{PRD:EC}}"
+
+# Copyright stuff
+!macro DOC_COPYRIGHT
+    Copyright [[c]] [[_DOC_YEAR]], [[DOC_OWNER]]
+
+    All rights reserved.
+
+    You are free to copy and distribute this manual for non-commercial
+    purposes only.
+!endmacro
+
+# Trademark stuff
+!macro  DOC_TRADEMARKS
+[[Windows]] is a registered trademark of
+{{ORG[expand] Microsoft}}.
+
+[[Unix]] is a registered trademark of
+{{ORG[expand] X/Open}}.
+
+Other trademarks are the property of their respective owners.
+!endmacro
+
+# Admendments advice
+!macro EC_AMENDMENTS
+Suggested enhancements and corrections to [[EC]] and its documentation
+can be forwarded to [[EC_BUGS]].
+!endmacro
+
+!block langdefs
+# elastiC language
+eC|ec|elastic|elastiC:\
+    :pb=^\d?*?\d?\p\d?\(\a?\)(\d|{):bb={:be=}:cb=/*:ce=*/:ab=//:sb=":se=\e":\
+    :lb=':le=\e':tl:\
+    :kw=break case continue default do else\
+    for goto if return\
+    local static public private switch while\
+    package import from function class object in\
+    catch class new operator\
+    throw try:
+!endblock
+
+################# Hypertext Generation Stuff #####################
+
+!if $var{'OPT_TARGET'} eq 'html'
+    # the Reference Guide is broken into topics for HTML
+    !on phrase 'CMD' ;; \
+        if ($text =~ /^sd[fn]/) {\
+            $attr{'jump'} = sprintf("%sref/%s.html", $var{'EC_ROOT'}, \
+              $text =~ /^sdfcvt$|^sdf2/ ? 'sdf' : $text); \
+        }
+    !on phrase 'FMT' ;; \
+        $attr{'jump'} = $text; \
+        $attr{'jump'} =~ tr/A-Z/a-z/; \
+        $attr{'jump'} = $var{'EC_ROOT'} . "ref/fmt_" . $attr{'jump'} . ".html"
+    !on phrase 'CLASS';; $attr{'jump'} = $var{'EC_ROOT'} . "ref/c".substr($text,0,7).".html"
+    !on phrase 'FILT' ;; $attr{'jump'} = $var{'EC_ROOT'} . "ref/f".substr($text,0,7).".html"
+    !on phrase 'MAC'  ;; $attr{'jump'} = $var{'EC_ROOT'} . "ref/m".substr($text,0,7).".html"
+!else
+    # normal mode
+    !on phrase 'CMD' ;; \
+        if ($text =~ /^sd[ft]/) { \
+            $attr{'jump'} = "../ref/re_sdf.html#" . \
+              ($text =~ /^sdfcvt$|^sdf2/ ? 'sdf' : $text); \
+        }
+    !on phrase 'CLASS';; $attr{'jump'} = $var{'EC_ROOT'} . "ref/re_sdf.html#$text Class"
+    !on phrase 'FMT'  ;; $attr{'jump'} = $var{'EC_ROOT'} . "ref/re_sdf.html#$text Format"
+    !on phrase 'FILT' ;; $attr{'jump'} = $var{'EC_ROOT'} . "ref/re_sdf.html#$text Filter"
+    !on phrase 'MAC'  ;; $attr{'jump'} = $var{'EC_ROOT'} . "ref/re_sdf.html#$text Macro"
+!endif
+
+################# Index Generation Stuff #####################
+
+# A poor man's index :-)
+!on phrase ''       ;; if (length($text) < 50) {$attr{'index'} = $text}
+!on phrase '[HAP]\d';; $attr{'index'} = $text

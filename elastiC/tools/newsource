@@ -1,0 +1,155 @@
+#!/usr/bin/perl -w
+# ==========================================================================
+# newsource
+# ==========================================================================
+# Generate new source files for inclusion in elastiC.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 20 Nov 1999
+#
+#   $Id: newsource,v 1.1 2002/05/23 21:20:29 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+use strict;
+use Carp;
+use File::Basename;
+
+if ($#ARGV < 1) {
+    print STDERR "newsource  - by Marco Pantaleoni  <panta\@elasticworld.org>\n";
+    print STDERR "usage: newsource [-t TEMPLATEDIR] FILELIST DESCRIPTION\n\n";
+    exit 1;
+}
+
+my ($cmd_base, $cmd_path, $cmd_suffix) = fileparse($0, "");
+
+my ($templatedir) = ($cmd_path);
+my ($date, $year, $description, $filename);
+$date = `date`;
+chomp($date);
+($year) = ($date =~ /([0-9]{4})/);
+
+$description = pop(@ARGV);
+
+if (($#ARGV >= 1) and ($ARGV[0] eq '-t')) {
+    shift();
+    $templatedir = shift();
+}
+
+while ($#ARGV >= 0) {
+    $filename = shift;
+
+    if ($filename =~ /\.(c|h|cc|hh|C|H|m)$/) {
+	emitTemplate( $filename );
+    } else {
+	emitTemplate( $filename . ".h" );
+	emitTemplate( $filename . ".c" );
+    }
+}
+
+sub emitTemplate {
+    my ($filename) = @_;
+
+    open(OUT, ">$filename");
+    if ($filename =~ /\.(h|hh|H)/) {
+	emitH(*OUT{IO}, $filename);
+    } else {
+	emitC(*OUT{IO}, $filename);
+    }
+    close(OUT);
+}
+
+sub emitH {
+    my ($fh, $filename) = @_;
+
+    my $basename;
+    my $cpp;
+    my ($trans, $tfile);
+
+    $basename = $filename;
+    $basename =~ s/\.[^\.]*$//;
+
+    $cpp = uc( $filename );
+    $cpp =~ s/\./\_/;
+    $cpp = "__" . $cpp;
+
+    $trans = {
+	      'BASENAME'    => $basename,
+	      'FILENAME'    => $basename . '.h',
+	      'DESCRIPTION' => $description,
+	      'CREATED'     => $date,
+	      'ID'          => '',
+	      'COPYRIGHT'   => $year,
+	      'HSYM'        => $cpp,
+	     };
+
+    $tfile = $templatedir . 'template.h.tmpl';
+    templatesubst( $fh, $tfile, $trans );
+}
+
+sub emitC {
+    my ($fh, $filename) = @_;
+
+    my $basename;
+    my ($trans, $tfile);
+
+    $basename = $filename;
+    $basename =~ s/\.[^\.]*$//;
+
+    $trans = {
+	      'BASENAME'    => $basename,
+	      'FILENAME'    => $basename . '.c',
+	      'DESCRIPTION' => $description,
+	      'CREATED'     => $date,
+	      'ID'          => '',
+	      'COPYRIGHT'   => $year,
+	      'HSYM'        => '',
+	     };
+
+    $tfile = $templatedir . 'template.c.tmpl';
+    templatesubst( $fh, $tfile, $trans );
+}
+
+sub templatesubst {
+    my ($fh, $tfile, $trans) = @_;
+
+    my ($key, $K);
+
+    open(TMPL, $tfile) || die "can't open file '$tfile': $!";
+    while (<TMPL>) {
+	chomp;
+
+	foreach $key (keys %$trans) {
+	    $K = "\@$key@";
+	    if (/$K/) {
+		s/$K/$trans->{$key}/;
+	    }
+	}
+
+	print $fh $_ . "\n";
+    }
+    close(TMPL);
+}

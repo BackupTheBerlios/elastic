@@ -1,0 +1,6 @@
+#/usr/local/share/automake/install-sh install-sh
+#/usr/local/share/automake/mkinstalldirs mkinstalldirs
+#/usr/local/share/automake/missing missing
+#/usr/local/share/libtool/config.guess config.guess
+#/usr/local/share/libtool/config.sub config.sub
+#/usr/local/share/libtool/ltmain.sh ltmain.sh

@@ -1,0 +1,39 @@
+/* cnf.h.in */
+
+#define SO_SUFFIX "@SO@"
+
+#define EC_VERSION		EC_MAKEVERSION(@EC_MAJOR_VERSION@, @EC_MINOR_VERSION@, @EC_MICRO_VERSION@)
+#define EC_VERSION_STRING	"@EC_VERSION@"
+
+#define EC_MAJOR_VERSION	@EC_MAJOR_VERSION@
+#define EC_MINOR_VERSION	@EC_MINOR_VERSION@
+#define EC_MICRO_VERSION	@EC_MICRO_VERSION@
+
+#define EC_API_VERSION		@EC_API_VERSION@
+#define EC_API_REVISION		@EC_API_REVISION@
+#define EC_BINARY_AGE		@EC_BINARY_AGE@
+
+#define CNF_PREFIX		"@prefix@"
+#define CNF_EXECPREFIX		"@exec_prefix@"
+#define CNF_BINDIR		"@bindir@"
+#define CNF_LIBS		"@LIBS@"
+#define CNF_CFLAGS		"@CFLAGS@"
+#define CNF_CC			"@CC@"
+
+#define EC_PLATFORM_ALIGNMENT	@PLATFORM_ALIGNMENT@
+
+/*
+ * Should we use EC_API_VERSION instead of EC_VERSION in EC_DEFAULTLIBPATH ???
+ * Maybe we should use:
+ *  .../usr/lib/elastic:/usr/lib/elastic/native-@EC_API_VERSION@...
+ */
+#ifndef WIN32	/* UNIX */
+#define EC_DEFAULTLIBPATH	"/usr/lib/elastic:/usr/lib/elastic-@EC_VERSION@:@prefix@/lib/elastic:@prefix@/lib/elastic-@EC_VERSION@"
+#else		/* WIN32 */
+/*
+ * We are hardcoding default paths, which is *UGLY*
+ * On Win32 we should really use a configuration mechanism
+ * like the registry.
+ */
+#define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_VERSION@;C:\\elastic-@EC_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib;@prefix@\\elastic;@prefix@\\elastic-@EC_VERSION@"
+#endif

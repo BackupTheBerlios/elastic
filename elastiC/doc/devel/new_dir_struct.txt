@@ -1,0 +1,24 @@
+TOPLEVEL
+   README
+   INSTALL
+   COPYRIGHT
+   ...
+   configure.in
+   Makefile.in
+   src/
+      compat/
+      obj/
+      objdbg/
+      gtk/
+      devel/
+      profile/
+      regress/
+      interp_funcs/
+      foreign_packages/
+      old/
+   doc/
+      examples/
+   tools/
+   util/
+
+Eliminate lib/ subdir: library in src/ subdir

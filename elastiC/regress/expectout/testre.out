@@ -1,0 +1,44 @@
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: (bcD)
+MATCH: <match groups: 2 subject:"...ABCabcDEFdef..." regexp:<regexp "(bcD)", @nil>>
+GROUP  0: "bcD"                                         [7,9]
+GROUP  1: "bcD"                                         [7,9]
+
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: bcD
+MATCH: <match groups: 1 subject:"...ABCabcDEFdef..." regexp:<regexp "bcD", @nil>>
+GROUP  0: "bcD"                                         [7,9]
+
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: bCD
+MATCH: @nil
+
+SUBJECT: Nel mezzo del cammin di nostra vita mi ritrovai per una selva oscura
+PATTERN: (del|di).*(del|di).*per
+MATCH: <match groups: 3 subject:"Nel mezzo del cammin di nostra vita mi ritrovai per una selva oscura" regexp:<regexp "(del|di).*(del|di).*per", @nil>>
+GROUP  0: "del cammin di nostra vita mi ritrovai per"   [10,50]
+GROUP  1: "del"                                         [10,12]
+GROUP  2: "di"                                          [21,22]
+
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: (bcD)
+MATCH: <match groups: 2 subject:"...ABCabcDEFdef..." regexp:"(bcD)">
+GROUP  0: "bcD"                                         [7,9]
+GROUP  1: "bcD"                                         [7,9]
+
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: bcD
+MATCH: <match groups: 1 subject:"...ABCabcDEFdef..." regexp:"bcD">
+GROUP  0: "bcD"                                         [7,9]
+
+SUBJECT: ...ABCabcDEFdef...
+PATTERN: bCD
+MATCH: @nil
+
+SUBJECT: Nel mezzo del cammin di nostra vita mi ritrovai per una selva oscura
+PATTERN: (del|di).*(del|di).*per
+MATCH: <match groups: 3 subject:"Nel mezzo del cammin di nostra vita mi ritrovai per una selva oscura" regexp:"(del|di).*(del|di).*per">
+GROUP  0: "del cammin di nostra vita mi ritrovai per"   [10,50]
+GROUP  1: "del"                                         [10,12]
+GROUP  2: "di"                                          [21,22]
+

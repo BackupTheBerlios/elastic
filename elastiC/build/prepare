@@ -1,0 +1,16 @@
+#!/bin/sh
+
+[ -e autom4te.cache ] && rm -rf autom4te.cache
+find . -name "config.cache" | xargs rm -f
+find . -name "config.log" | xargs rm -f
+find . -name "config.status" | xargs rm -f
+rm -f *.cache *.log *.status
+rm -f config.h src/tsize.h
+mkdir -p ${HOME}/usrlocal/share/aclocal
+echo "*** ACLOCAL ***"
+aclocal -I ${HOME}/usrlocal/share/aclocal -I build
+#/usr/local/bin/aclocal -I ${HOME}/usrlocal/share/aclocal -I build
+echo "*** AUTOCONF ***"
+autoconf --localdir=build
+echo "*** AUTOMAKE ***"
+automake

@@ -1,0 +1,6 @@
+I have some doubts about the correctness of EcParameterCountErrorMethod() and
+EcParameterCountErrorClassMethod(), since the first argument is used either as
+the target of the offending method and either as the starting point in the class 
+search process. When the parameter count mismatch appens for a call to a method
+in a upper class and when the lower class has, say, the right number of args,
+the method found would be that of the lower class.

@@ -1,0 +1,30 @@
+(D) DESCRIPTION
+D: difficulty level (in a logarithmic scale)
+------------------------------------------------------------------------
+(2)   regular expressions                                           DONE
+
+(2)   complete modules (string, math, basic, ...)
+
+(2.5) new gtk module                                                DONE
+
+(2)   correct search path for packages                              DONE
+
+(2.5) bignums, rationals, ...
+
+(2.4) dynamic loading of (C & elastiC) packages
+
+(1)   linux kernel module for elastiC
+
+(2.5) add +=, -=, *=, ...                                           DONE
+
+(1.5) add generic construction
+
+(3)   make byacc thread safe, fully re-entrant and modularized
+
+(3)   make lex thread safe, fully re-entrant and modularized
+
+(3)   reorganize compiler to allow repl and eval
+
+(4)   rewrite compiler (split stages)
+
+(3)   repl loop (with new compiler)

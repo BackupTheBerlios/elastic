@@ -1,0 +1,11 @@
+*** Re-raise exception test ***
+Going to throw an EXCEPTION !
+a: 6
+7
+8
+IOError INIT
+6
+8
+ARGH IOError!
+ARGH !
+OUT

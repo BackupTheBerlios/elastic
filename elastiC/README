@@ -1,0 +1,195 @@
+                               elastiC
+                               =======
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+Its main characteristics are:
+
+    -  Open Source.
+    -  Interpreted.
+    -  Portable bytecode compilation.
+    -  Familiar C-like syntax.
+    -  Dynamic typing.
+    -  Automatic real, very fast, Garbage Collection.
+    -  Object Oriented with meta-programming support (a la
+       Smalltalk).
+    -  Functional programming support (Scheme like closures with
+       lexical scoping). 
+    -  Hierarchical Namespaces.
+    -  Many useful basic types (dynamic arrays, dictionaries, symbols,
+       ...).
+    -  Extensibile with C (you can add functions, types, classes,
+	methods, packages, ...).
+    -  Embeddable in C.
+    -  Small footprint, making it ideal also in embedded systems.
+
+elastiC has been strongly influenced by C, Smalltalk, Scheme and
+Python and tries to merge the best characteristics of all these
+languages, maintaining though its unique personality.
+
+And elastiC comes with a number of goodies, like configuration files
+for editing elastiC in Emacs (even with font-locking) and in Jed.
+
+USAGE
+-----
+
+elastiC is composed by a library, a bytecode compiler (ecc), an
+interpreter (ec) and other utilities.
+Compiling and executing an elastiC program is easy:
+
+   % ecc hello.ec         # compile `hello.ec'
+   % ec hello             # execute compiled `hello' program
+
+It is also possible to directly executing from a source file
+(bytecode compiling on the fly):
+
+   % ec hello.ec          # execute `hello.ec'
+
+For further information, refer to the man pages and the other
+documents that come with the package, as explained below.
+
+WEB SITE
+--------
+
+The elastiC official web site is:
+
+    http://www.elasticworld.org
+
+Here, you'll find the most recent release, documentation, support and
+other important information.
+
+DOCUMENTATION
+-------------
+
+elastiC documentation is distributed with the package in the "doc"
+subdirectory (in plain text, HTML, SGML, man, ...).
+Some examples are in the "doc/examples" subdirectory.
+
+To print the man pages (if using groff):
+
+   % groff -man doc/quickref.1 | lpr
+   % groff -man doc/elastic.1 | lpr
+   % groff -man doc/ec.1 | lpr
+   % groff -man doc/ecc.1 | lpr
+   ...
+
+or, if you simply want to read them without installing the whole
+thing:
+
+   % groff -Tascii -man doc/quickref.1 | more
+   % groff -Tascii -man doc/elastic.1 | more
+   % groff -Tascii -man doc/ec.1 | more
+   % groff -Tascii -man doc/ecc.1 | more
+   ...
+
+Probably the best way to get started with elastiC is by reading the
+man pages, examples and experimenting. Its basic syntax is very
+similar to that of the C language (it is much simpler, actually), so
+you should feel at home. The more complete introductory documents are
+the quickref(1) and elastic(1) man pages.
+
+Please note that since elastiC is a young project, it is somewhat
+lacking in documentation & examples. I really hope to change this in
+the future. In the meantime, please be patient.
+(Some "examples" are regression tests, in "regress/*.ec").
+
+INSTALLATION
+------------
+
+See the file "INSTALL"
+
+MAILING LISTS
+-------------
+
+There are two mailing lists for elastiC.
+They are elastic-user@prosa.it and elastic-devel@prosa.it
+The first one is to dicuss about the language itself. If you have
+any questions, it's the right place to check.
+The second one is about the implementation of compiler and
+interpreter, and about proposed additions to the language.
+To subscribe, simply send a mail with body subscribe to the
+addresses elastic-user-request@lists.prosa.it and
+elastic-devel-request@lists.prosa.it.
+From a unix machine it's simply a matter of doing:
+
+    % echo "subscribe" | mail elastic-user-request@lists.prosa.it
+    % echo "subscribe" | mail elastic-devel-request@lists.prosa.it
+
+You will receive a message from the list server after your
+registration.
+
+Otherwise you can also subscribe from the web:
+
+    http://lists.prosa.it/cgi-bin/mailman/listinfo/elastic-user
+    http://lists.prosa.it/cgi-bin/mailman/listinfo/elastic-devel
+
+You will receive a message from the list server after your
+registration.
+Mailing list archives are available at:
+
+    http://lists.prosa.it/pipermail//elastic-devel/
+    http://lists.prosa.it/pipermail//elastic-user/
+
+Thanks to the folks at Prosa Srl (http://www.prosa.it) for hosting
+the above mailing lists.
+
+MISC
+----
+
+Emacs support: read the file `misc/README.emacs' on how to install the
+accompanying `elastic.el'.
+JED support: you have to install the .sl files present in the `misc'
+subdirectory and apply the patches `*.sl.diff'.
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+elastiC is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+THIRD PARTY SOFTWARE
+--------------------
+
+elastiC uses a modified version of the PCRE library:
+
+  Regular expression support is provided by the PCRE library package,
+  which is open source software, written by Philip Hazel, and copyright
+  by the University of Cambridge, England.
+
+The original PCRE library is available from:
+
+  ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
+
+elastiC includes source code derived from BSD:
+
+  This product includes software developed by the University of
+  California, Berkeley and its contributors.
+
+Note however that, as stated in
+
+  ftp://ftp.cs.berkeley.edu/pub/4bsd/README.Impt.License.Change
+
+the so called `advertising clause' in the BSD license doesn't
+apply anymore.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+1 November 1999 - 23 Oct 2001

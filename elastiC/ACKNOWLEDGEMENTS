@@ -1,0 +1,13 @@
+My thanks go to the following people, whose help has proved invaluable:
+
+David N. Welton      <davidw@apache.org>           - documentation
+Federico Di Gregorio <fog@debian.org>              - debian package,
+                                                     versioning discussions
+Emiliano             <emile@iris-advies.com>       - intelligent questions,
+                                                     suggestions, bug reports,
+                                                     unicode support
+Alexander Bokovoy    <a.bokovoy@sam-solutions.net> - bug fixes, licensing issues
+Patrick Clochesy     <spacehog@new.rr.com>         - BSD license clarification
+Yuri Mironoff        <ymironoff@slk.com>           - AIX native compiler support
+
+I apologize to the (many) I've forgotten.

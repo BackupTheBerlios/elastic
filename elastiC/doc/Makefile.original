@@ -1,0 +1,125 @@
+# Generated automatically from Makefile.in by configure.
+# ==========================================================================
+# Makefile
+# ==========================================================================
+# Makefile for elastiC documentation.
+# --------------------------------------------------------------------------
+#   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+#
+#   Created: 17 Jun 1998
+#
+#   $Id: Makefile.original,v 1.1 2002/05/23 21:16:26 panta Exp $
+# --------------------------------------------------------------------------
+#    Copyright (C) 1997-1999 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+#  See the elastiC License for the specific language governing rights and
+#  limitations under the elastiC License.
+# ==========================================================================
+
+.EXPORT_ALL_VARIABLES:
+
+MAN1            = elastic.1    ec.1    ecc.1    ecdump.1
+MAN1_POD        = elastic.pod  ec.pod  ecc.pod  ecdump.pod
+MAN1_HTML       = elastic.html ec.html ecc.html ecdump.html
+MAN1_TXT        = elastic.txt  ec.txt  ecc.txt  ecdump.txt
+MAN1_SGML       = elastic.sgml ec.sgml ecc.sgml ecdump.sgml
+#MAN1_TEX        = elastic.tex  ec.tex  ecc.tex  ecdump.tex
+TARGETS         = $(MAN1_POD) $(MAN1_HTML) $(MAN1_TXT) $(MAN1) $(MAN1_SGML) tutorial.html tutorial.sgml tutorial.txt
+
+#SUBDIRS         = examples
+SUBDIRS         =
+
+
+# ------------------------------------------------------------------------
+# C O M P I L A T I O N   F L A G S
+# ------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------
+# E N V I R O N M E N T
+# ------------------------------------------------------------------------
+
+ifeq (0,${MAKELEVEL})
+TOPDIR    := $(shell pwd)
+whoami    := $(shell whoami)
+host-type := $(shell arch)
+BUILDDIR  := $(TOPDIR)/build
+MAKE := ${MAKE} host-type=${host-type} whoami=${whoami}
+endif
+
+# ------------------------------------------------------------------------
+# A U T O M A T I C   D E P E N D E N C Y   G E N E R A T I O N
+# ------------------------------------------------------------------------
+
+# ------------------------------------------------------------------------
+# A U T O M A T I C   R U L E S
+# ------------------------------------------------------------------------
+
+include $(BUILDDIR)/rules.mk
+
+# ------------------------------------------------------------------------
+# R U L E S
+# ------------------------------------------------------------------------
+
+.PHONY: all
+all: $(TARGETS)
+
+.PHONY: install
+install:
+	$(INSTALL) -d $(datadir)
+	$(INSTALL) -d $(datadir)/elastic
+	$(INSTALL) -d $(datadir)/elastic/images
+	$(INSTALL) -d $(datadir)/elastic/examples
+	$(INSTALL) -d $(mandir)/man1
+	$(INSTALL) -m 644 $(TARGETS) $(datadir)/elastic
+	$(INSTALL) -m 644 images/*.jpg $(datadir)/elastic/images
+	$(INSTALL) -m 644 examples/* $(datadir)/elastic/examples
+	$(INSTALL) -m 644 $(MAN1) $(mandir)/man1
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i install; done
+endif
+
+.PHONY: clean
+clean:
+	@$(RM) *.log *.aux *.toc
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i clean; done
+endif
+
+.PHONY: distclean
+distclean: clean
+	@$(RM) Makefile
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i distclean; done
+endif
+
+.PHONY: realclean
+realclean: clean
+	@$(RM) $(TARGETS)
+	@$(RM) Makefile
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i realclean; done
+endif
+
+.PHONY: depend
+depend dep:
+ifdef SUBDIRS
+	for i in $(SUBDIRS); do $(MAKE) TOPDIR=${TOPDIR} -C $$i depend; done
+endif

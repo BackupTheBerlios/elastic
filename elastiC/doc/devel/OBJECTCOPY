@@ -1,0 +1,10 @@
+Some object types are peculiar with regard to the copy operation (deep
+& shallow). These types are (currently):
+
+   - classes
+   - packages
+   - stacks
+
+Objects of these types are not copied, since this wouldn't make much
+sense. Up to the reader to figure out why... :)
+

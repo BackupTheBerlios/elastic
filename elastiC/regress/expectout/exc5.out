@@ -1,0 +1,6 @@
+*** Inter-functional catch exception test ***
+IN 1
+IN 2
+IOError INIT
+IOError: (@undefined: 38  IN: @undefined)
+	@undefined

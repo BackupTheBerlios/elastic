@@ -1,0 +1,3 @@
+PATH: '/usr/local/java/jdk1.1.6/bin:/usr/local/MuPAD/share/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/opt/bin:.:/usr/local/qt/bin:/usr/local/kde/bin:/usr/local/spice3/bin:/usr/local/spicecad/bin:/usr/local/chipmunk/bin:/usr/local/lclint/bin:/usr/local/MuPAD//bin:/usr/local/pgsql/bin:/home/marco/bin:.'
+ECTEST    : '@nil'
+Now ECTEST: 'Hello'

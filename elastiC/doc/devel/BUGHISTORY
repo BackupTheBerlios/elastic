@@ -1,0 +1,32 @@
+* Wrong references to instance variables after a method call.
+	ReturnOP didn't get self & at_class after stack retrieval.
+
+* self == @nil in init method.
+	We didn't always set caller, self and at_class in EcCallArgs()
+
+* Wrong symbol used on method invocation when using a compiled package.
+	We used to save the symbol id, that is not guaranteed to remain
+	constant across executions (especially when loading other compiled
+	packages).
+
+* Variable references in other packages picked up the wrong object.
+	Happened when intermixed with public variables where private ones.
+	We inadvertently used the position in the export list, instead of
+	the position on the package frame at compile time.
+
+* Offset in objects loaded when loading packages
+	Caused by passing arguments to a compiled package that loaded
+	other compiled packages. sys.args where set immediately on
+	initialization, causing the shift in globals, with respect to
+	compile time.
+
+* At cleanup time, messages printed on stdout/stderr where not printed
+	File object release closed file descriptors, even for std*
+
+* Offset in objects loaded when loading packages
+	Caused by saving along with a package *all* the globals in effect
+	at save time, not only those introduced by the core.
+
+* Segfault on user free function
+	Caused by unloading of *.so modules before calling user free
+	functions in object table release.

@@ -1,0 +1,280 @@
+!init OPT_CONFIG="elastic"; OPT_STYLE="manual"; EC_ROOT="./"
+#
+# >>Title::     elastiC internal architecture
+#
+# >>Copyright::
+#    Copyright (C) 2000 Marco Pantaleoni. All rights reserved.
+#
+#  The contents of this file are subject to the elastiC License version 1.0
+#  (the "elastiC License"); you may not use this file except in compliance
+#  with the elastiC License. You may obtain a copy of the elastiC License at
+#  http://www.elasticworld.org/LICENSE
+#
+#  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+#  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+#  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+#  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+#  POSSIBILITY OF SUCH DAMAGE.
+#
+#  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+#  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+#  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+#  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+#  MODIFICATIONS.
+#
+
+# Define variables
+!define DOC_NAME           "elastiC"
+!define DOC_TYPE           "- internal architecture"
+!define DOC_AUTHOR         "Marco Pantaleoni ({{EMAIL:panta@elasticworld.org}})"
+!define DOC_TOC            2
+!define DOC_IX
+
+!define ELASTIC            "B<elastiC>"
+
+# Build the title
+!build_title
+
+H1: DESCRIPTION
+
+This document describes the internal architecture, organization and
+design philosophy of the B<elastiC> system. It is aimed at developers 
+wanting to modify or extend the core of B<elastiC> library, which is
+not an easy task. This is B<not> a necessary reading for module
+writers or end-users, though it could be an useful aid to a deeper
+understanding.
+
+H1: Overview
+
+B<elastiC> is a complex product, and so its design features many
+interacting subsystems. It is of fundamental importance to grasp a
+picture of the interaction patterns of these subsystems.
+So we'll start by identifying them:
+
+* Library global management functions
+
+  ** intialization & cleanup
+  ** versioning
+  ** library error handling
+  ** primitive registration
+  ** misc utility functions
+
+* Object manager
+
+  ** type subsystem
+     *** type registration
+     *** type inspection / access
+     *** operation dispatch
+         **** generic operations protocol
+         **** arithmetic protocol
+         **** sequence protocol
+  ** specific basic types
+     *** fundamental types
+         **** boolean
+         **** integer
+         **** floating point
+         **** symbol
+         **** C primitive
+         **** C method
+     *** library-provided user types
+         **** array
+         **** char
+         **** string
+         **** stack frame
+         **** bytecode
+         **** exception handler
+         **** package
+         **** class
+         **** class instance (object)
+  ** heap manager (allocation & GC)
+  ** object copy, compare, ...
+  ** package I/O
+
+* Compiler
+
+* Interpreter
+
+* Basic I/O
+
+* Utility
+
+  ** symbol handling
+  ** string handling
+  ** low-level memory management
+  ** ...
+
+H1: Code conventions
+
+elastiC sources are written following some essential guidelines, that
+should be observed when making changes or adding functionality. These
+guidelines try to observe the I<least surprise> principle, in order to 
+minimize the amount of information that the developer has to remember.
+These conventions have never been written down before, but developed
+spontaneously from the author mental processes, so it's certain the
+we'll miss or omit some of them in this short summary, but the
+developer is encouraged to respect the spirit of the existing sources
+and to continue in the same direction. We must admit for intellectual
+honesty that not every part of the source code is strictly adhering to 
+the same conventions (since these changed over time and with author
+inclinations). The author will be thankful to whom will notify any
+inconsistency in the existing sources (there are many of them).
+
+H2: Symbol prefixes
+
+elastiC is mainly a library, so it's essential to avoid any pollution
+of the global name space. The only efficient method to accomplish this 
+in C is resorting to a prefix for every symbol introduced.
+In elastiC we also use different prefixes to differentiate between
+classes of symbols, according to the table:
+Note: the two letter prefix B<EC> (as B<Ec>, ...)  is a contraction of elastiC.
+
+!block table; format=424; style="grid"
+Symbol_type					Prefix		Examples
+C macro						EC_		EC_NULLP(obj), EC_INUM(obj)
+pointer to an elastiC object			EC_		EC_OBJ  E<nbspace> E<nbspace> I<(unique)>
+Function strongly related to elastiC library	Ec		EcMakeFloat( value )
+Global C variable for an elastiC object		Ec		EcTrueObject, EcMathErrorClass
+Basic C type wrappers				Ec		EcInt, EcFloat, EcBool, EcChar, ...
+Utility function names & datastructures		ec_		ec_hash, ec_list_create(), ec_string, ec_mempool, ...
+Function pointers typedefs			ec_		ec_copy_fcn, ec_mark_fcn, ec_hash_fcn, ...
+Private global variables			_ec_		_ec_private
+Private functions				_ec_		_ec_lib_init()
+!endblock
+
+The reader will notice that some symbols use underscore to separate
+words and others don't: the rule is that all lowercase names (those
+with ec_ prefix) use the underscore, the other names use capitalized
+initials.
+
+H2: Source code formatting
+
+elastiC sources are written respecting the following rules:
+
+* indentation is made with TABs. TABs align on every fifth character
+  (TABs are four spaces).
+
+* in function calls, parameters are separated from parentheses by one space on
+  each side:
+
+  >        memcpy( dst, src, nobjs * sizeof(EC_OBJ) );
+
+* a space is B<mandatory> after commas and it's recommended to split
+  arguments among multiple lines if they don't fit otherwise
+  (parameters can be optionally aligned between lines). Here are two
+  samples:
+
+  >        EC_OBJ EcSendMessage(     EC_OBJ obj, EcUInt methodid, EC_OBJ stack );
+  >        EC_OBJ EcSendMessageVA(   EC_OBJ obj, EcUInt methodid, EcInt nargs, ... );
+  >        EC_OBJ EcSendMessageArgs( EC_OBJ obj, EcUInt methodid, EcInt nargs, EC_OBJ *args );
+  >
+  >
+  >        EcSetInstanceVariable( obj, EcParameterCountErrorClass,
+  >                               "expected",
+  >                               expected );
+
+* braces are always on the same column of the statement introducing them.
+  For example:
+
+  >        if (condition)
+  >        {
+  >            ...
+  >        } else
+  >        {
+  >            ...
+  >        }
+
+* if the body of an C<if>, C<while>, ... is a simple statement, braces
+  can be omitted:
+
+  >        if (! str)
+  >            return NULL;
+
+* C<switch> are written as in the following fragment:
+
+  >        switch (condition)
+  >        {
+  >        case 0:
+  >            ...
+  >            break;
+  >
+  >        case 1:
+  >            ...
+  >            break;
+  >
+  >        default:
+  >            ...
+  >            break;
+  >        }
+
+* function declarations and definitions must follow ANSI C conventions
+
+* use meaningful variable and functions names, especially for global
+  ones.
+
+* use NULL for null pointers, not 0
+
+* use C<EcInt>, C<EcFloat>, C<EcBool>, ... not C<int>,
+  C<float>/C<double>, ... (there are some, rare, exceptions to this
+  rule: you could need a cast to pass parameters to third party
+  variadic functions for example).
+
+* always write portable code
+
+* always follow good sense
+
+* if in doubt for something, check pre-existing sources
+
+H1: Source tree organization
+
+H1: Analysis
+
+Here we try to analyze in greater depth the major elastiC subsystems.
+However this guide doesn't pretend to define implementation
+requirements or standards, so, current source distribution has always
+the last word in case of ambiguity.
+
+H2: Library global management functions
+
+H2: Object manager
+
+H2: Compiler
+
+H2: Interpreter
+
+H2: Basic I/O
+
+H2: Utility
+
+H1: SEE ALSO
+
+L<elastic(1)>: for the elastiC language
+
+H1: AUTHOR
+
+[[EC_AUTHOR]]
+
+H1: COPYRIGHT
+
+Copyright (C) 2000 Marco Pantaleoni. All rights reserved.
+
+The contents of this file are subject to the elastiC License version 1.0
+(the "elastiC License"); you may not use this file except in compliance
+with the elastiC License. You may obtain a copy of the elastiC License at
+http://www.elasticworld.org/LICENSE
+
+IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+MODIFICATIONS.
+
+See the elastiC License for the specific language governing rights and
+limitations under the elastiC License.

@@ -1,0 +1,4 @@
+DATA : [<instance of clbug.Function>, 5]
+FDEF : fdesc
+****
+DATA : [<instance of clbug.Function>, 5]

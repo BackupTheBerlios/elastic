@@ -1,0 +1,11 @@
+libltdl
+
+times()                                       DONE
+
+PATH_MAX                                      DONE
+
+getcwd() requires <direct.h>                  DONE
+
+strsep()                                      DONE
+
+setenv() -> _putenv( const char *envstring )  DONE

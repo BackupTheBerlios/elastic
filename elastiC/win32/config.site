@@ -1,0 +1,46 @@
+# config.site for configure when cross-compiling to mingw32 (Win32)
+#
+# Change some defaults.
+test "x$prefix" = "x" && prefix=/usr/local/win32
+test "x$exec_prefix" = "x" && exec_prefix=/usr/local/win32
+test "x$sharedstatedir" = 'x${prefix}/com' && sharedstatedir=/usr/local/win32/var
+test "x$localstatedir" = 'x${prefix}/var' && localstatedir=/usr/local/win32/var
+
+cross_tools_1=/usr/local/cross-tools/win32/i386-mingw32msvc/bin
+cross_tools_2=/usr/local/cross-tools/win32/bin
+
+#
+# Give Autoconf 2.x generated configure scripts a shared default
+# cache file for feature test results, architecture-specific.
+if test "$cache_file" = ./config.cache; then
+	cache_file="${srcdir}/win32/config.cache"
+
+	# A cache file is only valid for one C compiler.
+	CC=i386-mingw32msvc-gcc
+	LD=${cross_tools_1}/ld
+	NM=${cross_tools_2}/i386-mingw32msvc-nm
+	AR=${cross_tools_2}/i386-mingw32msvc-ar
+	AS=${cross_tools_2}/i386-mingw32msvc-as
+	RANLIN=${cross_tools_2}/i386-mingw32msvc-ranlib
+	OBJDUMP=${cross_tools_2}/i386-mingw32msvc-objdump
+	OBJCOPY=${cross_tools_2}/i386-mingw32msvc-objcopy
+	STRIP=${cross_tools_2}/i386-mingw32msvc-strip
+
+	# Override defaults
+	ac_cv_exeext=${ac_cv_exeext=.exe}
+	ac_cv_mingw32=${ac_cv_mingw32=yes}
+	ac_cv_path_LD=${ac_cv_path_LD=${cross_tools_1}/ld}
+	ac_cv_path_NM=${ac_cv_path_NM="${cross_tools_2}/i386-mingw32msvc-nm -B"}
+	ac_cv_prog_CC=${ac_cv_prog_CC=i386-mingw32msvc-gcc}
+	ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=${cross_tools_2}/i386-mingw32msvc-ranlib}
+	ac_cv_prog_STRIP=${ac_cv_prog_STRIP=${cross_tools_2}/i386-mingw32msvc-strip}
+	ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=yes}
+	ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
+	ac_cv_prog_cc_works=${ac_cv_prog_cc_works=yes}
+	ac_cv_prog_gcc=${ac_cv_prog_gcc=yes}
+	ac_cv_prog_gnu_ld=${ac_cv_prog_gnu_ld=yes}
+	ac_cv_prog_make_make_set=${ac_cv_prog_make_make_set=yes}
+
+	ac_cv_c_bigendian=${ac_cv_c_bigendian=no}
+	ac_cv_func_setpgrp_void=${ac_cv_func_setpgrp_void=yes}
+fi
