@@ -8,7 +8,7 @@
 #
 #   Created: 21 Nov 1999
 #
-#   $Id: dmake,v 1.1 2002/05/23 21:20:29 panta Exp $
+#   $Id: dmake,v 1.2 2002/05/31 13:03:31 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
 #
@@ -270,3 +270,4 @@ if ($nerrors > 0) {
 
 close(LOG);
 close(OUT);
+print STDERR "\007";

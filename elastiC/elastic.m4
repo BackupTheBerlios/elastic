@@ -28,7 +28,7 @@ AC_ARG_ENABLE(elastictest, [  --disable-elastictest       Do not try to compile 
   fi
 
   AC_PATH_PROG(ELASTIC_CONFIG, elastic-config, no)
-  min_elastic_version=ifelse([$1], ,0.0.31,$1)
+  min_elastic_version=ifelse([$1], ,0.0.37,$1)
   AC_MSG_CHECKING(for elastiC - version >= $min_elastic_version)
   no_elastic=""
   if test "$ELASTIC_CONFIG" = "no" ; then
@@ -65,8 +65,7 @@ dnl
 #include <stdio.h>
 #include <stdlib.h>
 
-int 
-main ()
+int main(void)
 {
   int major, minor, micro;
   EcInt ec_ver;
@@ -247,7 +246,7 @@ AC_CACHE_VAL(AC_CV_NAME,
 [AC_TRY_RUN([#include <stdio.h>
 #include <elastic/basic.h>
 #include <elastic/elastic.h>
-main()
+int main(void)
 {
   FILE *f=fopen("conftestval", "w");
   if (!f) exit(1);

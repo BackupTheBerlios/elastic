@@ -1,3 +1,7 @@
+2002-05-31  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* hashfunc.[hc]: added djb and sdbm hash functions.
+
 2002-05-27  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* lib.[ch]: Added basic.apply (EcLibApply) and and basic.arity

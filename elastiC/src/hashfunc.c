@@ -7,9 +7,9 @@
  *
  *   Created: Wed Apr 30 21:07:36 MET DST 1997
  *
- *   $Id: hashfunc.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: hashfunc.c,v 1.3 2002/05/31 13:03:31 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -43,6 +43,12 @@
 #include <limits.h>
 #endif
 
+/*
+ * Hashing pointers:
+ *
+ *   http://www.cs.yorku.ca/~oz/hash.html
+ */
+
 #ifndef CHAR_BIT
 #define CHAR_BIT 8
 #endif
@@ -57,7 +63,7 @@ do {                                            \
 	for (i = 0; i < (len); i++)                 \
 		h = (h + (h << 5)) ^ *bufp++;           \
                                                 \
-	(rv)= h;                                    \
+	(rv) = h;                                   \
 } while (0)
 
 #define DJB_HASH_R(rv, buf, len)                            \
@@ -70,7 +76,31 @@ do {                                                        \
 	for (i = 0; i < (len); i++)                             \
 		h = (h + (h << 5)) ^ *bufp--;                       \
                                                             \
-	(rv)= h;                                                \
+	(rv) = h;                                               \
+} while (0)
+
+#define SDBM_HASH(rv, buf, len)                             \
+do {                                                        \
+	register const unsigned char *bufp = (buf);             \
+	register int i;                                         \
+	register EcDWord hash = 0;                              \
+                                                            \
+	for (i = 0; i < (len); i++)                             \
+		hash = *bufp++ + (hash << 6) + (hash << 16) - hash; \
+                                                            \
+	(rv) = hash;                                            \
+} while (0)
+
+#define SDBM_HASH_R(rv, buf, len)                           \
+do {                                                        \
+	register const unsigned char *bufp = (buf) + (len) = 1; \
+	register int i;                                         \
+	register EcDWord hash = 0;                              \
+                                                            \
+	for (i = 0; i < (len); i++)                             \
+		hash = *bufp-- + (hash << 6) + (hash << 16) - hash; \
+                                                            \
+	(rv) = hash;                                            \
 } while (0)
 
 static inline EcDWord djb_hash(const unsigned char *buf, size_t len)
@@ -87,6 +117,23 @@ static inline EcDWord djb_hash_r(const unsigned char *buf, size_t len)
 	EcDWord rv;
 
 	DJB_HASH_R(rv, buf, len);
+	return rv;
+}
+
+static inline EcDWord sdbm_hash(const unsigned char *buf, size_t len)
+{
+	EcDWord rv;
+
+	SDBM_HASH(rv, buf, len);
+	return rv;
+}
+
+
+static inline EcDWord sdbm_hash_r(const unsigned char *buf, size_t len)
+{
+	EcDWord rv;
+
+	SDBM_HASH_R(rv, buf, len);
 	return rv;
 }
 
@@ -149,6 +196,61 @@ EC_API EcUInt ec_hash_pjw_memory_r(const char *key, EcUInt count)
 	}
 
 	return hash_value;
+}
+
+EC_API EcUInt ec_hash_djb_string( const char *key )
+{
+	register int     c;
+	register EcDWord hash;
+
+	hash = 5381;
+	while (c = *key++)
+		hash = (hash + (hash << 5)) ^ c;	/* (hash * 33) ^ c */
+
+	return hash;
+}
+
+EC_API EcUInt ec_hash_djb_memory( const char *key, EcUInt count )
+{
+	EcDWord hash;
+
+	DJB_HASH(hash, key, count);
+	return hash;
+}
+
+EC_API EcUInt ec_hash_djb_memory_r(const char *key, EcUInt count)
+{
+	EcDWord hash;
+
+	DJB_HASH_R(hash, key, count);
+	return hash;
+}
+
+EC_API EcUInt ec_hash_sdbm_string( const char *key )
+{
+	register int c;
+	register EcDWord hash = 0;
+
+	while (c = *key++)
+		hash = c + (hash << 6) + (hash << 16) - hash;
+
+	return hash;
+}
+
+EC_API EcUInt ec_hash_sdbm_memory( const char *key, EcUInt count )
+{
+	EcDWord hash;
+
+	SDBM_HASH(hash, key, count);
+	return hash;
+}
+
+EC_API EcUInt ec_hash_sdbm_memory_r(const char *key, EcUInt count)
+{
+	EcDWord hash;
+
+	SDBM_HASH_R(hash, key, count);
+	return hash;
 }
 
 EC_API EcUInt ec_hash_float( EcFloat key )

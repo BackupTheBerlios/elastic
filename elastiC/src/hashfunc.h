@@ -7,9 +7,9 @@
  *
  *   Created: Tue May  6 14:22:25 MET DST 1997
  *
- *   $Id: hashfunc.h,v 1.1 2002/05/23 21:17:07 panta Exp $
+ *   $Id: hashfunc.h,v 1.2 2002/05/31 13:03:31 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -44,6 +44,12 @@ EC_BEGIN_DECLS
 EC_API EcUInt ec_hash_pjw_string( const char *key );
 EC_API EcUInt ec_hash_pjw_memory( const char *key, EcUInt count );
 EC_API EcUInt ec_hash_pjw_memory_r(const char *key, EcUInt count);
+EC_API EcUInt ec_hash_djb_string( const char *key );
+EC_API EcUInt ec_hash_djb_memory( const char *key, EcUInt count );
+EC_API EcUInt ec_hash_djb_memory_r(const char *key, EcUInt count);
+EC_API EcUInt ec_hash_sdbm_string( const char *key );
+EC_API EcUInt ec_hash_sdbm_memory( const char *key, EcUInt count );
+EC_API EcUInt ec_hash_sdbm_memory_r(const char *key, EcUInt count);
 EC_API EcUInt ec_hash_two_string( const char *key );
 EC_API EcUInt ec_hash_two_memory( const char *key, EcUInt count );
 EC_API EcUInt ec_hash_two_memory_r( const char *key, EcUInt count );
