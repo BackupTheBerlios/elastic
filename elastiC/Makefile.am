@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.6 2002/06/02 10:19:26 panta Exp $
+#   $Id: Makefile.am,v 1.7 2002/06/06 19:52:49 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -65,6 +65,7 @@ install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/makemodule $(DESTDIR)$(bindir)
 	$(INSTALL_SCRIPT) $(srcdir)/mingw32-makedll $(DESTDIR)$(bindir)
+	$(INSTALL_SCRIPT) $(srcdir)/cygwin-makedll $(DESTDIR)$(bindir)
 else
 install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)

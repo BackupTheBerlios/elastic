@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.3 2002/06/06 13:44:05 panta Exp $
+#   $Id: Makefile.am,v 1.4 2002/06/06 19:52:49 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -44,6 +44,8 @@ CLEANFILES = $(DYNAMIC_MODULES) $(wildcard $.o)  $(wildcard $.dll)
 elasticlibdir = $(prefix)/lib/elastic-$(EC_API_VERSION)
 elasticlib_DATA = $(DYNAMIC_MODULES)
 
+EXTRA_DIST = $(SOURCES_DYNAMIC_MODULES)
+
 noinst_LTLIBRARIES = libmodules.la
 
 CFLAGS = $(CORE_CFLAGS)
@@ -55,14 +57,17 @@ posix_static =
 endif
 
 if ECMODULE_POSIX_DYNAMIC
-posix_dynamic         = posix_m.c
-dynamic_modules_posix = posix$(SO)
+posix_dynamic                 = posix_m.c
+dynamic_modules_posix         = posix$(SO)
+sources_dynamic_modules_posix = $(posix_dynamic)
 else
-posix_dynamic         =
-dynamic_modules_posix =
+posix_dynamic                 =
+dynamic_modules_posix         =
+sources_dynamic_modules_posix = $(posix_dynamic)
 endif
 
 DYNAMIC_MODULES = $(dynamic_modules_posix)
+SOURCES_DYNAMIC_MODULES = $(sources_dynamic_modules_posix)
 
 static_sources = \
 	list_m.c	\
