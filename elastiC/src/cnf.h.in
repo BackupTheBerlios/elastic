@@ -77,7 +77,42 @@
 
 #define EC_PLATFORM_ALIGNMENT	@PLATFORM_ALIGNMENT@
 
+/* stdio I/O support */
+
+#undef WITH_STDIO
+#define WITH_STDIO 1
+
+#if @WITHOUT_STDIO@										/* WITHOUT_STDIO */
+#undef WITHOUT_STDIO
+#undef WITH_STDIO
+#define WITHOUT_STDIO 1
+#endif
+
+#if @WITH_STDIO@										/* WITH_STDIO */
+#undef WITHOUT_STDIO
+#undef WITH_STDIO
+#define WITH_STDIO 1
+#endif
+
 /* static/dynamic modules */
+
+#if @ecmodule_stream_static@									/* ecmodule_stream_static  */
+#define ECMODULE_STREAM_STATIC @ecmodule_stream_static@
+#endif
+#if @ecmodule_stream_dynamic@									/* ecmodule_stream_dynamic */
+#define ECMODULE_STREAM_DYNAMIC @ecmodule_stream_dynamic@
+#endif
+
+#if @ecmodule_filestream_static@								/* ecmodule_filestream_static  */
+#define ECMODULE_FILESTREAM_STATIC @ecmodule_filestream_static@
+#endif
+#if @ecmodule_filestream_dynamic@								/* ecmodule_filestream_dynamic */
+#define ECMODULE_FILESTREAM_DYNAMIC @ecmodule_filestream_dynamic@
+#endif
+
+#if @ecmodule_file_obsolete@									/* ecmodule_file_obsolete  */
+#define ECMODULE_FILE_OBSOLETE @ecmodule_file_obsolete@
+#endif
 
 #if @ecmodule_posix_static@										/* ecmodule_posix_static  */
 #define ECMODULE_POSIX_STATIC @ecmodule_posix_static@

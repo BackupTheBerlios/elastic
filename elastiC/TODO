@@ -23,14 +23,14 @@ immediate_future  /* got from other sections (max ~10 points here) */
 	- registered C pointers
 	- packageio proper usage of C pointer register (with versioning, ...)
 	- handle versioning in modules
-	- generic I/O (UNDER CONSTRUCTION)
+	- generic I/O (UNDER CONSTRUCTION, QUITE THERE)
 	- classes and methods for every type
 	- serialization framework
 }
 
 core
 {
-	* implement a GenericError / UnknownError exception
+	* implement a GenericError / UnknownError exception, RangeError, ...
 	* add fundamental types ec_int8, ec_uint8, ec_int16, ec_uint16, ...,
 	  ec_char, ec_schar, ec_uchar, ec_short, ec_ushort, ec_int, ec_uint, ...
           ec_bool, ec_off64. Change EcInt, EcWord, EcBool, ... to ec_int,

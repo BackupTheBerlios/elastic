@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.10 2002/06/12 16:00:05 panta Exp $
+ *   $Id: private.h,v 1.11 2002/06/12 17:42:53 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -455,14 +455,12 @@ EcBool    _ec_stream_t_init( void );
 void      _ec_stream_t_cleanup( void );
 
 /* stream module (elastiC module) */
-#define ECMODULE_STREAM_STATIC 1
 #if ECMODULE_STREAM_STATIC
 EC_OBJ    _ec_modstream_init( void );
 void      _ec_modstream_cleanup( void );
 #endif
 
 /* filestream module */
-#define ECMODULE_FILESTREAM_STATIC 1
 #if ECMODULE_FILESTREAM_STATIC
 EC_OBJ    _ec_modfilestream_init( void );
 void      _ec_modfilestream_cleanup( void );

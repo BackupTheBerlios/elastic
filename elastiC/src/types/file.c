@@ -7,9 +7,9 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.c,v 1.4 2002/06/11 18:44:17 panta Exp $
+ *   $Id: file.c,v 1.5 2002/06/12 17:42:53 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -43,6 +43,9 @@
 #include "compat.h"
 #include "debug.h"
 
+#if ! defined(ECMODULE_FILE_OBSOLETE)
+#error "this file should be compiled only when the obsolete file module is enabled."
+#endif
 
 EC_API EcInt tc_file = -1;
 

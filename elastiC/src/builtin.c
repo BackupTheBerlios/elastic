@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.8 2002/06/12 16:00:05 panta Exp $
+ *   $Id: builtin.c,v 1.9 2002/06/12 17:42:53 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -569,8 +569,10 @@ EcBool _ec_register_builtin( void )
 	if (! _ec_stream_t_init())									/* elastiC stream type */
 		return FALSE;
 
+#if ECMODULE_STREAM_STATIC
 	if (! _ec_modstream_init())									/* elastiC stream module */
 		return FALSE;
+#endif
 
 #if ECMODULE_FILESTREAM_STATIC
 	if (EC_ERRORP(_ec_modfilestream_init()))					/* C level filestream support and elastiC filestream module */
@@ -596,12 +598,12 @@ EcBool _ec_register_builtin( void )
 							/* don't close */ TRUE,
 							/* popen()-ed  */ FALSE );
 	PRIVATE(stream_stderr) = str;
-#else
+#else /* start of ! ECMODULE_FILESTREAM_STATIC */
 	/* :TODO: use a stringstream or a nullstream or something */
 	PRIVATE(stream_stdin)  = NULL;
 	PRIVATE(stream_stdout) = NULL;
 	PRIVATE(stream_stderr) = NULL;
-#endif
+#endif /* end of ! ECMODULE_FILESTREAM_STATIC */
 
 	if (! _ec_lib_init())
 		return FALSE;
@@ -786,7 +788,11 @@ void _ec_cleanup_builtin( void )
 	_ec_file_cleanup();
 #endif
 	_ec_lib_cleanup();
+#if ECMODULE_FILESTREAM_STATIC
 	_ec_modfilestream_cleanup();								/* C level filestream support and elastiC filestream module */
+#endif
+#if ECMODULE_STREAM_STATIC
 	_ec_modstream_cleanup();									/* elastiC stream module */
+#endif
 	_ec_stream_t_cleanup();										/* elastiC stream type */
 }

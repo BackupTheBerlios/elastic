@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.16 2002/06/12 16:00:05 panta Exp $
+dnl   $Id: configure.in,v 1.17 2002/06/12 17:42:53 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -282,6 +282,8 @@ AC_ARG_ENABLE(profile,      [  --enable-profile=[no/yes]        - Enable compili
 AC_ARG_ENABLE(bprofile,     [  --enable-bprofile=[no/yes]       - Enable compiling with bprof profile information [default=no]],,enable_bprofile=no)
 AC_ARG_ENABLE(pentium,      [  --enable-pentium=[no/gcc/egcs]   - Enable pentium optimizations [default=no]],,enable_pentium=no)
 
+AC_ARG_ENABLE(stdio,        [  --enable-stdio=[no/yes]          - Enable libc stdio I/O support [default=yes]],,enable_stdio=yes)
+
 dnl for PCRE `configure'
 AC_ARG_ENABLE(utf8,
 [  --enable-utf8=[no/yes]           - Enable UTF8 support in PCRE (incomplete) [default=yes]],,enable_utf8=yes)
@@ -300,10 +302,76 @@ AM_CONDITIONAL(DLBACKEND_NO, test x$DLBACKEND = xno)
 
 dnl Modules
 
+AC_ARG_WITH(module_stream,
+[  --with-module-stream=[no/static/dynamic] - Specify whether/how to build the stream module [default=static]],ECMODULE_STREAM="${with_module_stream}",ECMODULE_STREAM="static")
+AC_ARG_WITH(module_filestream,
+[  --with-module-filestream=[no/static/dynamic] - Specify whether/how to build the filestream module [default=static]],ECMODULE_FILESTREAM="${with_module_filestream}",ECMODULE_FILESTREAM="static")
+AC_ARG_WITH(module_file,
+[  --with-module-file=[no/compat/obsolete] - Specify whether/how to build the file module [default=compat]],ECMODULE_FILE="${with_module_file}",ECMODULE_FILE="compat")
 AC_ARG_WITH(module_posix,
 [  --with-module-posix=[no/static/dynamic] - Specify whether/how to build the POSIX module [default=dynamic]],ECMODULE_POSIX="${with_module_posix}",ECMODULE_POSIX="dynamic")
 AC_ARG_WITH(module_errno,
 [  --with-module-errno=[no/static/dynamic] - Specify whether/how to build the errno module [default=dynamic]],ECMODULE_ERRNO="${with_module_errno}",ECMODULE_ERRNO="dynamic")
+
+if test "x$ECMODULE_STREAM" = "xno" ; then
+  ecmodule_stream="no"
+  ecmodule_stream_static=0
+  ecmodule_stream_dynamic=0
+elif test "x$ECMODULE_STREAM" = "xstatic" -o "x$ECMODULE_STREAM" = "xyes"; then
+  ecmodule_stream="static"
+  ecmodule_stream_static=1
+  ecmodule_stream_dynamic=0
+elif  test "x$ECMODULE_STREAM" = "xdynamic" -o "x$ECMODULE_STREAM" = "xshared"; then
+  ecmodule_stream="dynamic"
+  ecmodule_stream_static=0
+  ecmodule_stream_dynamic=1
+fi
+AC_SUBST(ecmodule_stream)
+AC_SUBST(ecmodule_stream_static)
+AC_SUBST(ecmodule_stream_dynamic)
+AM_CONDITIONAL(ECMODULE_STREAM_NO,      test x$ecmodule_stream = xno)
+AM_CONDITIONAL(ECMODULE_STREAM_STATIC,  test x$ecmodule_stream = xstatic)
+AM_CONDITIONAL(ECMODULE_STREAM_DYNAMIC, test x$ecmodule_stream = xdynamic)
+
+if test "x$ECMODULE_FILESTREAM" = "xno" ; then
+  ecmodule_filestream="no"
+  ecmodule_filestream_static=0
+  ecmodule_filestream_dynamic=0
+elif test "x$ECMODULE_FILESTREAM" = "xstatic" -o "x$ECMODULE_FILESTREAM" = "xyes"; then
+  ecmodule_filestream="static"
+  ecmodule_filestream_static=1
+  ecmodule_filestream_dynamic=0
+elif  test "x$ECMODULE_FILESTREAM" = "xdynamic" -o "x$ECMODULE_FILESTREAM" = "xshared"; then
+  ecmodule_filestream="dynamic"
+  ecmodule_filestream_static=0
+  ecmodule_filestream_dynamic=1
+fi
+AC_SUBST(ecmodule_filestream)
+AC_SUBST(ecmodule_filestream_static)
+AC_SUBST(ecmodule_filestream_dynamic)
+AM_CONDITIONAL(ECMODULE_FILESTREAM_NO,      test x$ecmodule_filestream = xno)
+AM_CONDITIONAL(ECMODULE_FILESTREAM_STATIC,  test x$ecmodule_filestream = xstatic)
+AM_CONDITIONAL(ECMODULE_FILESTREAM_DYNAMIC, test x$ecmodule_filestream = xdynamic)
+
+if test "x$ECMODULE_FILE" = "xno" ; then
+  ecmodule_file="no"
+  ecmodule_file_compat=0
+  ecmodule_file_obsolete=0
+elif test "x$ECMODULE_FILE" = "xcompat" -o "x$ECMODULE_FILE" = "xyes"; then
+  ecmodule_file="compat"
+  ecmodule_file_compat=1
+  ecmodule_file_obsolete=0
+elif  test "x$ECMODULE_FILE" = "xobsolete"; then
+  ecmodule_file="obsolete"
+  ecmodule_file_compat=0
+  ecmodule_file_obsolete=1
+fi
+AC_SUBST(ecmodule_file)
+AC_SUBST(ecmodule_file_compat)
+AC_SUBST(ecmodule_file_obsolete)
+AM_CONDITIONAL(ECMODULE_FILE_NO,       test x$ecmodule_file = xno)
+AM_CONDITIONAL(ECMODULE_FILE_COMPAT,   test x$ecmodule_file = xcompat)
+AM_CONDITIONAL(ECMODULE_FILE_OBSOLETE, test x$ecmodule_file = xobsolete)
 
 if test "x$ECMODULE_POSIX" = "xno" ; then
   ecmodule_posix="no"
@@ -399,6 +467,23 @@ if test "x$enable_pentium" = "xgcc"; then
 elif test "x$enable_pentium" = "xegcs"; then
   test "$cflags_set" = set || CFLAGS="$CFLAGS -O6 -mcpu=pentium -march=pentium -mpentium -malign-jumps=2 -malign-loops=2 -malign-functions=2"
 fi
+
+AC_SUBST(WITHOUT_STDIO)
+AC_SUBST(WITH_STDIO)
+if test "x$enable_stdio" = "xno"; then
+  test "$cflags_set" = set || CFLAGS="$CFLAGS -DWITHOUT_STDIO"
+  WITHOUT_STDIO=1
+  WITH_STDIO=0
+  stdio_support="no"
+else
+  test "$cflags_set" = set || CFLAGS="$CFLAGS -DWITH_STDIO"
+  WITHOUT_STDIO=0
+  WITH_STDIO=1
+  stdio_support="yes"
+fi
+
+AM_CONDITIONAL(STDIO_ENABLE,  test x$stdio_support = xyes)
+AM_CONDITIONAL(STDIO_DISABLE, test x$stdio_support = xno)
 
 test "$cflags_set" = set || CFLAGS="$CFLAGS $ELASTIC_DEBUG_FLAGS"
 
@@ -694,8 +779,12 @@ echo "   profiling        : ${enable_profile}"
 echo
 echo "General configuration:"
 echo "   dynamic module loading: ${DLBACKEND}"
+echo "   libc stdio support    : ${stdio_support}"
 echo
 echo "Configured modules:"
+echo "   stream                    - ${ecmodule_stream}"
+echo "   filestream                - ${ecmodule_filestream}"
+echo "   file                      - ${ecmodule_file}"
 echo "   posix (POSIX Std 1003.1)  - ${ecmodule_posix}"
 echo "   errno                     - ${ecmodule_errno}"
 echo

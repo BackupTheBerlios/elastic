@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.6 2002/06/12 16:00:05 panta Exp $
+#   $Id: Makefile.am,v 1.7 2002/06/12 17:42:53 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -50,6 +50,42 @@ noinst_LTLIBRARIES = libmodules.la
 
 CFLAGS = $(CORE_CFLAGS)
 
+# `stream' module
+
+if ECMODULE_STREAM_STATIC
+stream_static = stream_m.c
+else
+stream_static =
+endif
+
+if ECMODULE_STREAM_DYNAMIC
+stream_dynamic                 = stream_m.c
+dynamic_modules_stream         = stream$(SO)
+sources_dynamic_modules_stream = $(stream_dynamic)
+else
+stream_dynamic                 =
+dynamic_modules_stream         =
+sources_dynamic_modules_stream = $(stream_dynamic)
+endif
+
+# `filestream' module
+
+if ECMODULE_FILESTREAM_STATIC
+filestream_static = filestream_m.c
+else
+filestream_static =
+endif
+
+if ECMODULE_FILESTREAM_DYNAMIC
+filestream_dynamic                 = filestream_m.c
+dynamic_modules_filestream         = filestream$(SO)
+sources_dynamic_modules_filestream = $(filestream_dynamic)
+else
+filestream_dynamic                 =
+dynamic_modules_filestream         =
+sources_dynamic_modules_filestream = $(filestream_dynamic)
+endif
+
 # `posix' module
 
 if ECMODULE_POSIX_STATIC
@@ -86,19 +122,28 @@ dynamic_modules_errno         =
 sources_dynamic_modules_errno = $(errno_dynamic)
 endif
 
-DYNAMIC_MODULES = $(dynamic_modules_posix) $(dynamic_modules_errno)
-SOURCES_DYNAMIC_MODULES = $(sources_dynamic_modules_posix) $(sources_dynamic_modules_errno)
+DYNAMIC_MODULES = \
+	$(dynamic_modules_stream)	\
+	$(dynamic_modules_filestream)	\
+	$(dynamic_modules_posix)	\
+	$(dynamic_modules_errno)
+SOURCES_DYNAMIC_MODULES = \
+	$(sources_dynamic_modules_stream)	\
+	$(sources_dynamic_modules_filestream)	\
+	$(sources_dynamic_modules_posix)	\
+	$(sources_dynamic_modules_errno)
 
 static_sources = \
-	list_m.c	\
-	string_m.c	\
-	string_m.h	\
-	array_m.c	\
-	array_m.h	\
-	$(posix_static) \
-	$(errno_static)	\
-	errno_m_body.c.incl	\
-	stream_m.c
+	list_m.c		\
+	string_m.c		\
+	string_m.h		\
+	array_m.c		\
+	array_m.h		\
+	$(stream_static) 	\
+	$(filestream_static)	\
+	$(posix_static) 	\
+	$(errno_static)		\
+	errno_m_body.c.incl
 
 libmodules_la_SOURCES = \
 	$(static_sources)
@@ -106,6 +151,22 @@ libmodules_la_LIBADD =
 
 CFLAGS_DYNAMIC = $(MODULE_CFLAGS) -DELASTIC_EXPORTS
 COMPILE_DYNAMIC = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS_DYNAMIC) $(CCSHARED)
+
+if ECMODULE_STREAM_DYNAMIC
+stream_m.o : stream_m.c
+	$(COMPILE_DYNAMIC) -c $< -o $@
+
+$(dynamic_modules_stream): stream_m.o
+	$(MKMODULE) $(MKMODULEFLAGS) $@ $^ $(MKMODULELIBS) $(LIBS)
+endif
+
+if ECMODULE_FILESTREAM_DYNAMIC
+filestream_m.o : filestream_m.c
+	$(COMPILE_DYNAMIC) -c $< -o $@
+
+$(dynamic_modules_filestream): filestream_m.o
+	$(MKMODULE) $(MKMODULEFLAGS) $@ $^ $(MKMODULELIBS) $(LIBS)
+endif
 
 if ECMODULE_POSIX_DYNAMIC
 posix_m.o : posix_m.c

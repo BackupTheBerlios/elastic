@@ -1,0 +1,15 @@
+bak
+old
+Uncategorized
+ChangeLog.html
+Makefile
+Makefile.in
+dmake.output
+.libs
+.deps
+*.lo
+*.la
+*.so
+*.dll
+*.ecc
+stamp-h*

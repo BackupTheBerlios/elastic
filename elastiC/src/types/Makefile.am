@@ -7,9 +7,9 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.2 2002/06/12 16:00:06 panta Exp $
+#   $Id: Makefile.am,v 1.3 2002/06/12 17:42:53 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -41,12 +41,18 @@ noinst_LTLIBRARIES = libtypes.la
 
 CFLAGS = $(CORE_CFLAGS)
 
+if ECMODULE_FILE_OBSOLETE
+file_static_sources = file.c
+else
+file_static_sources =
+endif
+
 static_sources = \
 	array.c		\
 	char.c		\
 	class.c		\
 	compiled.c	\
-	file.c		\
+	$(file_static_sources) \
 	handler.c	\
 	hash.c		\
 	object.c	\

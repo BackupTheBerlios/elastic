@@ -72,12 +72,47 @@
 #define CNF_EXECPREFIX		"${prefix}"
 #define CNF_BINDIR			"${exec_prefix}/bin"
 #define CNF_LIBS			"-ldl -lm "
-#define CNF_CFLAGS			"-Wall -Winline -Wstrict-prototypes -Wno-protocols -D_GNU_SOURCE -I${top_builddir} -g -O0 -DEC_DEBUG"
+#define CNF_CFLAGS			"-Wall -Winline -Wstrict-prototypes -Wno-protocols -D_GNU_SOURCE -I${top_builddir} -g -O0 -DWITH_STDIO -DEC_DEBUG"
 #define CNF_CC				"gcc"
 
 #define EC_PLATFORM_ALIGNMENT	8
 
+/* stdio I/O support */
+
+#undef WITH_STDIO
+#define WITH_STDIO 1
+
+#if 0										/* WITHOUT_STDIO */
+#undef WITHOUT_STDIO
+#undef WITH_STDIO
+#define WITHOUT_STDIO 1
+#endif
+
+#if 1										/* WITH_STDIO */
+#undef WITHOUT_STDIO
+#undef WITH_STDIO
+#define WITH_STDIO 1
+#endif
+
 /* static/dynamic modules */
+
+#if 1									/* ecmodule_stream_static  */
+#define ECMODULE_STREAM_STATIC 1
+#endif
+#if 0									/* ecmodule_stream_dynamic */
+#define ECMODULE_STREAM_DYNAMIC 0
+#endif
+
+#if 1								/* ecmodule_filestream_static  */
+#define ECMODULE_FILESTREAM_STATIC 1
+#endif
+#if 0								/* ecmodule_filestream_dynamic */
+#define ECMODULE_FILESTREAM_DYNAMIC 0
+#endif
+
+#if 0									/* ecmodule_file_obsolete  */
+#define ECMODULE_FILE_OBSOLETE 0
+#endif
 
 #if 0										/* ecmodule_posix_static  */
 #define ECMODULE_POSIX_STATIC 0

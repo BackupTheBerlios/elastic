@@ -7,7 +7,7 @@
 #
 #   Created: Wed Jun 12 17:23:08 CEST 2002
 #
-#   $Id: Makefile.am,v 1.1 2002/06/12 16:00:05 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/06/12 17:42:53 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -42,7 +42,13 @@ VPATH = @srcdir@
 CLEANFILES = $(wildcard $.o)  $(wildcard $.dll) $(wildcard $.ecc)
 
 elasticlibdir = $(prefix)/lib/elastic-$(EC_API_VERSION)
-elasticlib_DATA = file.ec file.ecc os.ec os.ecc
+elasticlib_DATA = os.ec os.ecc $(file_module_data)
+
+if ECMODULE_FILE_COMPAT
+file_module_data = file.ec file.ecc
+else
+file_module_data =
+endif
 
 EXTRA_DIST = Re.ec
 
