@@ -1,0 +1,71 @@
+		     'skeleton' module for elastiC
+                     =============================
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+'skeleton' is a basic module useful as a template for the creation
+of elastiC modules written in C. It's very minimal, so it should be
+easy to understand its mechanisms. Note that this is not a tutorial on
+the elastiC API, but a guide through the issues of Makefiles,
+compiling, linking, ...
+
+USAGE
+-----
+
+The skeleton module is fully functional, though somewhat silly.
+It makes use of automake & autoconf.
+To compile it, simply issue the commands:
+
+  % configure
+  % make
+  % make install
+
+The test program is 'testskeleton.ec'. After compilation, do:
+
+  % ec testskeleton.ec
+
+this will run the program, loading the skeleton module.
+
+ELASTIC WEB SITE
+----------------
+
+elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other important information.
+
+INSTALLATION
+------------
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+25 November 1999
