@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.3 2002/06/04 20:08:27 panta Exp $
+ *   $Id: elastic.c,v 1.4 2002/06/06 00:09:24 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -1214,6 +1214,120 @@ double ec_strtod(const char *nptr, char **endptr)
 #else
 	return strtod(nptr, endptr);
 #endif
+}
+
+/* symbols to mask */
+
+EC_OBJ _ec_symbol2value( const char *func_name, EcInt param_index, _ec_symbol2int *map, EC_OBJ obj, EcInt *options )
+{
+	EC_OBJ    exc;
+	ec_string ds;
+	EcInt     i;
+
+	ASSERT( options );
+
+	*options = 0;
+
+	if (EC_NULLP(obj))
+		return EC_NIL;
+
+	if (! EC_SYMBOLP(obj))
+		return EC_TYPEERROR_F(/* function name    */ func_name,
+							  /* parameter index  */ param_index,
+							  /* expected         */ tc_none,
+							  /* offending object */ obj,
+							  /* reason           */ "expected a symbol or @nil");
+
+	i = 0;
+	while (map[i].symbolid > 0)
+	{
+		if (map[i].symbolid == EC_SYMBOL(obj))
+		{
+			*options |= map[i].value;
+			return EC_NIL;
+		}
+		i++;
+	}
+
+	ec_string_init( &ds, NULL );
+	ec_sprintf( &ds, "option symbol %w not recognized", obj );
+	exc = EC_TYPEERROR_F(/* function name    */ func_name,
+						 /* parameter index  */ param_index,
+						 /* expected         */ tc_none,
+						 /* offending object */ obj,
+						 /* reason           */ ec_strdata( &ds ));
+	ec_string_cleanup( &ds );
+	return exc;
+}
+
+EC_OBJ _ec_sequence2mask( const char *func_name, EcInt param_index, _ec_symbol2int *map, EC_OBJ seq, EcInt *options )
+{
+	EC_OBJ el, exc;
+	EC_OBJ seql_o;
+	EcInt  seql, i, j;
+	EcBool found;
+
+	ASSERT( options );
+
+	*options = 0;
+
+	if (EC_NULLP(seq))
+		return EC_NIL;
+
+#define TYPE_ERROR	\
+EC_TYPEERROR_F(/* function name    */ func_name,                                     \
+			   /* parameter index  */ param_index,                                   \
+			   /* expected         */ tc_none,                                       \
+			   /* offending object */ seq,                                           \
+			   /* reason           */ "expected a sequence of option symbols or @nil")
+
+	if (! EcIsSequence( seq ))
+		return TYPE_ERROR;
+
+	seql_o = EcSequenceLength( seq );
+	if (EC_ERRORP(seql_o)) return seql_o;
+	ASSERT( EC_INUMP(seql_o) );
+	seql = EC_INUM(seql_o);
+
+	for (i = 0; i < seql; i++)
+	{
+		el = EcSequenceGetElement( seq, i );
+		if (EC_ERRORP(el)) return el;
+
+		if (EC_SYMBOLP(el))
+		{
+			j = 0; found = FALSE;
+			while (map[j].symbolid > 0)
+			{
+				if (map[j].symbolid == EC_SYMBOL(el))
+				{
+					*options |= map[j].value;
+					found = TRUE;
+					break;
+				}
+				j++;
+			}
+
+			if (! found)
+			{
+				ec_string ds;
+				ec_string_init( &ds, NULL );
+				ec_sprintf( &ds, "symbol %w not recognized in option sequence", el );
+				exc = EC_TYPEERROR_F(/* function name    */ func_name,
+									 /* parameter index  */ param_index,
+									 /* expected         */ tc_none,
+									 /* offending object */ seq,
+									 /* reason           */ ec_strdata( &ds ) );
+				ec_string_cleanup( &ds );
+				return exc;
+			}
+
+		} else
+			return TYPE_ERROR;
+	}
+
+	/* ok */
+	return EC_NIL;
 }
 
 /* Debugging */

@@ -55,6 +55,9 @@ core
 	* add C pointer registration (with identification, for serialization
 	  and package save/reload). Pointer info should include versioning
 	  information for runtime linking.
+	  o maybe that with pointer information we could avoid hard-coding
+	    primtive function name in EC_TYPEERROR_* macros, and EcParseStack*().
+	    Investigate.
 	* use the G bit in object flags not only for tc_primitive, but for any
 	  type having userdata (EC_OBJECTUSER(), ...) so that we can use the
 	  registerd C pointers table to save/load objects in packageio.c and
@@ -259,6 +262,7 @@ modules
 	o a module offering pack/unpack functionality (more or less like
 	  Perl's one. I'd prefer a more flexible mechanism based on recursive
 	  definition of data-types (scheme-like? list-based?))
+	o a module interfacing to libcurl for transparent network access via URLs
 
 	DONE: * add `math' module.
 	DONE: * update SWIG module and gtk module for copy construction.

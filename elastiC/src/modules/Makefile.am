@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:18:38 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/06/06 00:09:25 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -48,7 +48,9 @@ static_sources = \
 	string_m.c	\
 	string_m.h	\
 	array_m.c	\
-	array_m.h
+	array_m.h	\
+	posix_m.c	\
+	errno_switch.c
 
 libmodules_la_SOURCES = \
 	$(static_sources)

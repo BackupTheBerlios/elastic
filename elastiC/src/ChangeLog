@@ -1,3 +1,15 @@
+2002-06-06  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* compat.h builtin.c elastic.c private.h modules/posix_m.c:
+	started implementing a POSIX 1003.1 module.
+
+	* lib.c (EcLibIOErrorClass_New): fixed, it checked for two
+	parameters and it received three.
+
+	* memory.h memory.c (ec_allocpool): fixed C++ compatibility
+	problem: we had a typedef (ec_mempool) with the same name of a
+	struct. Now the struct is named ec_mempool_struct.
+
 2002-06-04  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* elastic.c builtin.c lib.c: added a new instance variable to

@@ -1,3 +1,16 @@
+2002-06-06  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/compat.h src/builtin.c src/elastic.c src/private.h
+	src/modules/posix_m.c: started implementing a POSIX 1003.1
+	module.
+
+	* src/lib.c (EcLibIOErrorClass_New): fixed, it checked for two
+	parameters and it received three.
+
+	* src/memory.h src/memory.c (ec_allocpool): fixed C++
+	compatibility problem: we had a typedef (ec_mempool) with the same
+	name of a struct. Now the struct is named ec_mempool_struct.
+
 2002-06-04  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* switched to library versioning in autoconf/automake...
