@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jun 11 17:34:18 CEST 2002
  *
- *   $Id: filestream.c,v 1.1 2002/06/11 18:45:10 panta Exp $
+ *   $Id: filestream.c,v 1.2 2002/06/11 19:32:07 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -58,19 +58,32 @@ EC_API const ec_streamdef *ec_filestream_def( void )
 #define FS_FH(stream)				((FILE *) (stream)->userdata2)
 #define FS_FH_SET(stream, v)		do { (stream)->userdata2 = (v); } while(0)
 
-#define FS_POPENED(stream)			((EcBool) (stream)->userdata1.v_int)
-#define FS_POPENED_SET(stream, v)	do { (stream)->userdata1.v_int = (EcInt)(v); } while(0)
+#define DONTCLOSE_MASK	0x0001
+#define POPENED_MASK	0x0002
+
+#define FS_DONTCLOSE(stream)		((EcBool) ((stream)->userdata1.v_int & DONTCLOSE_MASK))
+#define FS_DONTCLOSE_SET(stream)	do { (stream)->userdata1.v_int |= DONTCLOSE_MASK; } while(0)
+#define FS_DONTCLOSE_CLEAR(stream)	do { (stream)->userdata1.v_int &= (~DONTCLOSE_MASK); } while(0)
+#define FS_DONTCLOSE_LET(stream, v)	do { if ((v)) FS_DONTCLOSE_SET(stream); else FS_DONTCLOSE_CLEAR(stream); } while(0)
+
+#define FS_POPENED(stream)			((EcBool) ((stream)->userdata1.v_int & POPENED_MASK))
+#define FS_POPENED_SET(stream)		do { (stream)->userdata1.v_int |= POPENED_MASK; } while(0)
+#define FS_POPENED_CLEAR(stream)	do { (stream)->userdata1.v_int &= (~POPENED_MASK); } while(0)
+#define FS_POPENED_LET(stream, v)	do { if ((v)) FS_POPENED_SET(stream); else FS_POPENED_CLEAR(stream); } while(0)
 
 static EcBool filestream_create( ec_stream *s, EC_OBJ *excp, va_list ap )
 {
-	FILE   *fh      = NULL;
-	EcBool  popened = FALSE;
+	FILE   *fh        = NULL;
+	EcBool  dontclose = FALSE;
+	EcBool  popened   = FALSE;
 
-	fh      = va_arg( ap, FILE* );
-	popened = va_arg( ap, int );
+	fh        = va_arg( ap, FILE* );
+	dontclose = va_arg( ap, int );
+	popened   = va_arg( ap, int );
 
 	FS_FH_SET(s, fh);
-	FS_POPENED_SET(s, popened);
+	FS_DONTCLOSE_LET(s, dontclose);
+	FS_POPENED_LET(s, popened);
 
 	return TRUE;
 }
@@ -80,6 +93,9 @@ static EcInt filestream_close( ec_stream *s );
 static EcBool filestream_destroy( ec_stream *s )
 {
 	EcInt rv;
+
+	if (FS_DONTCLOSE(s))
+		return TRUE;
 
 	s->exc = EC_NIL;
 	rv = filestream_close( s );
@@ -98,7 +114,7 @@ static EcInt filestream_close( ec_stream *s )
 			int rv;
 			rv = pclose( FS_FH(s) );
 			FS_FH_SET(s, NULL);
-			FS_POPENED_SET(s, FALSE);
+			FS_POPENED_CLEAR(s);
 			if (rv == -1)
 			{
 				s->exc = _ec_errno2exception( errno, EC_NIL, "in pclose" );	/* :TODO: it would be nice to have the associated EC_OBJ *if any* */
@@ -112,7 +128,7 @@ static EcInt filestream_close( ec_stream *s )
 			fclose( FS_FH(s) );
 
 		FS_FH_SET(s, NULL);
-		FS_POPENED_SET(s, FALSE);
+		FS_POPENED_CLEAR(s);
 	}
 
 	return 0;

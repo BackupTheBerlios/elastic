@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.8 2002/06/11 18:44:17 panta Exp $
+ *   $Id: elastic.c,v 1.9 2002/06/11 19:32:07 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -277,7 +277,10 @@ EC_API EcBool EcInit( void )
 
 	PRIVATE(filestream_def) = NULL;
 
-	/* :TODO: register filestream and initialize default streams */
+	/*
+	 * The `filestream' stream will be registered in builtin.c
+	 * There the stdio streams will be initialized also.
+	 */
 
 	PRIVATE(package)   = NULL;
 	PRIVATE(npackages) = 0;
@@ -342,6 +345,9 @@ EC_API void EcCleanup( void )
 #endif
 
 	_ec_packageio_cleanup();
+
+	/* cleanup built-in packages, types, primitives & classes */
+	_ec_cleanup_builtin();
 
 	if (PRIVATE(builtin_name))
 		ec_hash_destroy( PRIVATE(builtin_name) );

@@ -1,3 +1,9 @@
+2002-06-11  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/stream.[hc] src/filestream.c ...: started implementing
+	generic I/O (streams). First cut also at a specialized
+	`filestream' stream (based on stdlib streams). Oh well...
+
 2002-06-07  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* configure.in src/compat.h src/builtin.c src/elastic.c

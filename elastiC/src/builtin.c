@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.6 2002/06/11 18:44:17 panta Exp $
+ *   $Id: builtin.c,v 1.7 2002/06/11 19:32:07 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -543,6 +543,10 @@ static EcVariableDef EcCompileErrorClass_Variables[] =			/* Instance Variables *
 
 EcBool _ec_register_builtin( void )
 {
+	const ec_streamdef *sdef;
+	ec_stream          *str;
+	EC_OBJ              exc;
+
 	if (! (_ec_array_init()    &&
 		   _ec_char_init()     &&
 		   _ec_string_init()   &&
@@ -566,6 +570,27 @@ EcBool _ec_register_builtin( void )
 	if (EC_ERRORP(_ec_filestream_init()))
 		return FALSE;
 #endif
+
+	/* ... and now create stdio streams */
+	sdef = ec_filestream_def();
+
+	str = ec_stream_create( sdef, &exc,
+							stdin,
+							/* don't close */ TRUE,
+							/* popen()-ed  */ FALSE );
+	PRIVATE(stream_stdin)  = str;
+
+	str = ec_stream_create( sdef, &exc,
+							stdout,
+							/* don't close */ TRUE,
+							/* popen()-ed  */ FALSE );
+	PRIVATE(stream_stdout) = str;
+
+	str = ec_stream_create( sdef, &exc,
+							stderr,
+							/* don't close */ TRUE,
+							/* popen()-ed  */ FALSE );
+	PRIVATE(stream_stderr) = str;
 
 	if (! _ec_lib_init())
 		return FALSE;

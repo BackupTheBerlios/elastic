@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.2 2002/06/11 18:44:17 panta Exp $
+ *   $Id: stream.c,v 1.3 2002/06/11 19:32:07 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -104,7 +104,7 @@ EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 	return &STREAMDEF(streamidx);
 }
 
-static ec_stream *ec_stream_create_va( ec_streamdef *streamdef, EC_OBJ *excp, va_list ap )
+static ec_stream *ec_stream_create_va( const ec_streamdef *streamdef, EC_OBJ *excp, va_list ap )
 {
 	ec_stream *stream;
 	EcBool     ok = FALSE;
@@ -142,7 +142,7 @@ static ec_stream *ec_stream_create_va( ec_streamdef *streamdef, EC_OBJ *excp, va
 	return stream;
 }
 
-EC_API ec_stream *ec_stream_create( ec_streamdef *streamdef, EC_OBJ *excp, ... )
+EC_API ec_stream *ec_stream_create( const ec_streamdef *streamdef, EC_OBJ *excp, ... )
 {
 	va_list    ap;
 	ec_stream *stream;
