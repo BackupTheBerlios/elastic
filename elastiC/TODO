@@ -208,6 +208,13 @@ modules
 	* evaluate possibility of externally include (as dynamic modules),
 	  iconv (libiconv) and/or IBM ICU for Unicode. (Emiliano wrote
 	  a "unicode" module, stacking on top of libunicode).
+	* a `posix' (9945-1:1996 (ISO/IEC) [IEEE/ANSI Std 1003.1,
+	  1996 Edition]) module.
+	* a module with other OS functions (popen(), ...)
+	o an XML module
+	o a date/time module
+	o a digest module (MD5, SHA1, ...)
+	o a cryptographic module (DES, RSA, Blowfish, ...)
 
 	DONE: * add `math' module.
 	DONE: * update SWIG module and gtk module for copy construction.
