@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jun 11 17:34:18 CEST 2002
  *
- *   $Id: filestream_m.c,v 1.1 2002/06/12 17:42:53 panta Exp $
+ *   $Id: filestream_m.c,v 1.2 2002/06/13 11:06:21 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -340,7 +340,10 @@ static ssize_t filestream_write( ec_stream *s, const void *buf, ssize_t count )
 	clearerr( FS_FH(s) );
 	nwritten = fwrite( buf, 1, count, FS_FH(s) );
 	if (nwritten < count)
-		s->exc = _ec_errno2exception( errno, EC_NIL, "in fwrite" );	/* :TODO: it would be nice to have the associated EC_OBJ *if any* */
+	{
+		if (ferror( FS_FH(s) ))
+			s->exc = _ec_errno2exception( errno, EC_NIL, "in fwrite" );	/* :TODO: it would be nice to have the associated EC_OBJ *if any* */
+	}
 
 	return (ssize_t) nwritten;
 }
@@ -470,6 +473,40 @@ static EC_OBJ filestream_restore  ( ec_stream *s,
 }
 
 
+static EcBool bind_stdio( const ec_streamdef *sdef, EC_OBJ *excp )
+{
+	ec_stream *str;
+
+	if (! PRIVATE(stream_stdin))
+	{
+		str = ec_stream_create( sdef, excp,
+								stdin,
+								/* don't close */ TRUE,
+								/* popen()-ed  */ FALSE );
+		PRIVATE(stream_stdin)  = str;
+	}
+
+	if (! PRIVATE(stream_stdout))
+	{
+		str = ec_stream_create( sdef, excp,
+								stdout,
+								/* don't close */ TRUE,
+								/* popen()-ed  */ FALSE );
+		PRIVATE(stream_stdout)  = str;
+	}
+
+	if (! PRIVATE(stream_stderr))
+	{
+		str = ec_stream_create( sdef, excp,
+								stderr,
+								/* don't close */ TRUE,
+								/* popen()-ed  */ FALSE );
+		PRIVATE(stream_stderr)  = str;
+	}
+
+	return TRUE;
+}
+
 #if ECMODULE_FILESTREAM_STATIC
 EC_OBJ _ec_modfilestream_init( void )
 #else
@@ -512,10 +549,11 @@ EC_API EC_OBJ ec_filestream_init( void )
 	};
 
 	const ec_streamdef *rdef;
+	EC_OBJ exc = EC_NIL;
 	EC_OBJ pkg;
 
 	rdef = ec_stream_register( &def );
-	if (! rdef) return EcMemoryError();
+	if (! rdef) return EcMemoryError();							/* :TODO: we could also have a stream with the same magic */
 
 	PRIVATE(filestream_def) = rdef;
 
@@ -526,6 +564,11 @@ EC_API EC_OBJ ec_filestream_init( void )
 	EcAddPrimitive( "filestream.open",		EcLibFileStream_Open );
 	EcAddPrimitive( "filestream.popen",		EcLibFileStream_POpen );
 	EcAddPrimitive( "filestream.fdopen",	EcLibFileStream_FDOpen );
+
+	/* associate standard streams if not already bound */
+	bind_stdio( rdef, &exc );
+	if (EC_ERRORP(exc))
+		return exc;
 
 	return pkg;												/* :TODO: return a package */
 }

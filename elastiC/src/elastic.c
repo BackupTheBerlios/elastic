@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.9 2002/06/11 19:32:07 panta Exp $
+ *   $Id: elastic.c,v 1.10 2002/06/13 11:06:21 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -278,7 +278,8 @@ EC_API EcBool EcInit( void )
 	PRIVATE(filestream_def) = NULL;
 
 	/*
-	 * The `filestream' stream will be registered in builtin.c
+	 * The `filestream' stream will be registered in builtin.c,
+	 * when available statically (as a statically builtin module).
 	 * There the stdio streams will be initialized also.
 	 */
 

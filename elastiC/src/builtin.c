@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.9 2002/06/12 17:42:53 panta Exp $
+ *   $Id: builtin.c,v 1.10 2002/06/13 11:06:21 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -543,9 +543,7 @@ static EcVariableDef EcCompileErrorClass_Variables[] =			/* Instance Variables *
 
 EcBool _ec_register_builtin( void )
 {
-	const ec_streamdef *sdef;
-	ec_stream          *str;
-	EC_OBJ              exc;
+	EC_OBJ modpkg;
 
 	if (! (_ec_array_init()    &&
 		   _ec_char_init()     &&
@@ -575,29 +573,13 @@ EcBool _ec_register_builtin( void )
 #endif
 
 #if ECMODULE_FILESTREAM_STATIC
-	if (EC_ERRORP(_ec_modfilestream_init()))					/* C level filestream support and elastiC filestream module */
+	modpkg = _ec_modfilestream_init();
+	if (EC_ERRORP(modpkg))										/* C level filestream support and elastiC filestream module */
 		return FALSE;
-
-	/* ... and now create stdio streams */
-	sdef = ec_filestream_def();
-
-	str = ec_stream_create( sdef, &exc,
-							stdin,
-							/* don't close */ TRUE,
-							/* popen()-ed  */ FALSE );
-	PRIVATE(stream_stdin)  = str;
-
-	str = ec_stream_create( sdef, &exc,
-							stdout,
-							/* don't close */ TRUE,
-							/* popen()-ed  */ FALSE );
-	PRIVATE(stream_stdout) = str;
-
-	str = ec_stream_create( sdef, &exc,
-							stderr,
-							/* don't close */ TRUE,
-							/* popen()-ed  */ FALSE );
-	PRIVATE(stream_stderr) = str;
+	/*
+	 * stdio streams will be bound by the filestream module,
+	 * if not already bound.
+	 */
 #else /* start of ! ECMODULE_FILESTREAM_STATIC */
 	/* :TODO: use a stringstream or a nullstream or something */
 	PRIVATE(stream_stdin)  = NULL;
@@ -620,12 +602,14 @@ EcBool _ec_register_builtin( void )
 		return FALSE;
 
 #if ECMODULE_POSIX_STATIC
-	if (EC_ERRORP(_ec_modposix_init()))
+	modpkg = _ec_modposix_init();
+	if (EC_ERRORP(modpkg))
 		return FALSE;											/* :TODO: do something with exception */
 #endif
 
 #if ECMODULE_ERRNO_STATIC
-	if (EC_ERRORP(_ec_moderrno_init()))
+	modpkg = _ec_moderrno_init();
+	if (EC_ERRORP(modpkg))
 		return FALSE;											/* :TODO: do something with exception */
 #endif
 

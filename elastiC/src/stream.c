@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.5 2002/06/12 17:42:53 panta Exp $
+ *   $Id: stream.c,v 1.6 2002/06/13 11:06:21 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -44,6 +44,11 @@
 
 #include "stream.h"
 
+/* default stream methods (private) */
+
+
+/* C API */
+
 EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 {
 	/*
@@ -53,10 +58,17 @@ EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 
 	ec_streamtype streamidx;
 	ec_streamdef *new_streamspec;
+	EcInt         i;
 
 	ASSERT( streamdef );
 
 	streamdef->streamtype = -1;
+
+	for (i = 0; i < (int)PRIVATE(streamtype_next); i++)
+	{
+		if (memcmp(PRIVATE(streamspec)[i].magic, streamdef->magic, sizeof(streamdef->magic)) == 0)
+			return NULL;										/* a stream type with the same magic is already registered */
+	}
 
 	streamidx      = PRIVATE(streamtype_next);
 	new_streamspec = ec_realloc( PRIVATE(streamspec), (streamidx + 1) * sizeof(struct ec_streamdef_struct) );
@@ -78,8 +90,6 @@ EC_API const ec_streamdef *ec_stream_register( ec_streamdef *streamdef )
 	}
 
 	/* fill with default function pointers if necessary */
-	/* :TODO: default_read (handling short-reads) */
-	/* :TODO: default_write (handling short-writes) */
 	/* :TODO: default_flush */
 	/* :TODO: default_unread */
 	/* :TODO: default_gets */
@@ -224,12 +234,90 @@ EC_API EcBool ec_stream_flush( ec_stream *stream )
 	return FALSE;
 }
 
+static ssize_t read_helper( ec_stream *stream, void *buf, ssize_t count )
+{
+	/*
+	 * helper read function handling "short" reads.
+	 * (needed for buffer streams and low-level OS "read").
+	 */
+	register ec_stream_read_fcn read_fcn;
+	ssize_t nleft, nread;
+
+	if (count <= 0)
+		return 0;
+
+	read_fcn = stream->streamdef->read_fcn;
+	if (! read_fcn)
+	{
+		stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
+		errno = EINVAL;
+		return -1;
+	}
+
+	ec_stream_exception_clear( stream );
+	nleft = count;
+	while (nleft > 0)
+	{
+		nread = read_fcn( stream, buf, nleft );
+
+		if ((nread < 0) || EC_ERRORP(stream->exc))
+			return nread;										/* error, return < 0 */
+		else if (nread == 0)
+			break;												/* EOF */
+
+		nleft -= nread;
+		buf   += nread;
+	}
+
+	return (count - nleft);										/* return >= 0 */
+}
+
+static ssize_t write_helper( ec_stream *stream, const void *buf, ssize_t count )
+{
+	/*
+	 * helper write function handling "short" write.
+	 * (needed for buffer streams and low-level OS "write").
+	 */
+	register ec_stream_write_fcn write_fcn;
+	size_t nleft, nwritten;
+
+	if (count <= 0)
+		return 0;
+
+	write_fcn = stream->streamdef->write_fcn;
+	if (! write_fcn)
+	{
+		stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
+		errno = EINVAL;
+		return -1;
+	}
+
+	ec_stream_exception_clear( stream );
+	nleft = count;
+	while (nleft > 0)
+	{
+		nwritten = write_fcn( stream, buf, nleft );
+		if ((nwritten <= 0) || EC_ERRORP(stream->exc))
+			return nwritten;									/* error */
+
+		nleft -= nwritten;
+		buf   += nwritten;
+	}
+
+	return (count - nleft);
+}
+
 EC_API ssize_t ec_stream_read( ec_stream *stream, void *buf, ssize_t count )
 {
+	/* see ec_stream_readn() for short-reads handling version */
+
 	ASSERT( stream );
 	ASSERT( count >= 0 );
 
-	/* :TODO: handle short reads (needed for buffer streams and low-level OS "read" */
+	if (count <= 0)
+		return 0;
+
+	ec_stream_exception_clear( stream );
 	if (stream->streamdef->read_fcn)
 		return stream->streamdef->read_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`read' not implemented for this stream type." );
@@ -237,12 +325,27 @@ EC_API ssize_t ec_stream_read( ec_stream *stream, void *buf, ssize_t count )
 	return -1;
 }
 
-EC_API ssize_t ec_stream_write( ec_stream *stream, const void *buf, ssize_t count )
+EC_API ssize_t ec_stream_readn( ec_stream *stream, void *buf, ssize_t count )
 {
+	/* short-reads handling version */
+
 	ASSERT( stream );
 	ASSERT( count >= 0 );
 
-	/* :TODO: handle short writes (needed for buffer streams and low-level OS "write" */
+	return read_helper( stream, buf, count );
+}
+
+EC_API ssize_t ec_stream_write( ec_stream *stream, const void *buf, ssize_t count )
+{
+	/* see ec_stream_writen() for short-writes handling version */
+
+	ASSERT( stream );
+	ASSERT( count >= 0 );
+
+	if (count <= 0)
+		return 0;
+
+	ec_stream_exception_clear( stream );
 	if (stream->streamdef->write_fcn)
 		return stream->streamdef->write_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`write' not implemented for this stream type." );
@@ -250,11 +353,22 @@ EC_API ssize_t ec_stream_write( ec_stream *stream, const void *buf, ssize_t coun
 	return -1;
 }
 
+EC_API ssize_t ec_stream_writen( ec_stream *stream, const void *buf, ssize_t count )
+{
+	/* short-writes handling version */
+
+	ASSERT( stream );
+	ASSERT( count >= 0 );
+
+	return write_helper( stream, buf, count );
+}
+
 EC_API EcBool ec_stream_unread( ec_stream *stream, const void *buf, ssize_t count )
 {
 	ASSERT( stream );
 	ASSERT( count >= 0 );
 
+	ec_stream_exception_clear( stream );
 	if (stream->streamdef->unread_fcn)
 		return stream->streamdef->unread_fcn( stream, buf, count );
 	stream->exc = EcUnimplementedError( "`unread' not implemented for this stream type." );
@@ -266,6 +380,8 @@ EC_API EcByte ec_stream_getch( ec_stream *stream )
 	EcByte val;
 
 	ASSERT( stream );
+	ec_stream_exception_clear( stream );
+	/* we don't need to use ec_stream_readn() here, because we read only 1 byte */
 	if (stream->streamdef->read_fcn)
 	{
 		stream->streamdef->read_fcn( stream, &val, 1 );
@@ -292,6 +408,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 		return -1;
 	}
 
+	ec_stream_exception_clear( stream );
 	if (maxchars >= 0)
 	{
 		/* limited */
@@ -299,6 +416,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 		rem = maxchars;
 		while (rem > 0)
 		{
+			/* we don't need to use ec_stream_readn() here because we read only one byte */
 			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
 			if (EC_ERRORP(stream->exc)) return nr;
 			if (nr != 1)
@@ -315,6 +433,7 @@ EC_API ssize_t ec_stream_gets_slow( ec_stream *stream, ec_string *dst, ssize_t m
 
 		while (TRUE)
 		{
+			/* we don't need to use ec_stream_readn() here because we read only one byte */
 			nr = stream->streamdef->read_fcn( stream, &ch, 1 );
 			if (EC_ERRORP(stream->exc)) return nr;
 			if (nr != 1)
@@ -371,10 +490,12 @@ EC_API ssize_t ec_stream_getcstr( ec_stream *stream, char *dst, ssize_t maxchars
 		return -1;
 	}
 
+	ec_stream_exception_clear( stream );
 	rem = maxchars;
 	dstp = dst;
 	while (rem > 1)
 	{
+		/* we don't need to use ec_stream_readn() here because we read only one byte */
 		nr = stream->streamdef->read_fcn( stream, &ch, 1 );
 		if (EC_ERRORP(stream->exc)) return nr;
 		if (nr != 1)
@@ -410,9 +531,12 @@ EC_API EcBool ec_stream_putch( ec_stream *stream, EcByte c )
 	ssize_t nwritten;
 
 	ASSERT( stream );
+
+	ec_stream_exception_clear( stream );
 	if (stream->streamdef->write_fcn)
 	{
 		ch = c;
+		/* we don't need to use ec_stream_writen() here because we write only one byte */
 		nwritten = stream->streamdef->write_fcn( stream, &ch, 1 );
 		if (EC_ERRORP(stream->exc)) return FALSE;
 		return (nwritten == 1) ? TRUE : FALSE;
@@ -428,10 +552,11 @@ EC_API EcBool ec_stream_putcstr( ec_stream *stream, const char *src )
 	char nl;
 
 	ASSERT( stream );
+
 	if (stream->streamdef->write_fcn)
 	{
 		len = src ? strlen(src) : 0;
-		nwritten = stream->streamdef->write_fcn( stream, src, len );
+		nwritten = write_helper( stream, src, len );
 		if (EC_ERRORP(stream->exc)) return nwritten;
 		if (nwritten != len)
 		{
@@ -440,7 +565,7 @@ EC_API EcBool ec_stream_putcstr( ec_stream *stream, const char *src )
 		}
 
 		nl = '\n';
-		nwritten = stream->streamdef->write_fcn( stream, &nl, 1 );
+		nwritten = write_helper( stream, &nl, 1 );
 		if (EC_ERRORP(stream->exc)) return nwritten;
 		if (nwritten != 1)
 		{
@@ -462,7 +587,7 @@ EC_API EcBool ec_stream_puts( ec_stream *stream, ec_string *src )
 	ASSERT( stream );
 	if (stream->streamdef->write_fcn)
 	{
-		nwritten = stream->streamdef->write_fcn( stream, ec_strdata(src), ec_strlen(src) );
+		nwritten = write_helper( stream, ec_strdata(src), ec_strlen(src) );
 		if (EC_ERRORP(stream->exc)) return nwritten;
 		if (nwritten != ec_strlen(src))
 		{
@@ -471,7 +596,7 @@ EC_API EcBool ec_stream_puts( ec_stream *stream, ec_string *src )
 		}
 
 		nl = '\n';
-		nwritten = stream->streamdef->write_fcn( stream, &nl, 1 );
+		nwritten = write_helper( stream, &nl, 1 );
 		if (EC_ERRORP(stream->exc)) return nwritten;
 		if (nwritten != 1)
 		{

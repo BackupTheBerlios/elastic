@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun 12 10:52:30 CEST 2002
  *
- *   $Id: stream_m.c,v 1.1 2002/06/12 16:00:05 panta Exp $
+ *   $Id: stream_m.c,v 1.2 2002/06/13 11:06:21 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -150,10 +150,11 @@ EC_API EC_OBJ EcLibStream_Read( EC_OBJ stack, EcAny userdata )
 	EC_OBJ   obj;
 	EC_OBJ   res;
 	EcInt    dim;
+	EcBool   exactly = FALSE;
 	char    *buf;
 	ssize_t  nread;
 
-	res = EcParseStackFunction( "stream.read", TRUE, stack, "O!i", tc_stream, &obj, &dim );
+	res = EcParseStackFunction( "stream.read", TRUE, stack, "O!i|b", tc_stream, &obj, &dim, &exactly );
 	if (EC_ERRORP(res))
 		return res;
 
@@ -168,7 +169,10 @@ EC_API EC_OBJ EcLibStream_Read( EC_OBJ stack, EcAny userdata )
 		return EcMemoryError();
 
 	ec_stream_exception_clear( EC_STREAM_STR(obj) );
-	nread = ec_stream_read( EC_STREAM_STR(obj), buf, (ssize_t) dim );
+	if (exactly)
+		nread = ec_stream_readn( EC_STREAM_STR(obj), buf, (ssize_t) dim );
+	else
+		nread = ec_stream_read( EC_STREAM_STR(obj), buf, (ssize_t) dim );
 	if (EC_ERRORP(EC_STREAM_STR(obj)->exc))
 		return EC_STREAM_STR(obj)->exc;
 	if (nread >= 0)
@@ -189,9 +193,10 @@ EC_API EC_OBJ EcLibStream_Write( EC_OBJ stack, EcAny userdata )
 	char     *buf;
 	EcInt     bufl;
 	EcInt     dim = -1;
+	EcBool    exactly = FALSE;
 	ssize_t   nwritten;
 
-	res = EcParseStackFunction( "stream.write", TRUE, stack, "O!s#|i", tc_stream, &obj, &buf, &bufl, &dim );
+	res = EcParseStackFunction( "stream.write", TRUE, stack, "O!s#|i", tc_stream, &obj, &buf, &bufl, &dim, &exactly );
 	if (EC_ERRORP(res))
 		return res;
 
@@ -208,7 +213,10 @@ EC_API EC_OBJ EcLibStream_Write( EC_OBJ stack, EcAny userdata )
 		return EcUnimplementedError( "range error" );			/* :TODO: better exception */
 
 	ec_stream_exception_clear( EC_STREAM_STR(obj) );
-	nwritten = ec_stream_write( EC_STREAM_STR(obj), buf, (ssize_t) dim );
+	if (exactly)
+		nwritten = ec_stream_writen( EC_STREAM_STR(obj), buf, (ssize_t) dim );
+	else
+		nwritten = ec_stream_write( EC_STREAM_STR(obj), buf, (ssize_t) dim );
 	if (EC_ERRORP(EC_STREAM_STR(obj)->exc))
 		return EC_STREAM_STR(obj)->exc;
 	if (nwritten >= 0)

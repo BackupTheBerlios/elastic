@@ -1,6 +1,6 @@
 Overview of Changes in elastiC 0.0.37:
 
-* win32 Visual C++ 6 support (VC 7 in progress)
+* win32 Visual C++ 6 support (VC 7 in progress) (thanks to George McBay)
 
 * Alpha compatibility.
   (elastiC should be 64-bit clean now).
