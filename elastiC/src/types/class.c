@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: class.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: class.c,v 1.3 2005/03/22 10:09:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -97,7 +97,7 @@ EC_API EC_OBJ EcMakeClass( EC_OBJ package, EC_OBJ superclass, const char *name )
 											 0,					/* req. parameters      */
 											 0,					/* params with defaults */
 											 FALSE,				/* varags               */
-											 FALSE );			/* is a method ?        */
+											 FALSE, NULL );			/* is a method ?        */
 	ec_string_cleanup( &ds );
 
 	/* Set appropriately the various fields */

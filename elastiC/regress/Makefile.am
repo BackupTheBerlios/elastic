@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.2 2002/05/25 18:54:09 panta Exp $
+#   $Id: Makefile.am,v 1.3 2005/03/22 10:09:33 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
 #
@@ -81,7 +81,9 @@ dist-hook:
 	mkdir -p $(distdir)/stderr
 	mkdir -p $(distdir)/expectout
 	mkdir -p $(distdir)/expecterr
+	mkdir -p $(distdir)/files
 	mkdir -p $(distdir)/obj
 	cp -a input/* $(distdir)/input
 	cp -a expectout/* $(distdir)/expectout
 	cp -a expecterr/* $(distdir)/expecterr
+	cp -a files/* $(distdir)/files

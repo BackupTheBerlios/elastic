@@ -1,12 +1,14 @@
 #!/bin/sh
 # Run this to generate all the initial makefiles, etc.
 
-# $Id: autogen.sh,v 1.1 2002/06/01 17:10:07 panta Exp $
+# $Id: autogen.sh,v 1.2 2005/03/22 10:09:32 panta Exp $
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
 
 PKG_NAME="elastic"
+
+export SED=sed
 
 (test -f $srcdir/configure.in \
   && test -f $srcdir/README \

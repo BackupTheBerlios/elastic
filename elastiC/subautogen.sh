@@ -1,13 +1,38 @@
 #!/bin/sh
 # Run this to generate all the initial makefiles, etc.
 
-# $Id: subautogen.sh,v 1.1 2002/06/01 17:10:07 panta Exp $
+# $Id: subautogen.sh,v 1.2 2005/03/22 10:09:32 panta Exp $
 
 DIE=0
 
 REAL=1
 
-(autoconf --version) < /dev/null > /dev/null 2>&1 || {
+autoconf_default="autoconf"
+autoheader_default="autoheader"
+libtool_default="libtool"
+libtoolize_default="libtoolize"
+automake_default="automake-1.6"
+aclocal_default="aclocal-1.6"
+
+autoconf=${AUTOCONF:-${autoconf_default}}
+autoheader=${AUTOHEADER:-${autoheader_default}}
+libtool=${LIBTOOL:-${libtool_default}}
+libtoolize=${LIBTOOLIZE:-${libtoolize_default}}
+automake=${AUTOMAKE:-${automake_default}}
+aclocal=${ACLOCAL:-${aclocal_default}}
+
+echo "Using:"
+echo "    autoconf   : ${autoconf}"
+echo "    autoheader : ${autoheader}"
+echo "    libtool    : ${libtool}"
+echo "    libtoolize : ${libtoolize}"
+echo "    automake   : ${automake}"
+echo "    aclocal    : ${aclocal}"
+echo
+
+export SED=sed
+
+(${autoconf} --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`autoconf' installed to compile ${PKG_NAME}."
   echo "Download the appropriate package for your distribution,"
@@ -16,7 +41,7 @@ REAL=1
 }
 
 (grep "^AM_PROG_LIBTOOL" $srcdir/configure.in >/dev/null) && {
-  (libtool --version) < /dev/null > /dev/null 2>&1 || {
+  (${libtool} --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile ${PKG_NAME}."
     echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-1.4.2.tar.gz"
@@ -36,7 +61,7 @@ REAL=1
 #  }
 #}
 
-(automake --version) < /dev/null > /dev/null 2>&1 || {
+(${automake} --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`automake' installed to compile ${PKG_NAME}."
   echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.6.tar.gz"
@@ -47,7 +72,7 @@ REAL=1
 
 
 # if no automake, don't bother testing for aclocal
-test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
+test -n "$NO_AUTOMAKE" || (${aclocal} --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
@@ -95,7 +120,7 @@ do
       if test -n "$aclocal_flags"; then
         aclocaldirs=`echo $aclocal_flags | sed -n -e 's/-I / /gp'`
       else
-        aclocaldirs=`aclocal --print-ac-dir`
+        aclocaldirs=`${aclocal} --print-ac-dir`
       fi
       #echo "aclocaldirs: $aclocaldirs"
       m4list="elastic.m4 elasticdir.m4"
@@ -139,23 +164,23 @@ do
         fi
       fi
       if grep "^AM_PROG_LIBTOOL" configure.in >/dev/null; then
-	echo "Running libtoolize --force --copy"
-	test "$REAL" -eq 1 && ( libtoolize --force --copy )
+	echo "Running ${libtoolize} --force --copy"
+	test "$REAL" -eq 1 && ( ${libtoolize} --force --copy )
       fi
-      echo "Running aclocal $aclocalinclude"
-      test "$REAL" -eq 1 && ( aclocal $aclocalinclude )
+      echo "Running ${aclocal} $aclocalinclude"
+      test "$REAL" -eq 1 && ( ${aclocal} $aclocalinclude )
       if grep "^AM_CONFIG_HEADER" configure.in >/dev/null; then
         if test -f $dr/NO-AUTOHEADER; then
           echo skipping autoheader -- flagged as no-autoheader
         else
-	  echo "Running autoheader"
-	  test "$REAL" -eq 1 && ( autoheader )
+	  echo "Running ${autoheader}"
+	  test "$REAL" -eq 1 && ( ${autoheader} )
         fi
       fi
-      echo "Running automake --add-missing --gnu $am_opt"
-      test "$REAL" -eq 1 && ( automake --add-missing --gnu $am_opt )
-      echo "Running autoconf"
-      test "$REAL" -eq 1 && ( autoconf )
+      echo "Running ${automake} --add-missing --gnu $am_opt"
+      test "$REAL" -eq 1 && ( ${automake} --add-missing --gnu $am_opt )
+      echo "Running ${autoconf}"
+      test "$REAL" -eq 1 && ( ${autoconf} )
     )
   fi
 done

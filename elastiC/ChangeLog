@@ -1,4 +1,25 @@
+2005-03-22  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* added expat-based xml module.
+
+2005-03-20  Marco Pantaleoni  <panta@elasticworld.org>
+
+        * added documentation strings for functions.
+
+	* src/elastic_s.l: added binary constants parsing (0bBBB...),
+        where B can be 0 or 1. For example 0b1010 is decimal 10.
+
+	* src/elastic_s.l: fixed octal constants parsing (0NNN...).
+
 2005-03-18  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/ast.* src/elastic_s.l src/elastic_p.y: added also another
+        syntax for arrays. Now it's possible to write
+
+	      {val1, val2, ...}
+
+	Empty arrays are specified as {,}, and arrays with one element
+	as {value,}
 
 	* src/ast.* src/elastic_s.l src/elastic_p.y: added new syntax
         for arrays.

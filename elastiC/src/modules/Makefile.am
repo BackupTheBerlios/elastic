@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.7 2002/06/12 17:42:53 panta Exp $
+#   $Id: Makefile.am,v 1.8 2005/03/22 10:09:34 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -38,6 +38,8 @@
 # Directory where sources are, from where we are.
 srcdir = @srcdir@
 VPATH = @srcdir@
+
+SUBDIRS = xml
 
 CLEANFILES = $(DYNAMIC_MODULES) $(wildcard $.o)  $(wildcard $.dll)
 
@@ -122,16 +124,38 @@ dynamic_modules_errno         =
 sources_dynamic_modules_errno = $(errno_dynamic)
 endif
 
+# `xml' module
+
+if ECMODULE_XML_STATIC
+xml_static =
+else
+xml_static =
+endif
+
+if ECMODULE_XML_DYNAMIC
+xml_dynamic                   = 
+dynamic_modules_xml           = xml/xml$(SO)
+sources_dynamic_modules_xml   = $(xml_dynamic)
+libraries_static_modules_xml  = 
+else
+xml_dynamic                   =
+dynamic_modules_xml           =
+sources_dynamic_modules_xml   = $(xml_dynamic)
+libraries_static_modules_xml  = xml/libxml.a
+endif
+
 DYNAMIC_MODULES = \
 	$(dynamic_modules_stream)	\
 	$(dynamic_modules_filestream)	\
 	$(dynamic_modules_posix)	\
-	$(dynamic_modules_errno)
+	$(dynamic_modules_errno)	\
+	$(dynamic_modules_xml)
 SOURCES_DYNAMIC_MODULES = \
 	$(sources_dynamic_modules_stream)	\
 	$(sources_dynamic_modules_filestream)	\
 	$(sources_dynamic_modules_posix)	\
-	$(sources_dynamic_modules_errno)
+	$(sources_dynamic_modules_errno)	\
+	$(sources_dynamic_modules_xml)
 
 static_sources = \
 	list_m.c		\
@@ -143,11 +167,16 @@ static_sources = \
 	$(filestream_static)	\
 	$(posix_static) 	\
 	$(errno_static)		\
+	$(xml_static)		\
 	errno_m_body.c.incl
+
+static_libraries =
+	$(libraries_static_modules_xml)
 
 libmodules_la_SOURCES = \
 	$(static_sources)
-libmodules_la_LIBADD =
+libmodules_la_LIBADD = \
+	$(static_libraries)
 
 CFLAGS_DYNAMIC = $(MODULE_CFLAGS) -DELASTIC_EXPORTS
 COMPILE_DYNAMIC = $(CC) $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS_DYNAMIC) $(CCSHARED)

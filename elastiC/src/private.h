@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.13 2005/03/03 23:51:43 panta Exp $
+ *   $Id: private.h,v 1.14 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -494,6 +494,12 @@ void      _ec_modposix_cleanup( void );
 #if ECMODULE_ERRNO_STATIC
 EC_OBJ    _ec_moderrno_init( void );
 void      _ec_moderrno_cleanup( void );
+#endif
+
+/* xml module */
+#if ECMODULE_XML_STATIC
+EC_OBJ    _ec_modxml_init( void );
+void      _ec_modxml_cleanup( void );
 #endif
 
 /* Misc */

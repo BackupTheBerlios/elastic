@@ -186,6 +186,11 @@ The original PCRE library is available from:
 
   ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/
 
+elastiC uses the Expat library, which is available under a MIT-style
+license. The original Expat library is available from:
+
+  http://sourceforge.net/projects/expat/
+
 elastiC includes source code derived from BSD:
 
   This product includes software developed by the University of
@@ -202,4 +207,4 @@ apply anymore.
 Enjoy,
 Marco Pantaleoni
 panta@elasticworld.org
-1 November 1999 - 23 Oct 2001
+1 November 1999 - 22 Mar 2005

@@ -9,3 +9,4 @@ Makefile.in
 *.la
 *.dll
 *.obj
+dmake.output

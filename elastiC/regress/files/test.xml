@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<html xmlns:pp="http://www.isogen.com/paul/post-processor">
+  <title>A test document</title>
+  <h1>A test document</h1>
+  <h2>Introduction</h2>
+  Some text...
+  Some more text...
+  <hr/>
+  Other text...
+
+  <ul>
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+    <li>Item 4</li>
+  </ul>
+</html>

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: object.h,v 1.3 2003/05/29 10:36:00 panta Exp $
+ *   $Id: object.h,v 1.4 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -149,6 +149,8 @@ typedef struct _compiled
 	 *                 elastiC array of tuples (bytecode index, line number)
 	 */
 	EC_OBJ info;												/* info object*/
+
+	EC_OBJ docstring;											/* documentation string */
 
 	EcCCallable ccallable;										/* C callable #JP */
 } EcCompiled;
@@ -485,6 +487,7 @@ extern EC_API EcInt tc_object;
 #define EC_COMPILEDNAME(obj)		(EC_COMPILED(obj)->name)
 #define EC_COMPILEDISMETHOD(obj)	(EC_COMPILED(obj)->ismethod)
 #define EC_COMPILEDINFO(obj)		(EC_COMPILED(obj)->info)
+#define EC_COMPILEDDOCSTRING(obj)	(EC_COMPILED(obj)->docstring)
 #define EC_COMPILEDCCALLABLE(obj)	(EC_COMPILED(obj)->ccallable) /* #JP */
 #define EC_HANDLER(obj)				((obj)->v.handler)
 #define EC_HANDLERTYPE(obj)			(EC_HANDLER(obj).type)

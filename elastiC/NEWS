@@ -1,5 +1,31 @@
 Overview of Changes in elastiC 0.0.38:
 
+* Added an xml parsing module.
+
+* Added documentation strings for functions.
+  It's possible to write:
+
+     function myfunc(a, b, c)
+     "This function does ..."
+     {
+         ...
+     }
+
+* Added binary constants. The format is (0bBBB...), where B can be 0 or 1.
+  For example 0b1010 is decimal 10.
+
+* Fixed parsing of octal constants.
+
+* Old syntaxes for arrays (#[...]) and hash tables (%[...]) are deprecated.
+
+* Added also another syntax for arrays. Now it's possible to write
+  something like
+
+    {val1, val2, ...}
+
+  Empty arrays are specified as {,}, and arrays with one element
+  as {value,}
+
 * Added new syntax for arrays. Now it's possible to write
   something like
 

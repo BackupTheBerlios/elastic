@@ -7,7 +7,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_s.l,v 1.6 2005/03/18 10:39:40 panta Exp $
+ *   $Id: elastic_s.l,v 1.7 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -43,6 +43,7 @@
 
 static void start( void );
 static void count( void );
+static unsigned long binary2int( const char *text );
 
 #define BUFLEN 4096
 static char buffer[BUFLEN], *buf = 0;
@@ -89,6 +90,7 @@ LBRACE  	"{"
 RBRACE  	"}"
 DIGIT   	[0-9]
 HEXDIGIT	[a-fA-F0-9]
+BINDIGIT	[01]
 ID      	[a-zA-Z_][a-zA-Z0-9_]*
 KEYWORD 	[a-zA-Z0-9_]+":"
 CSYM    	[a-zA-Z_][a-zA-Z0-9_:-]*
@@ -105,13 +107,14 @@ WS		[ \t\n]
 
 
 0[xX]{HEXDIGIT}+                        { unsigned long i; start(); count(); sscanf(yytext+2, "%lx", &i ); yylval.icnst = i; return T_INUMBER; }
-0{DIGIT}+                               { unsigned long i; start(); count(); sscanf(yytext+1, "%lx", &i ); yylval.icnst = i; return T_INUMBER; }
+0{DIGIT}+                               { unsigned long i; start(); count(); sscanf(yytext, "%li", &i ); yylval.icnst = i; return T_INUMBER; }
 {DIGIT}+				{
 						long i;
 						start(); count();
 						sscanf(yytext, "%ld", &i); yylval.icnst = (EcInt)i;
 						return T_INUMBER;
 					}
+0b{BINDIGIT}+                           { unsigned long i; start(); count(); i = binary2int(yytext); yylval.icnst = i; return T_INUMBER; }
 
 {DIGIT}*"."{DIGIT}+			|
 {DIGIT}+"."{DIGIT}*			|
@@ -280,4 +283,24 @@ static void count( void )
 	yylloc.first_column = PRIVATE(col_start);
 	yylloc.last_line    = PRIVATE(line);
 	yylloc.last_column  = PRIVATE(column);
+}
+
+static unsigned long binary2int( const char *text )
+{
+    unsigned long  res;
+    const char    *ptr;
+
+    if (! text) return 0;
+
+    res = 0;
+    ptr = text;
+    while (*ptr)
+    {
+        res <<= 1;
+        res += (*ptr == '1') ? 1 : 0;	
+
+	ptr++;
+    }
+
+    return res;
 }

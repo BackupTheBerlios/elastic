@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.11 2005/03/08 13:40:05 panta Exp $
+ *   $Id: elastic.h,v 1.12 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -210,7 +210,7 @@ EC_API EC_OBJ EcMakeCompiled( EC_OBJ package,
 							  EcInt  req_nargs,					/* minimum # of params (counting also default ones)                  */
 							  EcInt  def_nargs,					/* # of parameters with default values (must be included in above #) */
 							  EcBool varargs,
-							  EcBool ismethod );
+							  EcBool ismethod, const char *docstring );
 EC_API EC_OBJ EcMakeHandler( EC_OBJ type, EC_OBJ code );
 EC_API EC_OBJ EcMakePackage( const char *name );
 EC_API EC_OBJ EcMakeClass( EC_OBJ package, EC_OBJ superclass, const char *name );

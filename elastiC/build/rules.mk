@@ -1,5 +1,5 @@
 $(OBJDIR)%.ecc: %.ec .depend
-	ELASTICPATH="$(ELASTICPATH):$(top_builddir)/src/modules-dynamic/re:$(top_builddir)/src/modules:$(top_builddir)/modules" $(ECC) -o $@ $<
+	ELASTICPATH="$(ELASTICPATH):$(top_builddir)/src/modules-dynamic/re:$(top_builddir)/src/modules:$(top_builddir)/src/modules/xml:$(top_builddir)/modules" $(ECC) -o $@ $<
 
 %.html: %.sdf
 	$(SDF) $(SDFFLAGS) +sdf2html_ $<

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.7 2005/03/17 23:10:11 panta Exp $
+ *   $Id: compile.c,v 1.8 2005/03/22 10:09:33 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -614,7 +614,7 @@ EC_API EC_OBJ EcCompileString( ec_compiler_ctxt ctxt,
 		CCTXT(currentPackage)  = CCTXT(opts).in_package;
 		CCTXT(package_package) = CCTXT(opts).in_package;
 
-		anonFuncNode = makeFunction( NULL, NULL, NULL, PRIVATE(parse_result) );
+		anonFuncNode = makeFunction( NULL, NULL, NULL, PRIVATE(parse_result), NULL );
 		compileRoot( ctxt, anonFuncNode );
 
 		closeScope( ctxt, pkgScope );
@@ -2296,7 +2296,7 @@ static void compileTry( ec_compiler_ctxt ctxt, ASTNode node )
 	 * Compile the inline code block
 	 * (like an anonymous function, but with different calling/return convention)
 	 */
-	funcNode = makeFunction( NULL, NULL, NULL, node->vTryStmt.block );
+	funcNode = makeFunction( NULL, NULL, NULL, node->vTryStmt.block, NULL );
 	func = compileInlineCodeBlock( ctxt, funcNode );
 
 	handlers = EC_COMPILEDHANDLER(func);
@@ -2446,10 +2446,10 @@ static EC_OBJ compileCatch( ec_compiler_ctxt ctxt, ASTNode node )
 	if (node->vCatchStmt.var)
 		funcNode = makeFunction( NULL, NULL,
 								 makeParamList( FALSE, makeList( TRUE, FALSE, NULL, makeParam(node->vCatchStmt.var, NULL) ) ),
-								 node->vCatchStmt.handler );
+								 node->vCatchStmt.handler, NULL );
 	else
 		funcNode = makeFunction( NULL, NULL, NULL,
-								 node->vCatchStmt.handler );
+								 node->vCatchStmt.handler, NULL );
 	code = compileInlineCodeBlock( ctxt, funcNode );
 
 	ASSERT( EC_CLASSP(typeobj) );
@@ -2784,7 +2784,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		name = EcQualifiedString( QSYM(node->vFunction.funcName) );
 	else
 		name = NULL;
-	func = EcMakeCompiled( CCTXT(currentPackage), name, nargs, nparams_def, varargs, FALSE );
+	func = EcMakeCompiled( CCTXT(currentPackage), name, nargs, nparams_def, varargs, FALSE, node->vFunction.docstring );
 	ec_free( name );
 
 	if (EC_NULLP(CCTXT(compilationResult)))
@@ -3225,7 +3225,7 @@ static void compileMethod( ec_compiler_ctxt ctxt, ASTNode node )
 							 fullname,
 							 2 + nargs,
 							 nparams_def,
-							 varargs, TRUE );		/* space for self, at_class & args */
+							 varargs, TRUE, NULL );		/* space for self, at_class & args */
 
 	if (EC_NULLP(CCTXT(compilationResult)))
 		CCTXT(compilationResult) = method;
@@ -3599,7 +3599,7 @@ static EC_OBJ compileInlineCodeBlock( ec_compiler_ctxt ctxt, ASTNode node )
 #endif
 
 	/* Create a compiled object for the function */
-	func = EcMakeCompiled( CCTXT(currentPackage), NULL, nargs, 0, varargs, FALSE );
+	func = EcMakeCompiled( CCTXT(currentPackage), NULL, nargs, 0, varargs, FALSE, NULL );
 
 	/* Introduce a new scope */
 	funcScope = openScope( ctxt, CCTXT(currentScope), func, NormalFunction );

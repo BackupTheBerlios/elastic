@@ -7,7 +7,7 @@
  *
  *   Created: 
  *
- *   $Id: packageio.c,v 1.6 2005/03/08 13:40:05 panta Exp $
+ *   $Id: packageio.c,v 1.7 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -1259,12 +1259,13 @@ static void patch_bytecode( objectmap map, EC_OBJ obj, EcInt npkgs, EcInt *pkg_n
 					i += npar;
 				}
 			}
-			patch_bytecode( map, EC_COMPILEDLEXICAL(obj), npkgs, pkg_now_at );
-			patch_bytecode( map, EC_COMPILEDLFRAME(obj),  npkgs, pkg_now_at );
-			patch_bytecode( map, EC_COMPILEDHANDLER(obj), npkgs, pkg_now_at );
-			patch_bytecode( map, EC_COMPILEDPACKAGE(obj), npkgs, pkg_now_at );
-			patch_bytecode( map, EC_COMPILEDNAME(obj),    npkgs, pkg_now_at );
-			patch_bytecode( map, EC_COMPILEDINFO(obj),    npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDLEXICAL(obj),   npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDLFRAME(obj),    npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDHANDLER(obj),   npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDPACKAGE(obj),   npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDNAME(obj),      npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDINFO(obj),      npkgs, pkg_now_at );
+			patch_bytecode( map, EC_COMPILEDDOCSTRING(obj), npkgs, pkg_now_at );
 			break;
 		}
 
@@ -1521,6 +1522,7 @@ static void write_object( objectmap map, ec_stream *stream, EC_OBJ obj )
 			write_object( map, stream, EC_COMPILEDNAME(obj) );
 			write_byte( stream, (EcByte)EC_COMPILEDISMETHOD(obj) );
 			write_object( map, stream, EC_COMPILEDINFO(obj) );
+			write_object( map, stream, EC_COMPILEDDOCSTRING(obj) );
 			break;
 		}
 
@@ -1847,7 +1849,7 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 
 		if (type == tc_compiled)
 		{
-			EC_OBJ      lexical, lframe, handler, package, name, info;
+			EC_OBJ      lexical, lframe, handler, package, name, info, docstring;
 			EcInt       i, j, l;
 			EcBytecode  bc;
 			int         npar;
@@ -1898,26 +1900,27 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 			EC_COMPILEDNLOC(obj)     = read_dword( stream );
 			EC_COMPILEDMAXTEMPS(obj) = read_dword( stream );
 
-			lexical  = read_object( map, stream, executeImported );
-			lframe   = read_object( map, stream, executeImported );
-			handler  = read_object( map, stream, executeImported );
-			package  = read_object( map, stream, executeImported );
+			lexical   = read_object( map, stream, executeImported );
+			lframe    = read_object( map, stream, executeImported );
+			handler   = read_object( map, stream, executeImported );
+			package   = read_object( map, stream, executeImported );
 			ASSERT( EC_PACKAGEP(package) );
-			name     = read_object( map, stream, executeImported );
-			ismethod = read_byte( stream );
-			info     = read_object( map, stream, executeImported );
-
+			name      = read_object( map, stream, executeImported );
+			ismethod  = read_byte( stream );
+			info      = read_object( map, stream, executeImported );
+			docstring = read_object( map, stream, executeImported );
 			EC_COMPILEDLEXICAL(obj)  = lexical;
 #if EC_STACK_RECYCLE
 			if (EC_STACKP(EC_COMPILEDLEXICAL(obj)))
 				EC_STACKREF_INC(EC_COMPILEDLEXICAL(obj));
 #endif
-			EC_COMPILEDLFRAME(obj)   = lframe;
-			EC_COMPILEDHANDLER(obj)  = handler;
-			EC_COMPILEDPACKAGE(obj)  = package;
-			EC_COMPILEDNAME(obj)     = name;
-			EC_COMPILEDISMETHOD(obj) = ismethod;
-			EC_COMPILEDINFO(obj)     = info;
+			EC_COMPILEDLFRAME(obj)    = lframe;
+			EC_COMPILEDHANDLER(obj)   = handler;
+			EC_COMPILEDPACKAGE(obj)   = package;
+			EC_COMPILEDNAME(obj)      = name;
+			EC_COMPILEDISMETHOD(obj)  = ismethod;
+			EC_COMPILEDINFO(obj)      = info;
+			EC_COMPILEDDOCSTRING(obj) = docstring;
 			EC_COMPILEDCCALLABLE(obj) = NULL;
 			break;
 		}
@@ -2368,12 +2371,21 @@ static EcUInt remember_object( objectmap map, EC_OBJ obj )
 
 	/* already in map ? */
 	if (ec_hash_get( map->obj2id, (EcAny)obj, (EcAny *)&id ))
+	{
+		/* ec_stderr_printf( "remember_object(0x%08lX %s) -> %ld (PRESENT)\n", (unsigned long)obj, EcObjectTypeName(obj), id ); */
 		return id;
+	}
 
-	if (! ec_hash_set( map->obj2id, (EcAny)obj, (EcAny)(EcPointerInteger)(map->nextid + 1) ))
+	id = (map->nextid + 1);
+	if (! ec_hash_set( map->obj2id, (EcAny)obj, (EcAny)(EcPointerInteger)id ))
+	{
+		/* ec_stderr_printf( "remember_object(0x%08lX %s) -> 0 (FAILED!)\n", (unsigned long)obj, EcObjectTypeName(obj) ); */
 		return 0;
-	ec_hash_set( map->id2obj, (EcAny)(EcPointerInteger)(map->nextid + 1), (EcAny)obj );
-	return ++(map->nextid);
+	}
+	ec_hash_set( map->id2obj, (EcAny)(EcPointerInteger)id, (EcAny)obj );
+	/* ec_stderr_printf( "remember_object(0x%08lX %s) -> %ld (ADDED)\n", (unsigned long)obj, EcObjectTypeName(obj), id ); */
+	++(map->nextid);
+	return id;
 }
 
 static EcUInt object2id( objectmap map, EC_OBJ obj )
@@ -2381,7 +2393,11 @@ static EcUInt object2id( objectmap map, EC_OBJ obj )
 	EcUInt id;
 
 	if (! ec_hash_get( map->obj2id, (EcAny)obj, (EcAny *)&id ))
+	{
+		/* ec_stderr_printf( "object2id(0x%08lX %s) -> 0 (not present)\n", (unsigned long)obj, EcObjectTypeName(obj) ); */
 		return 0;
+	}
+	/* ec_stderr_printf( "object2id(%W) -> %ld (PRESENT)\n", obj, id ); */
 	return id;
 }
 
@@ -2394,8 +2410,10 @@ static EC_OBJ id2object( objectmap map, EcUInt id )
 #if defined(WITH_STDIO) && SHOW_MAP
 		ec_stderr_printf( "INVALID_OBJECT at id = %ld\n", (long)id );
 #endif
+		/* ec_stderr_printf( "id2object(%ld) -> FAILED\n", id ); */
 		return INVALID_OBJECT;
 	}
+	/* ec_stderr_printf( "id2object(%ld) -> 0x%08lX %s (PRESENT)\n", id, (unsigned long)obj, EcObjectTypeName(obj) ); */
 	return obj;
 }
 

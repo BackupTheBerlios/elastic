@@ -15,6 +15,7 @@ elastic-config
 gmon.out
 elastic_p.h
 elastic_p.c
+elastic_p.output
 elastic_s.h
 elastic_s.c
 ec
@@ -22,6 +23,8 @@ ec2c
 ecc
 ecrt
 ecdump
+grammar.vcg
+linux-errno.h
 .libs
 .deps
 *.lo

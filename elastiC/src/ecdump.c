@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ecdump.c,v 1.5 2005/03/08 13:40:05 panta Exp $
+ *   $Id: ecdump.c,v 1.6 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -320,6 +320,7 @@ static void dump_bytecode( FILE *sourcefh, EcInt level, EC_OBJ compiled, EcInt a
 	const char *name;
 	int         npar;
 	char       *compname;
+	const char *docstring = NULL;
 	EC_OBJ      info, line_array = EC_NIL, line_tp;
 	EcInt       ln_len = 0, lni;
 
@@ -338,7 +339,13 @@ static void dump_bytecode( FILE *sourcefh, EcInt level, EC_OBJ compiled, EcInt a
 	else
 		compname = "$ANONYMOUS$";
 
+	if (EC_STRINGP(EC_COMPILEDDOCSTRING(compiled)))
+		docstring = EC_STRDATA(EC_COMPILEDDOCSTRING(compiled));
+	else
+		docstring = "";
+
 	IND0; ec_stdout_printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
+	IND0; ec_stdout_printf( "  \"%s\"\n", docstring );
 	IND0; ec_stdout_printf( "Bytecode len.       : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
 	IND0; ec_stdout_printf( "# req. arguments    : %ld\n", (long)EC_COMPILEDNARG(compiled) );
 	IND0; ec_stdout_printf( " of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );

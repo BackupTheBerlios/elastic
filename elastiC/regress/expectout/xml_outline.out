@@ -1,0 +1,592 @@
+enter "m0n0wall"
+  data: 
+
+  data: 	
+  enter "version"
+    data: 1.4
+  exit "version"
+  data: 
+
+  data: 	
+  enter "system"
+    data: 
+
+    data: 		
+    enter "hostname"
+      data: m0n0wall
+    exit "hostname"
+    data: 
+
+    data: 		
+    enter "domain"
+      data: local
+    exit "domain"
+    data: 
+
+    data: 		
+    enter "dnsserver"
+    exit "dnsserver"
+    data: 
+
+    data: 		
+    enter "dnsallowoverride"
+    exit "dnsallowoverride"
+    data: 
+
+    data: 		
+    enter "username"
+      data: admin
+    exit "username"
+    data: 
+
+    data: 		
+    enter "password"
+      data: $1$2xGLA75j$W/jiJc00HYBZX7kFjxjQv0
+    exit "password"
+    data: 
+
+    data: 		
+    enter "timezone"
+      data: Etc/UTC
+    exit "timezone"
+    data: 
+
+    data: 		
+    enter "time-update-interval"
+      data: 300
+    exit "time-update-interval"
+    data: 
+
+    data: 		
+    enter "timeservers"
+      data: pool.ntp.org
+    exit "timeservers"
+    data: 
+
+    data: 		
+    enter "webgui"
+      data: 
+
+      data: 			
+      enter "protocol"
+        data: http
+      exit "protocol"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 		
+    exit "webgui"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "system"
+  data: 
+
+  data: 	
+  enter "interfaces"
+    data: 
+
+    data: 		
+    enter "lan"
+      data: 
+
+      data: 			
+      enter "if"
+        data: sis0
+      exit "if"
+      data: 
+
+      data: 			
+      enter "ipaddr"
+        data: 192.168.1.1
+      exit "ipaddr"
+      data: 
+
+      data: 			
+      enter "subnet"
+        data: 24
+      exit "subnet"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 		
+    exit "lan"
+    data: 
+
+    data: 		
+    enter "wan"
+      data: 
+
+      data: 			
+      enter "if"
+        data: sis1
+      exit "if"
+      data: 
+
+      data: 			
+      enter "ipaddr"
+        data: dhcp
+      exit "ipaddr"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 			
+      enter "subnet"
+      exit "subnet"
+      data: 
+
+      data: 			
+      enter "gateway"
+      exit "gateway"
+      data: 
+
+      data: 			
+      enter "blockpriv"
+      exit "blockpriv"
+      data: 
+
+      data: 			
+      enter "dhcphostname"
+      exit "dhcphostname"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 		
+    exit "wan"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "interfaces"
+  data: 
+
+  data: 	
+  enter "staticroutes"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "staticroutes"
+  data: 
+
+  data: 	
+  enter "pppoe"
+    data: 
+
+    data: 		
+    enter "username"
+    exit "username"
+    data: 
+
+    data: 		
+    enter "password"
+    exit "password"
+    data: 
+
+    data: 		
+    enter "provider"
+    exit "provider"
+    data: 
+
+    data: 	
+  exit "pppoe"
+  data: 
+
+  data: 	
+  enter "pptp"
+    data: 
+
+    data: 		
+    enter "username"
+    exit "username"
+    data: 
+
+    data: 		
+    enter "password"
+    exit "password"
+    data: 
+
+    data: 		
+    enter "local"
+    exit "local"
+    data: 
+
+    data: 		
+    enter "subnet"
+    exit "subnet"
+    data: 
+
+    data: 		
+    enter "remote"
+    exit "remote"
+    data: 
+
+    data: 	
+  exit "pptp"
+  data: 
+
+  data: 	
+  enter "dyndns"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    enter "type"
+      data: dyndns
+    exit "type"
+    data: 
+
+    data: 		
+    enter "username"
+    exit "username"
+    data: 
+
+    data: 		
+    enter "password"
+    exit "password"
+    data: 
+
+    data: 		
+    enter "host"
+    exit "host"
+    data: 
+
+    data: 		
+    enter "mx"
+    exit "mx"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "dyndns"
+  data: 
+
+  data: 	
+  enter "dhcpd"
+    data: 
+
+    data: 		
+    enter "lan"
+      data: 
+
+      data: 			
+      enter "enable"
+      exit "enable"
+      data: 
+
+      data: 			
+      enter "range"
+        data: 
+
+        data: 				
+        enter "from"
+          data: 192.168.1.100
+        exit "from"
+        data: 
+
+        data: 				
+        enter "to"
+          data: 192.168.1.199
+        exit "to"
+        data: 
+
+        data: 			
+      exit "range"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 		
+    exit "lan"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "dhcpd"
+  data: 
+
+  data: 	
+  enter "pptpd"
+    data: 
+
+    data: 		
+    enter "mode"
+    exit "mode"
+    data: 
+
+    data: 		
+    enter "redir"
+    exit "redir"
+    data: 
+
+    data: 		
+    enter "localip"
+    exit "localip"
+    data: 
+
+    data: 		
+    enter "remoteip"
+    exit "remoteip"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "pptpd"
+  data: 
+
+  data: 	
+  enter "dnsmasq"
+    data: 
+
+    data: 		
+    enter "enable"
+    exit "enable"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "dnsmasq"
+  data: 
+
+  data: 	
+  enter "snmpd"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    enter "syslocation"
+    exit "syslocation"
+    data: 
+
+    data: 		
+    enter "syscontact"
+    exit "syscontact"
+    data: 
+
+    data: 		
+    enter "rocommunity"
+      data: public
+    exit "rocommunity"
+    data: 
+
+    data: 	
+  exit "snmpd"
+  data: 
+
+  data: 	
+  enter "diag"
+    data: 
+
+    data: 		
+    enter "ipv6nat"
+      data: 
+
+      data: 			
+      data: 
+
+      data: 			
+      enter "ipaddr"
+      exit "ipaddr"
+      data: 
+
+      data: 		
+    exit "ipv6nat"
+    data: 
+
+    data: 	
+  exit "diag"
+  data: 
+
+  data: 	
+  enter "bridge"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "bridge"
+  data: 
+
+  data: 	
+  enter "syslog"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "syslog"
+  data: 
+
+  data: 	
+  enter "nat"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "nat"
+  data: 
+
+  data: 	
+  enter "filter"
+    data: 
+
+    data: 		
+    enter "rule"
+      data: 
+
+      data: 			
+      enter "type"
+        data: pass
+      exit "type"
+      data: 
+
+      data: 			
+      enter "descr"
+        data: Default LAN -
+        data: >
+        data:  any
+      exit "descr"
+      data: 
+
+      data: 			
+      enter "interface"
+        data: lan
+      exit "interface"
+      data: 
+
+      data: 			
+      enter "source"
+        data: 
+
+        data: 				
+        enter "network"
+          data: lan
+        exit "network"
+        data: 
+
+        data: 			
+      exit "source"
+      data: 
+
+      data: 			
+      enter "destination"
+        data: 
+
+        data: 				
+        enter "any"
+        exit "any"
+        data: 
+
+        data: 			
+      exit "destination"
+      data: 
+
+      data: 		
+    exit "rule"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "filter"
+  data: 
+
+  data: 	
+  enter "shaper"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "shaper"
+  data: 
+
+  data: 	
+  enter "ipsec"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "ipsec"
+  data: 
+
+  data: 	
+  enter "aliases"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "aliases"
+  data: 
+
+  data: 	
+  enter "proxyarp"
+    data: 
+
+    data: 		
+    data: 
+
+    data: 	
+  exit "proxyarp"
+  data: 
+
+exit "m0n0wall"

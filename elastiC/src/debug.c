@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jan 19 09:18:54 MET 1999
  *
- *   $Id: debug.c,v 1.3 2005/03/08 13:40:05 panta Exp $
+ *   $Id: debug.c,v 1.4 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -266,6 +266,7 @@ EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 	const char *name;
 	int         npar;
 	char       *compname;
+	const char *docstring = NULL;
 
 
 	ASSERT( EC_COMPILEDP(compiled) );
@@ -275,7 +276,13 @@ EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 	else
 		compname = "$ANONYMOUS$";
 
+	if (EC_STRINGP(EC_COMPILEDDOCSTRING(compiled)))
+		docstring = EC_STRDATA(EC_COMPILEDDOCSTRING(compiled));
+	else
+		docstring = "";
+
 	ec_stderr_printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
+	ec_stdout_printf( "  \"%s\"\n", docstring );
 	ec_stderr_printf( "Bytecode len.        : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
 	ec_stderr_printf( "# req. arguments     : %ld\n", (long)EC_COMPILEDNARG(compiled) );
 	ec_stderr_printf( "  of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );

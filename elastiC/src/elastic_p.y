@@ -8,7 +8,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.7 2005/03/18 10:39:40 panta Exp $
+ *   $Id: elastic_p.y,v 1.8 2005/03/22 10:09:34 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -173,15 +173,17 @@ primary.expression
 
 
 postfix.expression
-	: primary.expression                                       { $$ = $1;                                           }
-	| lvalue.expression                                        { $$ = $1;                                           }
-	| T_FUNCTION '(' parameter.list ')' compound.statement     { $$ = makeFunction( NULL, NULL, $3, $5 );
-								     if ($5) $5->vStmtList.retVal = TRUE; SAVE($$, @1); }
-	| postfix.expression '(' ')'                               { $$ = makeCall( $1, NULL ); SAVE($$, @1);           }
-	| postfix.expression '(' argument.list ')'                 { $$ = makeCall( $1,   $3 ); SAVE($$, @1);           }
-	| method.call                                              { $$ = $1;                                           }
-	| array.construction                                       { $$ = $1;                                           }
-	| hash.construction                                        { $$ = $1;                                           }
+	: primary.expression                                            { $$ = $1;                                           }
+	| lvalue.expression                                             { $$ = $1;                                           }
+	| T_FUNCTION '(' parameter.list ')' compound.statement          { $$ = makeFunction( NULL, NULL, $3, $5, NULL );
+								          if ($5) $5->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| T_FUNCTION '(' parameter.list ')' T_STRING compound.statement { $$ = makeFunction( NULL, NULL, $3, $6, $5 );
+								          if ($6) $6->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| postfix.expression '(' ')'                                    { $$ = makeCall( $1, NULL ); SAVE($$, @1);           }
+	| postfix.expression '(' argument.list ')'                      { $$ = makeCall( $1,   $3 ); SAVE($$, @1);           }
+	| method.call                                                   { $$ = $1;                                           }
+	| array.construction                                            { $$ = $1;                                           }
+	| hash.construction                                             { $$ = $1;                                           }
 ;
 
 lvalue.expression
@@ -204,6 +206,9 @@ array.construction
 	: T_ARRAYCONS ']'                                          { $$ = makeArrayCons( NULL ); SAVE($$, @1); }
 	| T_ARRAYCONS argument.list ']'                            { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
 	| T_ARRAYCONS argument.list ',' ']'                        { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
+	| '{' ',' '}'                                              { $$ = makeArrayCons( NULL );   SAVE($$, @1); }
+	| '{' argument.list '}'                                    { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
+	| '{' argument.list ',' '}'                                { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
 	| '(' ',' ')'                                              { $$ = makeArrayCons( NULL ); SAVE($$, @1); }
 	| '(' assignment.expression ',' ')'                        { $$ = makeArrayCons( makeList( TRUE, FALSE, NULL, $2 ) ); SAVE($$, @1); }
 	| '(' array.argument.list ')'                              { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
@@ -474,13 +479,21 @@ parameter.list
 
 function.definition
 	: T_FUNCTION variable '(' parameter.list ')' compound.statement
-		{ $$ = makeFunction( $2, DECLVAR( SymbolLocal,   $2 ), $4, $6 ); if ($6) $6->vStmtList.retVal = TRUE; SAVE($$, @1); }
+		{ $$ = makeFunction( $2, DECLVAR( SymbolLocal,   $2 ), $4, $6, NULL ); if ($6) $6->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| T_FUNCTION variable '(' parameter.list ')' T_STRING compound.statement
+		{ $$ = makeFunction( $2, DECLVAR( SymbolLocal,   $2 ), $4, $7, $6 ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
 	| T_STATIC T_FUNCTION variable '(' parameter.list ')' compound.statement
-		{ $$ = makeFunction( $3, DECLVAR( SymbolStatic,  $3 ), $5, $7 ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+		{ $$ = makeFunction( $3, DECLVAR( SymbolStatic,  $3 ), $5, $7, NULL ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| T_STATIC T_FUNCTION variable '(' parameter.list ')' T_STRING compound.statement
+		{ $$ = makeFunction( $3, DECLVAR( SymbolStatic,  $3 ), $5, $8, $7 ); if ($8) $8->vStmtList.retVal = TRUE; SAVE($$, @1); }
 	| T_PRIVATE T_FUNCTION variable '(' parameter.list ')' compound.statement
-		{ $$ = makeFunction( $3, DECLVAR( SymbolPrivate, $3 ), $5, $7 ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+		{ $$ = makeFunction( $3, DECLVAR( SymbolPrivate, $3 ), $5, $7, NULL ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| T_PRIVATE T_FUNCTION variable '(' parameter.list ')' T_STRING compound.statement
+		{ $$ = makeFunction( $3, DECLVAR( SymbolPrivate, $3 ), $5, $8, $7 ); if ($8) $8->vStmtList.retVal = TRUE; SAVE($$, @1); }
 	| T_PUBLIC T_FUNCTION variable '(' parameter.list ')' compound.statement
-		{ $$ = makeFunction( $3, DECLVAR( SymbolPublic,  $3 ), $5, $7 ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+		{ $$ = makeFunction( $3, DECLVAR( SymbolPublic,  $3 ), $5, $7, NULL ); if ($7) $7->vStmtList.retVal = TRUE; SAVE($$, @1); }
+	| T_PUBLIC T_FUNCTION variable '(' parameter.list ')' T_STRING compound.statement
+		{ $$ = makeFunction( $3, DECLVAR( SymbolPublic,  $3 ), $5, $8, $7 ); if ($8) $8->vStmtList.retVal = TRUE; SAVE($$, @1); }
 ;
 
 /* Classes */

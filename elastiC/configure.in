@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.20 2005/03/03 23:51:41 panta Exp $
+dnl   $Id: configure.in,v 1.21 2005/03/22 10:09:32 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2003 Marco Pantaleoni. All rights reserved.
 dnl
@@ -247,7 +247,7 @@ AM_PROG_LIBTOOL
 
 dnl Configure libltdl
 dnl AC_CONFIG_SUBDIRS(src/libltdl)
-AC_CONFIG_SUBDIRS(src/libltdl src/modules-dynamic/re/pcre)
+AC_CONFIG_SUBDIRS(src/libltdl src/modules-dynamic/re/pcre src/modules/xml/expat)
 
 dnl  Initialize maintainer mode
 AM_MAINTAINER_MODE
@@ -289,6 +289,9 @@ dnl for PCRE `configure'
 AC_ARG_ENABLE(utf8,
 [  --enable-utf8=[no/yes]           - Enable UTF8 support in PCRE (incomplete) [default=yes]],,enable_utf8=yes)
 
+dnl for Expat `configure'
+dnl ...
+
 AC_SUBST(DLBACKEND)
 
 AC_ARG_WITH(ec2c,
@@ -316,6 +319,8 @@ AC_ARG_WITH(module_posix,
 [  --with-module-posix=[no/static/dynamic] - Specify whether/how to build the POSIX module [default=dynamic]],ECMODULE_POSIX="${with_module_posix}",ECMODULE_POSIX="dynamic")
 AC_ARG_WITH(module_errno,
 [  --with-module-errno=[no/static/dynamic] - Specify whether/how to build the errno module [default=dynamic]],ECMODULE_ERRNO="${with_module_errno}",ECMODULE_ERRNO="dynamic")
+AC_ARG_WITH(module_xml,
+[  --with-module-xml=[no/static/dynamic] - Specify whether/how to build the xml module [default=dynamic]],ECMODULE_XML="${with_module_xml}",ECMODULE_XML="dynamic")
 
 if test "x$ECMODULE_STREAM" = "xno" ; then
   ecmodule_stream="no"
@@ -416,6 +421,26 @@ AC_SUBST(ecmodule_errno_dynamic)
 AM_CONDITIONAL(ECMODULE_ERRNO_NO,      test x$ecmodule_errno = xno)
 AM_CONDITIONAL(ECMODULE_ERRNO_STATIC,  test x$ecmodule_errno = xstatic)
 AM_CONDITIONAL(ECMODULE_ERRNO_DYNAMIC, test x$ecmodule_errno = xdynamic)
+
+if test "x$ECMODULE_XML" = "xno" ; then
+  ecmodule_xml="no"
+  ecmodule_xml_static=0
+  ecmodule_xml_dynamic=0
+elif test "x$ECMODULE_XML" = "xstatic" -o "x$ECMODULE_XML" = "xyes"; then
+  ecmodule_xml="static"
+  ecmodule_xml_static=1
+  ecmodule_xml_dynamic=0
+elif  test "x$ECMODULE_XML" = "xdynamic" -o "x$ECMODULE_XML" = "xshared"; then
+  ecmodule_xml="dynamic"
+  ecmodule_xml_static=0
+  ecmodule_xml_dynamic=1
+fi
+AC_SUBST(ecmodule_xml)
+AC_SUBST(ecmodule_xml_static)
+AC_SUBST(ecmodule_xml_dynamic)
+AM_CONDITIONAL(ECMODULE_XML_NO,      test x$ecmodule_xml = xno)
+AM_CONDITIONAL(ECMODULE_XML_STATIC,  test x$ecmodule_xml = xstatic)
+AM_CONDITIONAL(ECMODULE_XML_DYNAMIC, test x$ecmodule_xml = xdynamic)
 
 
 AC_SUBST(CFLAGS)
@@ -771,10 +796,10 @@ dnl Emit optional features variables
 AC_SUBST(ELASTIC_DEBUG_FLAGS)
 AC_SUBST(PROFILEOBJ)
 
-dnl AC_OUTPUT(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf)
+dnl AC_OUTPUT(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules/xml/Makefile src/modules/xml/expat/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf)
 
-dnl AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
-AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+dnl AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules/xml/Makefile src/modules/xml/expat/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/modules-dynamic/re/pcre/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
+AC_CONFIG_FILES(Makefile src/cnf.h src/elastic-config src/Makefile src/arithmetic/Makefile src/modules/Makefile src/modules/xml/Makefile src/modules-dynamic/Makefile src/modules-dynamic/re/Makefile src/types/Makefile src/dl/Makefile src/unix/Makefile src/win32/Makefile modules/Makefile regress/Makefile doc/Makefile aclocal/Makefile doc/INSTALL.sdf win32/elastic.nsi)
 AC_CONFIG_COMMANDS([win32-cnf.h], [cp -f src/cnf.h win32/cnf.h])
 AC_CONFIG_COMMANDS([win32-nsis], [
 cp -f README win32/README.txt
@@ -802,4 +827,5 @@ echo "   filestream                - ${ecmodule_filestream}"
 echo "   file                      - ${ecmodule_file}"
 echo "   posix (POSIX Std 1003.1)  - ${ecmodule_posix}"
 echo "   errno                     - ${ecmodule_errno}"
+echo "   xml                       - ${ecmodule_xml}"
 echo

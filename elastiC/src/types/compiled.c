@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: compiled.c,v 1.3 2003/05/29 10:36:00 panta Exp $
+ *   $Id: compiled.c,v 1.4 2005/03/22 10:09:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -64,7 +64,7 @@ static EcBool compiled_check( EC_OBJ obj );
 
 /* C API */
 
-EC_API EC_OBJ EcMakeCompiled( EC_OBJ package, const char *name, EcInt nargs, EcInt nargs_def, EcBool varargs, EcBool ismethod )
+EC_API EC_OBJ EcMakeCompiled( EC_OBJ package, const char *name, EcInt nargs, EcInt nargs_def, EcBool varargs, EcBool ismethod, const char *docstring )
 {
 	EC_OBJ obj;
 
@@ -74,18 +74,17 @@ EC_API EC_OBJ EcMakeCompiled( EC_OBJ package, const char *name, EcInt nargs, EcI
 	EC_COMPILED(obj) = ec_malloc( sizeof(EcCompiled) );
 	if (! EC_COMPILED(obj)) return Ec_ERROR;
 
-	EC_COMPILEDCODE(obj)     = NULL;
-	EC_COMPILEDNCODE(obj)    = 0;
-	EC_COMPILEDNARG(obj)     = nargs;
-	EC_COMPILEDNARG_DEF(obj) = nargs_def;
-	EC_COMPILEDVARG(obj)     = varargs ? 1 : 0;
-	EC_COMPILEDNLOC(obj)     = 0;
-	EC_COMPILEDMAXTEMPS(obj) = 0;
-	EC_COMPILEDLEXICAL(obj)  = EC_NIL;
-	EC_COMPILEDLFRAME(obj)   = EcMakeArray( 0 );
-	EC_COMPILEDHANDLER(obj)  = EcMakeArray( 0 );
-	EC_COMPILEDPACKAGE(obj)  = package;
-
+	EC_COMPILEDCODE(obj)      = NULL;
+	EC_COMPILEDNCODE(obj)     = 0;
+	EC_COMPILEDNARG(obj)      = nargs;
+	EC_COMPILEDNARG_DEF(obj)  = nargs_def;
+	EC_COMPILEDVARG(obj)      = varargs ? 1 : 0;
+	EC_COMPILEDNLOC(obj)      = 0;
+	EC_COMPILEDMAXTEMPS(obj)  = 0;
+	EC_COMPILEDLEXICAL(obj)   = EC_NIL;
+	EC_COMPILEDLFRAME(obj)    = EcMakeArray( 0 );
+	EC_COMPILEDHANDLER(obj)   = EcMakeArray( 0 );
+	EC_COMPILEDPACKAGE(obj)   = package;
 	if (name && index(name, '.'))
 	{
 		EC_COMPILEDNAME(obj) = EcMakeString( name, (EcInt) strlen( name ) );
@@ -109,6 +108,9 @@ EC_API EC_OBJ EcMakeCompiled( EC_OBJ package, const char *name, EcInt nargs, EcI
 	EcHashSet( EC_COMPILEDINFO(obj),							/* line number info */
 			   EcMakeSymbolFromId( PRIVATE(lineID) ),
 			   EcMakeArray( 4 ) );
+
+	/* EC_COMPILEDDOCSTRING(obj) = docstring ? EcMakeString( docstring, -1 ) : EcMakeString( "", -1 ); */	
+	EC_COMPILEDDOCSTRING(obj) = docstring ? EcMakeString( docstring, -1 ) : EC_NIL;
 
 	EC_COMPILEDCCALLABLE(obj) = NULL;							/* #JP */
 
@@ -218,7 +220,8 @@ static EC_OBJ compiled_copy( EC_OBJ obj, EcCopyType type )
 						  EC_COMPILEDNARG(obj),
 						  EC_COMPILEDNARG_DEF(obj),
 						  EC_COMPILEDVARG(obj),
-						  EC_COMPILEDISMETHOD(obj) );
+						  EC_COMPILEDISMETHOD(obj),
+						  EC_NNULLP(EC_COMPILEDDOCSTRING(obj)) ? EC_STRDATA(EC_COMPILEDDOCSTRING(obj)) : NULL );
 	if (EC_ERRORP(res)) return res;
 
 	size  = EC_COMPILEDNCODE(obj) + BCQUANTUM;
@@ -274,6 +277,15 @@ static EC_OBJ compiled_copy( EC_OBJ obj, EcCopyType type )
 	}
 	EC_COMPILEDINFO(res) = copy;
 
+	if (type == EcShallowCopyType) 
+		copy = EC_COMPILEDDOCSTRING(obj);
+	else
+	{
+		copy = EcCopy( EC_COMPILEDDOCSTRING(obj), EcDeepCopyType );
+		if (EC_ERRORP(copy)) return copy;
+	}
+	EC_COMPILEDDOCSTRING(res) = copy;
+
 	EC_COMPILEDCCALLABLE(res) = EC_COMPILEDCCALLABLE(obj);		/* #JP */
 
 	return res;
@@ -283,12 +295,13 @@ static void compiled_mark( EC_OBJ obj )
 {
 	ASSERT( EC_COMPILEDP(obj) );
 
-	if (EC_NNULLP(EC_COMPILEDLEXICAL(obj))) EcMarkObject( EC_COMPILEDLEXICAL(obj) );
-	if (EC_NNULLP(EC_COMPILEDLFRAME(obj)))  EcMarkObject( EC_COMPILEDLFRAME(obj) );
-	if (EC_NNULLP(EC_COMPILEDHANDLER(obj))) EcMarkObject( EC_COMPILEDHANDLER(obj) );
-	if (EC_NNULLP(EC_COMPILEDPACKAGE(obj))) EcMarkObject( EC_COMPILEDPACKAGE(obj) );
-	if (EC_NNULLP(EC_COMPILEDNAME(obj)))    EcMarkObject( EC_COMPILEDNAME(obj) );
-	if (EC_NNULLP(EC_COMPILEDINFO(obj)))    EcMarkObject( EC_COMPILEDINFO(obj) );
+	if (EC_NNULLP(EC_COMPILEDLEXICAL(obj)))   EcMarkObject( EC_COMPILEDLEXICAL(obj) );
+	if (EC_NNULLP(EC_COMPILEDLFRAME(obj)))    EcMarkObject( EC_COMPILEDLFRAME(obj) );
+	if (EC_NNULLP(EC_COMPILEDHANDLER(obj)))   EcMarkObject( EC_COMPILEDHANDLER(obj) );
+	if (EC_NNULLP(EC_COMPILEDPACKAGE(obj)))   EcMarkObject( EC_COMPILEDPACKAGE(obj) );
+	if (EC_NNULLP(EC_COMPILEDNAME(obj)))      EcMarkObject( EC_COMPILEDNAME(obj) );
+	if (EC_NNULLP(EC_COMPILEDINFO(obj)))      EcMarkObject( EC_COMPILEDINFO(obj) );
+	if (EC_NNULLP(EC_COMPILEDDOCSTRING(obj))) EcMarkObject( EC_COMPILEDDOCSTRING(obj) );
 }
 
 static void compiled_free( EC_OBJ obj )
@@ -307,13 +320,14 @@ static void compiled_free( EC_OBJ obj )
 	if (EC_STACKP(EC_COMPILEDLEXICAL(obj)))
 		EC_STACKREF_DEC(EC_COMPILEDLEXICAL(obj));
 #endif
-	EC_COMPILEDLEXICAL(obj)  = EC_NIL;
-	EC_COMPILEDLFRAME(obj)   = EC_NIL;
-	EC_COMPILEDHANDLER(obj)  = EC_NIL;
-	EC_COMPILEDPACKAGE(obj)  = EC_NIL;
-	EC_COMPILEDNAME(obj)     = EC_NIL;
-	EC_COMPILEDISMETHOD(obj) = FALSE;
-	EC_COMPILEDINFO(obj)     = EC_NIL;
+	EC_COMPILEDLEXICAL(obj)   = EC_NIL;
+	EC_COMPILEDLFRAME(obj)    = EC_NIL;
+	EC_COMPILEDHANDLER(obj)   = EC_NIL;
+	EC_COMPILEDPACKAGE(obj)   = EC_NIL;
+	EC_COMPILEDNAME(obj)      = EC_NIL;
+	EC_COMPILEDISMETHOD(obj)  = FALSE;
+	EC_COMPILEDINFO(obj)      = EC_NIL;
+	EC_COMPILEDDOCSTRING(obj) = EC_NIL;
 	EC_COMPILEDCCALLABLE(obj) = NULL;							/* #JP */
 
 	ec_free( EC_COMPILED(obj) );
@@ -455,6 +469,7 @@ static EcUInt compiled_hash( EC_OBJ obj, EcInt recur )
 	res += _ec_hash( EC_COMPILEDNAME(obj), recur );
 	res += ec_hash_uint( EC_COMPILEDISMETHOD(obj) );
 	/* res += _ec_hash( EC_COMPILEDINFO(obj), recur ); */				/* TODO XXX is it right ??? */
+	res += _ec_hash( EC_COMPILEDDOCSTRING(obj), recur );
 	return res;
 }
 
@@ -508,6 +523,10 @@ static EcBool compiled_compare( EC_OBJ obj1, EC_OBJ obj2, EcInt *res )
 	if (! EcObjectEqual( EC_COMPILEDINFO(obj1), EC_COMPILEDINFO(obj2) )) /* TODO XXX is it right ??? */
 		return FALSE;
 #endif
+#if 0
+	if (! EcObjectEqual( EC_COMPILEDDOCSTRING(obj1), EC_COMPILEDDOCSTRING(obj2) )) /* TODO XXX is it right ??? */
+		return FALSE;
+#endif
 	return TRUE;
 
 	return FALSE;
@@ -530,6 +549,7 @@ static EcBool compiled_check( EC_OBJ obj )
 	ASSERTFIELDN( EC_COMPILEDPACKAGE(obj), tc_package );
 	ASSERTFIELDN( EC_COMPILEDNAME(obj), tc_string );
 	ASSERTFIELDN( EC_COMPILEDINFO(obj), tc_hash );
+	ASSERTFIELDN( EC_COMPILEDDOCSTRING(obj), tc_string );
 */
 	return TRUE;
 }
