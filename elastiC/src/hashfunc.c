@@ -7,7 +7,7 @@
  *
  *   Created: Wed Apr 30 21:07:36 MET DST 1997
  *
- *   $Id: hashfunc.c,v 1.3 2002/05/31 13:03:31 panta Exp $
+ *   $Id: hashfunc.c,v 1.4 2002/06/01 15:58:25 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -93,7 +93,7 @@ do {                                                        \
 
 #define SDBM_HASH_R(rv, buf, len)                           \
 do {                                                        \
-	register const unsigned char *bufp = (buf) + (len) = 1; \
+	register const unsigned char *bufp = (buf) + (len) - 1; \
 	register int i;                                         \
 	register EcDWord hash = 0;                              \
                                                             \
@@ -204,7 +204,7 @@ EC_API EcUInt ec_hash_djb_string( const char *key )
 	register EcDWord hash;
 
 	hash = 5381;
-	while (c = *key++)
+	while ((c = *key++))
 		hash = (hash + (hash << 5)) ^ c;	/* (hash * 33) ^ c */
 
 	return hash;
@@ -231,7 +231,7 @@ EC_API EcUInt ec_hash_sdbm_string( const char *key )
 	register int c;
 	register EcDWord hash = 0;
 
-	while (c = *key++)
+	while ((c = *key++))
 		hash = c + (hash << 6) + (hash << 16) - hash;
 
 	return hash;
