@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.3 2002/06/06 16:10:57 panta Exp $
+ *   $Id: posix_m.c,v 1.4 2002/06/06 17:27:57 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -47,8 +47,14 @@
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
+#if HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
 #if HAVE_FCNTL_H
 #include <fcntl.h>
+#endif
+#if HAVE_SIGNAL_H
+#include <signal.h>
 #endif
 #if HAVE_ERRNO_H
 #include <errno.h>
@@ -75,6 +81,7 @@ static EcUInt s_S_IRWXU = 0,
 	s_S_IROTH = 0,
 	s_S_IWOTH = 0,
 	s_S_IXOTH = 0;
+static EcUInt s_WNOHANG = 0, s_WUNTRACED = 0;
 
 static _ec_symbol2int sym2int_access_mode[] =
 {
@@ -123,6 +130,13 @@ static _ec_symbol2int sym2int_open_mode[] =
 	{ 0, 0 },													/* S_IROTH  */
 	{ 0, 0 },													/* S_IWOTH  */
 	{ 0, 0 },													/* S_IXOTH  */
+	{ 0, 0 }
+};
+
+static _ec_symbol2int sym2int_waitpid_options[] =
+{
+	{ 0, 0 },													/* WNOHANG   */
+	{ 0, 0 },													/* WUNTRACED */
 	{ 0, 0 }
 };
 
@@ -277,14 +291,17 @@ static EC_OBJ EcLibPosix_close( EC_OBJ stack, EcAny userdata )
 	/* POSIX function: int close(int fd) */
 
 #if HAVE_CLOSE
+	EcInt   fd_i;
 	int     fd;
 	int     rv;
 	EC_OBJ  res;
 
 	res = EcParseStackFunction( "posix.close", TRUE, stack, "i",
-								&fd );
+								&fd_i );
 	if (EC_ERRORP(res))
 		return res;
+
+	fd = (int) fd_i;
 
 	rv = close( fd );
 	if (rv < 0)
@@ -301,15 +318,18 @@ static EC_OBJ EcLibPosix_read( EC_OBJ stack, EcAny userdata )
 	/* POSIX function: ssize_t read(int fd, void *buf, size_t count) */
 
 #if HAVE_READ
-	int     fd, count;
+	EcInt   fd_i, count;
+	int     fd;
 	ssize_t rv;
 	EC_OBJ  buf;
 	EC_OBJ  res;
 
 	res = EcParseStackFunction( "posix.read", TRUE, stack, "ii",
-								&fd, &count );
+								&fd_i, &count );
 	if (EC_ERRORP(res))
 		return res;
+
+	fd = (int) fd_i;
 
 	buf = EcMakeString( "", count + 1 );
 	if (EC_ERRORP(buf)) return buf;
@@ -328,15 +348,18 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 	/* POSIX function: ssize_t write(int fd, const void *buf, size_t count) */
 
 #if HAVE_WRITE
+	EcInt   fd_i;
 	int     fd;
 	ssize_t rv;
 	EC_OBJ  buf;
 	EC_OBJ  res;
 
 	res = EcParseStackFunction( "posix.write", TRUE, stack, "iO!",
-								&fd, tc_string, &buf );
+								&fd_i, tc_string, &buf );
 	if (EC_ERRORP(res))
 		return res;
+
+	fd = (int) fd_i;
 
 	rv = write( fd, EC_STRDATA(buf), EC_STRLEN(buf) );
 	if (rv < 0)
@@ -353,14 +376,17 @@ static EC_OBJ EcLibPosix_dup( EC_OBJ stack, EcAny userdata )
 	/* POSIX function: int dup(int oldfd) */
 
 #if HAVE_DUP
+	EcInt  oldfd_i;
 	int    oldfd;
 	int    newfd;
 	EC_OBJ res;
 
 	res = EcParseStackFunction( "posix.dup", TRUE, stack, "i",
-								&oldfd );
+								&oldfd_i );
 	if (EC_ERRORP(res))
 		return res;
+
+	oldfd = (int) oldfd_i;
 
 	newfd = dup( oldfd );
 	if (newfd < 0)
@@ -377,14 +403,18 @@ static EC_OBJ EcLibPosix_dup2( EC_OBJ stack, EcAny userdata )
 	/* POSIX function: int dup2(int oldfd, int newfd) */
 
 #if HAVE_DUP2
+	EcInt  oldfd_i, newfd_i;
 	int    oldfd, newfd;
 	int    newfd_r;
 	EC_OBJ res;
 
 	res = EcParseStackFunction( "posix.dup2", TRUE, stack, "ii",
-								&oldfd, &newfd );
+								&oldfd_i, &newfd_i );
 	if (EC_ERRORP(res))
 		return res;
+
+	oldfd = (int) oldfd_i;
+	newfd = (int) newfd_i;
 
 	newfd_r = dup2( oldfd, newfd );
 	if (newfd_r < 0)
@@ -453,6 +483,8 @@ static EC_OBJ EcLibPosix_execv( EC_OBJ stack, EcAny userdata )
 
 	res = EcParseStackFunction( "posix.execv", TRUE, stack, "sO",
 								&pathname, &argv_o );
+	if (EC_ERRORP(res))
+		return res;
 
 	if (! EcIsSequence( argv_o ))
 		return EC_TYPEERROR_F(/* function name    */ "posix.execv",
@@ -503,6 +535,8 @@ static EC_OBJ EcLibPosix_execve( EC_OBJ stack, EcAny userdata )
 
 	res = EcParseStackFunction( "posix.execve", TRUE, stack, "sOO",
 								&pathname, &argv_o, &envp_o );
+	if (EC_ERRORP(res))
+		return res;
 
 	if (! EcIsSequence( argv_o ))
 		return EC_TYPEERROR_F(/* function name    */ "posix.execv",
@@ -565,6 +599,307 @@ static EC_OBJ EcLibPosix_execve( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_EXECVE */
 }
 
+static EC_OBJ EcLibPosix_execvp( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int execvp(const char *file, char *const argv[]) */
+
+#if HAVE_EXECVP
+	const char *filename;
+	EC_OBJ argv_o, argvl_o, el;
+	EcInt  argvl, i;
+	char **argv;
+	pid_t  rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.execvp", TRUE, stack, "sO",
+								&filename, &argv_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	if (! EcIsSequence( argv_o ))
+		return EC_TYPEERROR_F(/* function name    */ "posix.execvp",
+							  /* parameter index  */ 2,
+							  /* expected         */ tc_none,
+							  /* offending object */ argv_o,
+							  /* reason           */ "expected a sequence of strings");
+	argvl_o = EcSequenceLength( argv_o );
+	if (EC_ERRORP(argvl_o)) return argvl_o;
+	ASSERT( EC_INUMP(argvl_o) );
+	argvl = EC_INUM(argvl_o);
+	argv = alloca( sizeof(const char *) * (argvl + 1) );
+	if (! argv) return EcMemoryError();
+	for (i = 0; i < argvl; i++)
+	{
+		el = EcSequenceGetElement( argv_o, i );
+		if (EC_ERRORP(el)) return el;
+		if (! EC_STRINGP(el))
+			return EC_TYPEERROR_F(/* function name    */ "posix.execvp",
+								  /* parameter index  */ 2,
+								  /* expected         */ tc_none,
+								  /* offending object */ argv_o,
+								  /* reason           */ "expected a sequence of strings");
+		argv[i] = ec_stringdup( EC_STRDATA(el) );
+	}
+	argv[i] = NULL;
+
+	rv = execvp(filename, argv);
+	/* we shouldn't return if everything worked */
+	return posix2exception( errno, EC_NIL, "in posix.execvp" );
+#else
+	return EcUnimplementedError( "POSIX `execvp' function not available" );
+#endif /* HAVE_EXECVP */
+}
+
+static EC_OBJ waitstatus2hash( int status )
+{
+	EC_OBJ status_h;
+	status_h = EcMakeHash();
+	if (EC_ERRORP(status_h)) return status_h;
+
+	EcHashSet( status_h, EcMakeSymbol("ifexited"),   EcMakeBool(WIFEXITED(status)) );
+	EcHashSet( status_h, EcMakeSymbol("exitstatus"), WIFEXITED(status) ? EcMakeInt(WEXITSTATUS(status)) : EC_NIL );
+	EcHashSet( status_h, EcMakeSymbol("ifsignaled"), EcMakeBool(WIFSIGNALED(status)) );
+	EcHashSet( status_h, EcMakeSymbol("termsig"),    WIFSIGNALED(status) ? EcMakeInt(WTERMSIG(status)) : EC_NIL );
+	EcHashSet( status_h, EcMakeSymbol("ifstopped"),  EcMakeBool(WIFSTOPPED(status)) );
+	EcHashSet( status_h, EcMakeSymbol("stopsig"),    WIFSTOPPED(status) ? EcMakeBool(WSTOPSIG(status)) : EC_NIL );
+
+	return status_h;
+}
+
+static EC_OBJ EcLibPosix_wait( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: pid_t wait(int *status) */
+
+#if HAVE_WAIT
+	pid_t  rv;
+	EC_OBJ status_h;
+	int    status;
+
+	EC_CHECKNARGS_F("posix.wait", 0);
+
+	rv = wait( &status );
+	if (rv <= 0)
+		return posix2exception( errno, EC_NIL, "in posix.wait" );
+
+	status_h = waitstatus2hash( status );
+	if (EC_ERRORP(status_h)) return status_h;
+
+	return EcMakeArrayInit( 2,
+							EcMakeInt( rv ),
+							status_h );
+#else
+	return EcUnimplementedError( "POSIX `wait' function not available" );
+#endif /* HAVE_WAIT */
+}
+
+static EC_OBJ EcLibPosix_waitpid( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: pid_t waitpid(pid_t pid, int *status, int options) */
+
+#if HAVE_WAITPID
+	EcInt  pid_i;
+	pid_t  pid;
+	EC_OBJ options_o = EC_NIL;
+	int    options = 0;
+	pid_t  rv;
+	EC_OBJ status_h;
+	int    status;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.waitpid", TRUE, stack, "i|O",
+								&pid_i, &options_o );
+	if (EC_ERRORP(res))
+		return res;
+
+	pid = (pid_t) pid_i;
+
+	res = _ec_sequence2mask( "posix.waitpid", 2, sym2int_waitpid_options, options_o, &options );
+	if (EC_ERRORP(res)) return res;
+
+	rv = waitpid( pid, &status, options );
+	if (rv <= 0)
+		return posix2exception( errno, EC_NIL, "in posix.waitpid" );
+
+	status_h = waitstatus2hash( status );
+	if (EC_ERRORP(status_h)) return status_h;
+
+	return EcMakeArrayInit( 2,
+							EcMakeInt( rv ),
+							status_h );
+#else
+	return EcUnimplementedError( "POSIX `waitpid' function not available" );
+#endif /* HAVE_WAITPID */
+}
+
+static EC_OBJ EcLibPosix__exit( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: void _exit(int status) */
+
+#if HAVE__EXIT
+	EcInt  status_i;
+	int    status;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix._exit", TRUE, stack, "i",
+								&status_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	status = (int) status_i;
+
+	_exit( status );
+	/* _exit never returns ! */
+	return posix2exception( errno, EC_NIL, "in posix._exit" );
+#else
+	return EcUnimplementedError( "POSIX `_exit' function not available" );
+#endif /* HAVE__EXIT */
+}
+
+static EC_OBJ EcLibPosix_kill( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int kill(pid_t pid, int sig) */
+
+#if HAVE_KILL
+	EcInt  pid_i, sig_i;
+	pid_t  pid;
+	int    sig;
+	int    rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.kill", TRUE, stack, "ii",
+								&pid_i, &sig_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	pid = (pid_t) pid_i;
+	sig = (int)   sig_i;
+
+	rv = kill( pid, sig );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.kill" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `kill' function not available" );
+#endif /* HAVE_KILL */
+}
+
+static EC_OBJ EcLibPosix_sleep( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int sleep(unsigned int seconds) */
+
+#if HAVE_SLEEP
+	EcInt        seconds_i;
+	unsigned int seconds, rv;
+	EC_OBJ       res;
+
+	res = EcParseStackFunction( "posix.sleep", TRUE, stack, "i",
+								&seconds_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	seconds = (unsigned int) seconds_i;
+
+	rv = sleep( seconds );
+	return EcMakeInt( rv );
+#else
+	return EcUnimplementedError( "POSIX `sleep' function not available" );
+#endif /* HAVE_SLEEP */
+}
+
+static EC_OBJ EcLibPosix_pause( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int pause(void) */
+
+#if HAVE_PAUSE
+	int rv;
+
+	EC_CHECKNARGS_F("posix.pause", 0);
+
+	rv = pause();
+	return posix2exception( errno, EC_NIL, "in posix.fork" );
+#else
+	return EcUnimplementedError( "POSIX `pause' function not available" );
+#endif /* HAVE_PAUSE */
+}
+
+static EC_OBJ EcLibPosix_alarm( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: unsigned int alarm(unsigned int seconds) */
+
+#if HAVE_ALARM
+	EcInt        seconds_i;
+	unsigned int seconds, rv;
+	EC_OBJ       res;
+
+	res = EcParseStackFunction( "posix.alarm", TRUE, stack, "i",
+								&seconds_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	seconds = (unsigned int) seconds_i;
+
+	rv = alarm( seconds );
+	return EcMakeInt( rv );
+#else
+	return EcUnimplementedError( "POSIX `alarm' function not available" );
+#endif /* HAVE_ALARM */
+}
+
+static EC_OBJ EcLibPosix_setuid( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int setuid(uid_t uid) */
+
+#if HAVE_SETUID
+	EcInt  uid_i;
+	uid_t  uid;
+	int    rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.setuid", TRUE, stack, "i",
+								&uid_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	uid = (uid_t) uid_i;
+
+	rv = setuid( uid );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.setuid" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `setuid' function not available" );
+#endif /* HAVE_SETUID */
+}
+
+static EC_OBJ EcLibPosix_setgid( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int setgid(gid_t gid) */
+
+#if HAVE_SETGID
+	EcInt  gid_i;
+	gid_t  gid;
+	int    rv;
+	EC_OBJ res;
+
+	res = EcParseStackFunction( "posix.setgid", TRUE, stack, "i",
+								&gid_i );
+	if (EC_ERRORP(res))
+		return res;
+
+	gid = (gid_t) gid_i;
+
+	rv = setgid( gid );
+	if (rv < 0)
+		return posix2exception( errno, EC_NIL, "in posix.setgid" );
+	else
+		return EcTrueObject;
+#else
+	return EcUnimplementedError( "POSIX `setgid' function not available" );
+#endif /* HAVE_SETGID */
+}
+
 #endif /* HAVE_UNISTD_H */
 
 /* Private */
@@ -596,6 +931,16 @@ EC_API EC_OBJ ec_posix_init( void )
 	EcAddPrimitive( "posix.fork",       EcLibPosix_fork );
 	EcAddPrimitive( "posix.execv",      EcLibPosix_execv );
 	EcAddPrimitive( "posix.execve",     EcLibPosix_execve );
+	EcAddPrimitive( "posix.execvp",     EcLibPosix_execvp );
+	EcAddPrimitive( "posix.wait",       EcLibPosix_wait );
+	EcAddPrimitive( "posix.waitpid",    EcLibPosix_waitpid );
+	EcAddPrimitive( "posix._exit",      EcLibPosix__exit );
+	EcAddPrimitive( "posix.kill",       EcLibPosix_kill );
+	EcAddPrimitive( "posix.sleep",      EcLibPosix_sleep );
+	EcAddPrimitive( "posix.pause",      EcLibPosix_pause );
+	EcAddPrimitive( "posix.alarm",      EcLibPosix_alarm );
+	EcAddPrimitive( "posix.setuid",     EcLibPosix_setuid );
+	EcAddPrimitive( "posix.setgid",     EcLibPosix_setgid );
 
 	/* Symbols */
 
@@ -636,6 +981,9 @@ EC_API EC_OBJ ec_posix_init( void )
 	s_S_IROTH   = EcInternSymbol( "S_IROTH" );
 	s_S_IWOTH   = EcInternSymbol( "S_IWOTH" );
 	s_S_IXOTH   = EcInternSymbol( "S_IXOTH" );
+
+	s_WNOHANG   = EcInternSymbol( "WNOHANG" );
+	s_WUNTRACED = EcInternSymbol( "WUNTRACED" );
 
 	i = 0;
 	sym2int_access_mode[i].symbolid = s_R_OK;
@@ -856,6 +1204,21 @@ EC_API EC_OBJ ec_posix_init( void )
 #endif
 	ASSERT( i == 15 );
 
+	i = 0;
+	sym2int_waitpid_options[i].symbolid = s_WNOHANG;
+#ifdef WNOHANG
+	sym2int_waitpid_options[i++].value  = WNOHANG;
+#else
+	sym2int_waitpid_options[i++].value  = 0;
+#endif
+	sym2int_waitpid_options[i].symbolid = s_WUNTRACED;
+#ifdef WUNTRACED
+	sym2int_waitpid_options[i++].value  = WUNTRACED;
+#else
+	sym2int_waitpid_options[i++].value  = 0;
+#endif
+	ASSERT( i == 2 );
+
 #endif /* HAVE_UNISTD_H */
 
 	/* Variables */
@@ -931,6 +1294,66 @@ EC_API EC_OBJ ec_posix_init( void )
 #endif
 	EcHashSet( feature, EcMakeSymbol("execve"),
 #if HAVE_UNISTD_H && HAVE_EXECVE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("execvp"),
+#if HAVE_UNISTD_H && HAVE_EXECVP
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("wait"),
+#if HAVE_UNISTD_H && HAVE_WAIT
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("waitpid"),
+#if HAVE_UNISTD_H && HAVE_WAITPID
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("_exit"),
+#if HAVE_UNISTD_H && HAVE__EXIT
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("kill"),
+#if HAVE_UNISTD_H && HAVE_KILL
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("sleep"),
+#if HAVE_UNISTD_H && HAVE_SLEEP
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("pause"),
+#if HAVE_UNISTD_H && HAVE_PAUSE
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("alarm"),
+#if HAVE_UNISTD_H && HAVE_SLEEP
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("setuid"),
+#if HAVE_UNISTD_H && HAVE_SETUID
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("setgid"),
+#if HAVE_UNISTD_H && HAVE_SETGID
 		       EcTrueObject );
 #else
 		       EcFalseObject );
