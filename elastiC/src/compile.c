@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.1 2002/05/23 21:16:52 panta Exp $
+ *   $Id: compile.c,v 1.2 2002/05/24 17:17:14 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -347,6 +347,11 @@ EC_API ec_compiler_ctxt EcCompilerContextCreate( void )
 
 	ctxt->labels = NULL;										/* hash mapping bytecode to list of labels   */
 
+	ctxt->package_package = EC_NIL;								/* package being compiled (or EC_NIL)        */
+	ctxt->package_saveHasReturned = FALSE;
+	ctxt->package_packageScope = NULL;							/* package scope                             */
+
+
 	/* compiler options */
 	opts_init( &ctxt->opts );
 
@@ -356,6 +361,10 @@ EC_API ec_compiler_ctxt EcCompilerContextCreate( void )
 EC_API void EcCompilerContextDestroy( ec_compiler_ctxt ctxt )
 {
 	opts_cleanup( &ctxt->opts );
+
+	ctxt->package_package = EC_NIL;								/* package being compiled (or EC_NIL)        */
+	ctxt->package_saveHasReturned = FALSE;
+	ctxt->package_packageScope = NULL;							/* package scope                             */
 
 	if (ctxt->labels) labels_cleanup( ctxt );
 	ASSERT( ctxt->labels == NULL );
