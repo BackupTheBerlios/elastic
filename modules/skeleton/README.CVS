@@ -1,6 +1,6 @@
 			     elastiC CVS
 			     ===========
-$Id: README.CVS,v 1.1 2002/05/30 17:12:08 panta Exp $
+$Id: README.CVS,v 1.2 2002/05/30 17:14:23 panta Exp $
 
 1. Access to elastiC CVS
 ------------------------
@@ -32,8 +32,8 @@ Assuming that the bash shell is beign used:
   $ cvs -z3 co elastiC
       (this will create an `elastiC' source tree in the current
        directory)
-  $ cvs -z3 co modules/inet
-      (this will create a `modules/inet' source tree in the current
+  $ cvs -z3 co modules/skeleton
+      (this will create a `modules/skeleton' source tree in the current
        directory)
 
 1.2 Developer access to elastiC CVS (only for project developers)
@@ -49,8 +49,8 @@ Assuming that the bash shell is beign used:
   $ cvs -z3 co elastiC
       (this will create an `elastiC' source tree in the current
        directory)
-  $ cvs -z3 co modules/inet
-      (this will create a `modules/inet' source tree in the current
+  $ cvs -z3 co modules/skeleton
+      (this will create a `modules/skeleton' source tree in the current
        directory)
 
 where `developername' is the BerliOS user account. The site password
@@ -63,10 +63,10 @@ The use of DSA authentication with a non-empty pass-phrase is highly
 recommended. Use ssh-agent and ssh-add to avoid having to enter the
 passphrase every time.
 
-2. Building the elastiC inet module from CVS
+2. Building the elastiC skeleton module from CVS
 --------------------------------------------
 
-Once the elastiC inet module has been checked out, there are a couple
+Once the elastiC skeleton module has been checked out, there are a couple
 operations that need to be performed *before* it can be succesfully
 built. These operations are:
 
@@ -83,7 +83,7 @@ at toplevel. autoconf 2.53, automake 1.6, libtool 1.4.2 or later are
 necessary.
 
 Once these steps have been completed, it's possible to proceed in the
-usual way to compile the elastiC inet module:
+usual way to compile the elastiC skeleton module:
 
   $ ./configure [OPTIONS]
     (autogen.sh will call `configure', so this step is necessary only
