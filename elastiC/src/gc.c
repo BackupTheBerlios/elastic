@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec  9 10:24:32 MET 1998
  *
- *   $Id: gc.c,v 1.1 2002/05/23 21:16:57 panta Exp $
+ *   $Id: gc.c,v 1.2 2002/05/24 17:26:26 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -620,6 +620,14 @@ static EcBool heap_grow( struct heap *heap )
 		return FALSE;
 
 	/* :TODO: do we need to clear memory in chunk ? */
+	/*
+	 * Answer: yes, we need to clean memory in chunk, since
+	 * later on (when releasing the object table) we'll test pointers
+	 * in chunk, releasing non-NULL ones.
+	 */
+	/* memset( ((char *)chunk) + sizeof(struct heap_chunk),
+			0x00, c_size * sizeof(struct _obj) ); */
+	memset( chunk, 0x00, sizeof(struct heap_chunk) + c_size * sizeof(struct _obj) );
 
 	new_nobjects = heap->n_objects + c_size;
 
