@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.4 2002/06/01 16:17:22 panta Exp $
+ *   $Id: lib.c,v 1.5 2002/06/01 21:22:12 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -129,6 +129,24 @@ EC_API EC_OBJ EcLibPrint( EC_OBJ stack, EcAny userdata )
 	{
 		ec_fprintf( stdout, "%w", obj[i] );
 	}
+
+	return EC_NIL;
+}
+
+EC_API EC_OBJ EcLibPrintNL( EC_OBJ stack, EcAny userdata )
+{
+	EC_OBJ *obj;
+	EC_OBJ res;
+	EcInt  num = 0;
+	EcInt  i;
+
+	res = EcParseStackFunction( "basic.printnl", TRUE, stack, "|o", &num, &obj );
+	if (EC_ERRORP(res))
+		return res;
+
+	for (i = 0; i < num; i++)
+		ec_fprintf( stdout, "%w", obj[i] );
+	ec_fprintf( stdout, "\n" );
 
 	return EC_NIL;
 }
@@ -1412,6 +1430,7 @@ EcBool _ec_lib_init( void )
 	EcAddPrimitive( "basic.int",         EcLibInt );
 	EcAddPrimitive( "basic.float",       EcLibFloat );
 	EcAddPrimitive( "basic.print",       EcLibPrint );
+	EcAddPrimitive( "basic.printnl",     EcLibPrintNL );
 	EcAddPrimitive( "basic.sprintf",     EcLibSPrintf );
 	EcAddPrimitive( "basic.printf",      EcLibPrintf );
 	EcAddPrimitive( "basic.copy",        EcLibCopy );

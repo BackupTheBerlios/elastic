@@ -24,6 +24,8 @@ Overview of Changes in elastiC 0.0.37:
   parameters of primitive functions, so basic.arity works only for
   bytecode objects at the moment.
 
+* Added `basic.printnl' (like basic.print but prints a final newline).
+
 * Nasty bugs fixed (thanks to George McBay)
 
 * Some steps toward Cygwin build-ability.

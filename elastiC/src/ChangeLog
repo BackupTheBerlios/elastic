@@ -1,3 +1,13 @@
+2002-06-01  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Version 0.0.37
+
+	* arithmetic/arithmetic.c (_mod): fixed modulus operation.
+
+	* lib.[ch]: Added `basic.printnl' (EcLibPrintNL).
+
+	* Cleanup of auto* stuff.
+
 2002-05-31  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* hashfunc.[hc]: added djb and sdbm hash functions.

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.h,v 1.2 2002/05/27 21:09:40 panta Exp $
+ *   $Id: lib.h,v 1.3 2002/06/01 21:22:12 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -46,6 +46,7 @@ EC_API EC_OBJ EcLibRepr( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibInt( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibFloat( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibPrint( EC_OBJ stack, EcAny userdata );
+EC_API EC_OBJ EcLibPrintNL( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibSPrintf( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibPrintf( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibCopy( EC_OBJ stack, EcAny userdata );
