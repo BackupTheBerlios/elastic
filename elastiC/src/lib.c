@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.6 2002/06/04 20:08:27 panta Exp $
+ *   $Id: lib.c,v 1.7 2002/06/06 00:05:29 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -888,7 +888,7 @@ EC_API EC_OBJ EcLibIOErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack 
 	EC_OBJ obj;
 	EC_OBJ msg, ioObject, posixError;
 
-	EC_CHECKNARGS_CM( self, "new", 2 );
+	EC_CHECKNARGS_CM( self, "new", 3 );
 
 	posixError = EC_STACKPOP( stack );
 	ioObject   = EC_STACKPOP( stack );
