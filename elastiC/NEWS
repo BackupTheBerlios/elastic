@@ -1,5 +1,9 @@
 Overview of Changes in elastiC 0.0.38:
 
+* Added a 'lazy' option (-l). When specified allows implicit parameter
+  declaration (read: you can omit variable declaration, *only* for package
+  and function/method variables).
+
 * Integrated patch from Anand Aiyer to support multiple threads with
   an interpreter instance per thread. Can be enabled using
   '--enable-threading' configure option, and the parent thread should
@@ -9,7 +13,9 @@ Overview of Changes in elastiC 0.0.38:
   (jp@lightflowtech.com). Preliminary and experimental right
   now, but it's very promising.
 
-* Added a Generic I/O mechanism (streams).
+* Added a Generic I/O mechanism (streams). Now using streams wherever
+  possible instead of libc stdio, so to be more platform-agnostic and
+  to allow substituting default input/output with more esotic channels.
 
 * New `posix' module.
 

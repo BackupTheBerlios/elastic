@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: object.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: object.c,v 1.3 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -376,7 +376,7 @@ static EC_OBJ buildvalue_sub( const char **formatp, int mode, Any **args )
 	if ((mode == 1) || (mode == 2))
 		(*fmtp)++;
 
-	/*fprintf( stderr, "buildvalue_sub  format: \"%s\"  fmt: \"%s\"  mode: %d\n", *formatp, *fmtp, mode );*/
+	/*ec_stderr_printf( "buildvalue_sub  format: \"%s\"  fmt: \"%s\"  mode: %d\n", *formatp, *fmtp, mode );*/
 
 	for (; **fmtp; (*fmtp)++)
 	{
@@ -439,10 +439,10 @@ static EC_OBJ buildvalue_sub( const char **formatp, int mode, Any **args )
 
 		case '(':
 			ttt = buildvalue_sub( fmtp, 1, args );
-			/*ec_fprintf( stderr, "SUB (: %W\n", ttt );
-			  ec_fprintf( stderr, "[1]RES : %W\n", res );*/
+			/*ec_stderr_printf( "SUB (: %W\n", ttt );
+			  ec_stderr_printf( "[1]RES : %W\n", res );*/
 			ACC_RESULT( ttt );
-			/*ec_fprintf( stderr, "[2]RES : %W   (fmt: \"%s\")\n", res, *fmtp );*/
+			/*ec_stderr_printf( "[2]RES : %W   (fmt: \"%s\")\n", res, *fmtp );*/
 			break;
 
 		case '{':
@@ -465,7 +465,7 @@ static EC_OBJ buildvalue_sub( const char **formatp, int mode, Any **args )
 	}
 
  finish:
-	/*ec_fprintf( stderr, "[3]RES : %W\n", res );*/
+	/*ec_stderr_printf( "[3]RES : %W\n", res );*/
 	return res;
 }
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.5 2002/06/13 17:44:18 panta Exp $
+ *   $Id: compile.c,v 1.6 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -296,6 +296,8 @@ static void opts_init(ec_compiler_options *opts)
 	opts->in_package    = EC_NIL;
 	opts->save          = FALSE;
 	opts->outputfile    = NULL;
+	opts->outputstream  = NULL;
+	opts->lazy          = FALSE;
 }
 
 static void opts_cleanup(ec_compiler_options *opts)
@@ -307,6 +309,8 @@ static void opts_cleanup(ec_compiler_options *opts)
 	if (opts->outputfile)
 		ec_free( opts->outputfile );
 	opts->outputfile = NULL;
+	opts->outputstream  = NULL;
+	opts->lazy          = FALSE;
 }
 
 static void opts_copy(ec_compiler_options *dst, ec_compiler_options *src)
@@ -324,6 +328,8 @@ static void opts_copy(ec_compiler_options *dst, ec_compiler_options *src)
 			dst->outputfile = ec_stringdup( src->outputfile );
 		else
 			dst->outputfile = NULL;
+		dst->outputstream  = src->outputstream;
+		dst->lazy          = src->lazy;
 	} else
 		opts_init( dst );
 }
@@ -453,9 +459,9 @@ EC_API EC_OBJ EcCompileStream( ec_compiler_ctxt ctxt,
 
     /* Print the AST */
 #if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
-	printf( "\nAbstract Syntax Tree:\n" );
+	ec_stderr_printf( "\nAbstract Syntax Tree:\n" );
     ASTPrint( 0, PRIVATE(parse_result) );
-	printf( "\n\n" );
+	ec_stderr_printf( "\n\n" );
 #endif
 
     /* Close the global scope */
@@ -532,9 +538,9 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
 
     /* Print the AST */
 #if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
-	printf( "\nAbstract Syntax Tree:\n" );
+	ec_stderr_printf( "\nAbstract Syntax Tree:\n" );
     ASTPrint( 0, PRIVATE(parse_result) );
-	printf( "\n\n" );
+	ec_stderr_printf( "\n\n" );
 #endif
 
     /* Close the global scope */
@@ -624,9 +630,9 @@ EC_API EC_OBJ EcCompileString( ec_compiler_ctxt ctxt,
 
     /* Print the AST */
 #if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
-	printf( "\nAbstract Syntax Tree:\n" );
+	ec_stderr_printf( "\nAbstract Syntax Tree:\n" );
     ASTPrint( 0, PRIVATE(parse_result) );
-	printf( "\n\n" );
+	ec_stderr_printf( "\n\n" );
 #endif
 
     /* Close the global scope */
@@ -738,11 +744,11 @@ static void resolve( ec_compiler_ctxt ctxt )
 		bytecode = ec_list_data( bnode );
 		ASSERT( EC_COMPILEDP(bytecode) );
 
-		/*ec_fprintf( stderr, "RESOLVING ON BYTECODE: %w 0x%08lX\n", bytecode, (unsigned long)bytecode );*/
+		/*ec_stderr_printf( "RESOLVING ON BYTECODE: %w 0x%08lX\n", bytecode, (unsigned long)bytecode );*/
 
 		referenced = referenced_labels( ctxt, bytecode );		/* labelinfo list */
 		if (! referenced) continue;
-		/*fprintf( stderr, "HAS REFERENCED LABELS\n" ); fflush( stderr );*/
+		/*ec_stderr_printf( "HAS REFERENCED LABELS\n" ); ec_stderr_flush();*/
 		referenced_iter = ec_list_iterator_create( referenced );
 		while ((rnode = ec_list_iterator_next( referenced_iter )))
 		{
@@ -755,7 +761,7 @@ static void resolve( ec_compiler_ctxt ctxt )
 			}
 			ASSERT( EC_COMPILEDNCODE(bytecode) > pos );
 
-			/*ec_fprintf( stderr, "RESOLVING LABEL %k (pos: %ld)\n", labelid, (long)pos );*/
+			/*ec_stderr_printf( "RESOLVING LABEL %k (pos: %ld)\n", labelid, (long)pos );*/
 
 			refs = label_references( ctxt, labelid, bytecode );	/* LI_REF(linfo) */
 			if (! refs)
@@ -769,7 +775,7 @@ static void resolve( ec_compiler_ctxt ctxt )
 				loc = (EcUInt)(EcPointerInteger) ec_list_data( lnode );
 				ASSERT( loc >= 0 );
 
-				/*ec_fprintf( stderr, "    BACKPATCHING at loc: %ld  pos: %ld\n", (long)loc, (long)pos );*/
+				/*ec_stderr_printf( "    BACKPATCHING at loc: %ld  pos: %ld\n", (long)loc, (long)pos );*/
 
 				/* backpatch */
 				ASSERT( EC_COMPILEDNCODE(bytecode) > loc );
@@ -1047,17 +1053,50 @@ static void compileVariable( ec_compiler_ctxt ctxt, ASTNode node )
 {
 	EcVarRefStruct vinfo;
 
+	Scope  targetScope, master;
+
+	targetScope = CCTXT(currentScope);
+	master = getMasterScope( ctxt, CCTXT(currentScope) );
+
 	/* Get the location of the variable */
 	if (! getSymbol( ctxt, CCTXT(currentScope), QSYM(node), &vinfo ))	/* Search in compile-time env.  */
 	{
-		char *name;
+		if (CCTXT(asLValue) && CCTXT(opts).lazy && (QSLEN(QSYM(node)) == 1) &&
+			((master->type == PackageScope) || (master->type == FunctionScope)))
+		{
+			/* lazy mode: implicit variable declaration allowed */
 
-		name = EcQualifiedString( QSYM(node) );
-		EcCompileError( FLINE(node), FCOL(node), "variable not defined: `%s'", name );
-		EcAlert( EcError,
-				 "(LINE: %ld, COLUMN: %ld) variable not defined: `%s'",
-				 FLINE(node), FCOL(node), name );
-		ec_free( name );
+			EcUInt      symid    = QSCOMP(QSYM(node), 0);
+			SymbolClass symclass = SymbolLocal;
+
+			if (! addSymbol( ctxt, targetScope, symid, symclass, FALSE ))
+			{
+				EcCompileError( FLINE(node), FCOL(node), "can't add symbol `%k'", symid );
+				EcAlert( EcError, "(LINE: %ld, COLUMN: %ld) can't add symbol `%k'", FLINE(node), FCOL(node), symid );
+			}
+
+			if (! getSymbol( ctxt, CCTXT(currentScope), QSYM(node), &vinfo ))	/* Search in compile-time env.  */
+			{
+				char *name;
+
+				name = EcQualifiedString( QSYM(node) );
+				EcCompileError( FLINE(node), FCOL(node), "internal compiled error. Variable not defined: `%s' even after forced introduction", name );
+				EcAlert( EcError,
+						 "(LINE: %ld, COLUMN: %ld) variable not defined: `%s'",
+						 FLINE(node), FCOL(node), name );
+				ec_free( name );
+			}
+		} else
+		{
+			char *name;
+
+			name = EcQualifiedString( QSYM(node) );
+			EcCompileError( FLINE(node), FCOL(node), "variable not defined: `%s'", name );
+			EcAlert( EcError,
+					 "(LINE: %ld, COLUMN: %ld) variable not defined: `%s'",
+					 FLINE(node), FCOL(node), name );
+			ec_free( name );
+		}
 	}
 
 	ASSERT( V_POS(&vinfo) != -1 );
@@ -1534,7 +1573,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			rhs_list = rhs_list->vStmtList.next;
 		}
 
-		/* fprintf(stderr, "n_lvalues: %ld\n", (long)n_lvalues); */
+		/* ec_stderr_printf("n_lvalues: %ld\n", (long)n_lvalues); */
 		if (n_lvalues != n_rvalues)
 		{
 			EcCompileError( FLINE(node), FCOL(node), "in multiple assignment there is a different number of elements on left and right" );
@@ -1559,9 +1598,9 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			lhs = lhs_list->vStmtList.stmt;
 
 			CCTXT(asLValue) = TRUE;
-			/* fprintf(stderr, "Compiling LHS %ld\n", (long)i);
+			/* ec_stderr_printf("Compiling LHS %ld\n", (long)i);
 			   ASTPrint( 0, lhs );
-			   printf("\n");*/
+			   ec_stderr_printf("\n");*/
 			compile( ctxt, lhs );
 			CCTXT(asLValue) = FALSE;
 
@@ -1579,7 +1618,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			i++;
 			lhs_list = lhs_list->vStmtList.next;
 		}
-		/* fprintf(stderr, "Compiling LHSs done\n"); */
+		/* ec_stderr_printf("Compiling LHSs done\n"); */
 
 		/*
 		 * The first rhs is the whole expression value
@@ -1592,20 +1631,20 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 		{
 			rhs = rhs_list->vStmtList.stmt;
 
-			/* fprintf(stderr, "Compiling RHS %ld\n", (long)i);
+			/* ec_stderr_printf("Compiling RHS %ld\n", (long)i);
 			   ASTPrint( 0, rhs );
-			   printf("\n"); */
+			   ec_stderr_printf("\n"); */
 			compile( ctxt, rhs );
 
 			i++;
 			rhs_list = rhs_list->vStmtList.next;
 		}
-		/* fprintf(stderr, "Compiling RHSs done\n"); */
+		/* ec_stderr_printf("Compiling RHSs done\n"); */
 
 		/* Save the right hand sides (rhs) in reverse order */
 		for (i = n_lvalues - 1; i >= 0; i--)
 		{
-			/* fprintf(stderr, "Saving RHS %ld\n", (long)i); */
+			/* ec_stderr_printf("Saving RHS %ld\n", (long)i); */
 
 			/*
 			 * The first rhs is the whole expression value.
@@ -1629,7 +1668,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 				emit0( ctxt, DiscardOP );
 			}
 		}
-		/* fprintf(stderr, "Saving done\n"); */
+		/* ec_stderr_printf("Saving done\n"); */
 	} else
 	{
 		/*
@@ -1646,7 +1685,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			lhs_list = lhs_list->vStmtList.next;
 		}
 
-		/* fprintf(stderr, "n_lvalues: %ld\n", (long)n_lvalues); */
+		/* ec_stderr_printf("n_lvalues: %ld\n", (long)n_lvalues); */
 
 		vinfo = ec_malloc( sizeof(EcVarRefStruct) * n_lvalues );
 		ASSERT( vinfo );
@@ -1665,9 +1704,9 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			lhs = lhs_list->vStmtList.stmt;
 
 			CCTXT(asLValue) = TRUE;
-			/* fprintf(stderr, "Compiling LHS %ld\n", (long)i);
+			/* ec_stderr_printf("Compiling LHS %ld\n", (long)i);
 			   ASTPrint( 0, lhs );
-			   printf("\n");*/
+			   ec_stderr_printf("\n");*/
 			compile( ctxt, lhs );
 			CCTXT(asLValue) = FALSE;
 
@@ -1685,19 +1724,19 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			i++;
 			lhs_list = lhs_list->vStmtList.next;
 		}
-		/* fprintf(stderr, "Compiling LHSs done\n"); */
+		/* ec_stderr_printf("Compiling LHSs done\n"); */
 
 		/*
 		 * The rhs is the whole expression value
 		 */
 
 		/* Compile the right hand side (rhs) */
-		/* fprintf(stderr, "Compiling RHS\n");
+		/* ec_stderr_printf("Compiling RHS\n");
 		   ASTPrint( 0, rhs );
-		   printf("\n"); */
+		   ec_stderr_printf("\n"); */
 		compile( ctxt, rhs );
 
-		/* fprintf(stderr, "Compiling RHS done\n"); */
+		/* ec_stderr_printf("Compiling RHS done\n"); */
 
 		/* Cycle through right hand side elements (rhs) in reverse order, saving them */
 		for (i = n_lvalues - 1; i >= 0; i--)
@@ -1706,7 +1745,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			EcInt idx_pos;
 			EC_OBJ idx_obj = EC_NIL;
 
-			/* fprintf(stderr, "Saving RHS %ld\n", (long)i); */
+			/* ec_stderr_printf("Saving RHS %ld\n", (long)i); */
 
 			/* 1. Compile indexing operation */
 
@@ -1730,7 +1769,7 @@ static void compileSimAssign( ec_compiler_ctxt ctxt, ASTNode node )
 			/* Save the computed value in variable location */
 			emitSave( ctxt, CCTXT(currentScope), &vinfo[i] );
 		}
-		/* fprintf(stderr, "Saving done\n"); */
+		/* ec_stderr_printf("Saving done\n"); */
 	}
 }
 
@@ -1831,7 +1870,7 @@ static void compileDecl( ec_compiler_ctxt ctxt, ASTNode node )
 		/* Add symbol */
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-		fprintf( stderr, "compileDecl: `%s' (%ld)\n", EcSymbolAt( symid ), symid );
+		ec_stderr_printf( "compileDecl: `%s' (%ld)\n", EcSymbolAt( symid ), symid );
 #endif
 		if (! addSymbol( ctxt, targetScope, symid, node->vDecl.symclass, FALSE ))
 		{
@@ -1980,7 +2019,7 @@ static void backpatch_break( ec_compiler_ctxt ctxt, Scope scope, EcInt finish )
 	EcUInt *lev;
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "BACKPATCH BREAK   finish: %ld\n", finish );
+	ec_stderr_printf( "BACKPATCH BREAK   finish: %ld\n", finish );
 #endif
 
 	stk_pos = scope->break_pos;
@@ -1997,7 +2036,7 @@ static void backpatch_break( ec_compiler_ctxt ctxt, Scope scope, EcInt finish )
 		{
 			ASSERT( *lev != (EcUInt) -1);
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-			fprintf( stderr, "    PATCHING %ld  to %ld\n", *pos, finish );
+			ec_stderr_printf( "    PATCHING %ld  to %ld\n", *pos, finish );
 #endif
 			patch( ctxt, *pos, finish );
 
@@ -2016,7 +2055,7 @@ static void backpatch_continue( ec_compiler_ctxt ctxt, Scope scope, EcInt finish
 	EcUInt *lev;
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "BACKPATCH CONTINUE   finish: %ld\n", finish );
+	ec_stderr_printf( "BACKPATCH CONTINUE   finish: %ld\n", finish );
 #endif
 
 	stk_pos = scope->continue_pos;
@@ -2033,7 +2072,7 @@ static void backpatch_continue( ec_compiler_ctxt ctxt, Scope scope, EcInt finish
 		{
 			ASSERT( *lev != (EcUInt) -1);
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-			fprintf( stderr, "    PATCHING %ld  to %ld\n", *pos, finish );
+			ec_stderr_printf( "    PATCHING %ld  to %ld\n", *pos, finish );
 #endif
 			patch( ctxt, *pos, finish );
 
@@ -2232,9 +2271,9 @@ static void compileTry( ec_compiler_ctxt ctxt, ASTNode node )
 
 		/* Add handler to code block handler chain */
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-		ec_fprintf( stderr, "Compiled CATCH (type: %w): %w\n", EC_HANDLERTYPE(handler), handler );
+		ec_stderr_printf( "Compiled CATCH (type: %w): %w\n", EC_HANDLERTYPE(handler), handler );
 		EcDumpCompiled( EC_HANDLERCODE(handler), 0 );
-		ec_fprintf( stderr, "*********************************\n\n" );
+		ec_stderr_printf( "*********************************\n\n" );
 #endif
 		EcArrayPush( handlers, handler );
 
@@ -2271,7 +2310,7 @@ static void compileBreak( ec_compiler_ctxt ctxt, ASTNode node )
 	else
 		lev = 1;
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "BREAK at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
+	ec_stderr_printf( "BREAK at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
 #endif
 	PUSH_BREAK( CCTXT(currentScope), pos, lev );
 }
@@ -2289,7 +2328,7 @@ static void compileContinue( ec_compiler_ctxt ctxt, ASTNode node )
 	else
 		lev = 1;
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "CONTINUE at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
+	ec_stderr_printf( "CONTINUE at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
 #endif
 	PUSH_CONTINUE( CCTXT(currentScope), pos, lev );
 }
@@ -2467,7 +2506,7 @@ static void compileCall( ec_compiler_ctxt ctxt, ASTNode node )
 		nargs++;
 		argList = argList->vStmtList.next;
 	}
-/*	fprintf( stderr, "Number of args in call: %ld\n", nargs );*/
+/*	ec_stderr_printf( "Number of args in call: %ld\n", nargs );*/
 
 	/* Compile arguments */
 	argList = node->vCall.arglist;
@@ -2501,7 +2540,7 @@ static void compileMethodCall( ec_compiler_ctxt ctxt, ASTNode node )
 		nargs++;
 		argList = argList->vStmtList.next;
 	}
-/*	fprintf( stderr, "Number of args in call: %ld\n", nargs );*/
+/*	ec_stderr_printf( "Number of args in call: %ld\n", nargs );*/
 
 	/*
 	 * Compile arguments
@@ -2635,7 +2674,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		nargs       = 0;
 		nparams_def = 0;
 	}
-/*	fprintf( stderr, "Number of args: %ld\n", nargs );*/
+/*	ec_stderr_printf( "Number of args: %ld\n", nargs );*/
 
 	/* Compile function variable name */
 	if (! anonymous)
@@ -2862,7 +2901,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		emit0( ctxt, SaveLexicalOP );
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-		if (anonymous) fprintf( stderr, "ANONYMOUS at pos: %ld\n", pos );
+		if (anonymous) ec_stderr_printf( "ANONYMOUS at pos: %ld\n", pos );
 #endif
 		if (! anonymous)
 		{
@@ -2963,9 +3002,9 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 		/* No, so declare it ! */
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-		printf( "Declaring: " );
+		ec_stderr_printf( "Declaring: " );
 		ASTPrint( 0, decl );
-		printf( "\n" );
+		ec_stderr_printf( "\n" );
 #endif
 		compileDecl( ctxt, decl );
 	} else
@@ -3123,7 +3162,7 @@ static void compileMethod( ec_compiler_ctxt ctxt, ASTNode node )
 		nparams_def = 0;
 	}
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "Method number of args: %ld (+ 2 implicit)\n", nargs );
+	ec_stderr_printf( "Method number of args: %ld (+ 2 implicit)\n", nargs );
 #endif
 
 	ASSERT( CCTXT(currentBytecode) );							/* This is bytecode of the entity containing the class */
@@ -3438,7 +3477,7 @@ static void compilePackage_post( ec_compiler_ctxt ctxt )
 	closeScope( ctxt, CCTXT(package_packageScope) );
 
 #if defined(WITH_STDIO) && (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
-	printf( "\nPACKAGE:\n" );
+	ec_stderr_printf( "\nPACKAGE:\n" );
 	EcDumpCompiled( EC_PACKAGECODE(CCTXT(package_package)), 0 );
 #if 1
 	ec_dbg_dump_package_frame( EC_PACKAGEFRAME(CCTXT(package_package)) );
@@ -3510,7 +3549,7 @@ static EC_OBJ compileInlineCodeBlock( ec_compiler_ctxt ctxt, ASTNode node )
 		nargs   = 0;
 	}
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-/*	fprintf( stderr, "Number of args: %ld\n", nargs );*/
+/*	ec_stderr_printf( "Number of args: %ld\n", nargs );*/
 #endif
 
 #if 0
@@ -3701,7 +3740,7 @@ static EcInt emit0( ec_compiler_ctxt ctxt, EcBytecode bc )
 
     pos = EcCompiledPush( CCTXT(currentBytecode), bc );
 #if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
-	fprintf(stderr, "%5ld %18s\n", (long)pos, EcBytecodeName( bc ));
+	ec_stderr_printf("%5ld %18s\n", (long)pos, EcBytecodeName( bc ));
 #endif
     return pos;
 }
@@ -3718,7 +3757,7 @@ static EcInt emit1( ec_compiler_ctxt ctxt, EcBytecode bc, EcInt op1 )
     pos = EcCompiledPush( CCTXT(currentBytecode), bc );
     EcCompiledPush( CCTXT(currentBytecode), op1 );
 #if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
-	fprintf(stderr, "%5ld %18s %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1);
+	ec_stderr_printf("%5ld %18s %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1);
 #endif
 
     return pos;
@@ -3737,7 +3776,7 @@ static EcInt emit2( ec_compiler_ctxt ctxt, EcBytecode bc, EcInt op1, EcInt op2 )
     EcCompiledPush( CCTXT(currentBytecode), op1 );
     EcCompiledPush( CCTXT(currentBytecode), op2 );
 #if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
-	fprintf(stderr, "%5ld %18s %12ld %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1, (long)op2);
+	ec_stderr_printf("%5ld %18s %12ld %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1, (long)op2);
 #endif
 
     return pos;
@@ -4480,8 +4519,8 @@ static EcBool getSymbolHere( ec_compiler_ctxt ctxt, Scope scope, EcUInt symid, E
 	ASSERT( scope );
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "getSymbolHere: id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
-	fprintf( stderr, "        scope: 0x%08lX\n", (unsigned long)scope );
+	ec_stderr_printf( "getSymbolHere: id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
+	ec_stderr_printf( "        scope: 0x%08lX\n", (unsigned long)scope );
 #endif
 
 	u = 0;
@@ -4495,7 +4534,7 @@ static EcBool getSymbolHere( ec_compiler_ctxt ctxt, Scope scope, EcUInt symid, E
 		{
 			p++;
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-/*			fprintf( stderr, "symid: %ld  name:`%s'\n", entry->symid, EcSymbolAt( entry->symid ) );*/
+/*			ec_stderr_printf( "symid: %ld  name:`%s'\n", entry->symid, EcSymbolAt( entry->symid ) );*/
 #endif
 			if (entry->symid == symid)
 			{
@@ -4553,7 +4592,7 @@ static EcBool getForeignSymbol( ec_compiler_ctxt ctxt, EcUInt symid, EcVarRef re
 
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "getForeignSymbol:   id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
+	ec_stderr_printf( "getForeignSymbol:   id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
 #endif
 
 	if (results)
@@ -4693,7 +4732,7 @@ static EcBool getQualifiedSymbol( ec_compiler_ctxt ctxt, Scope scope, EcQualifie
 	EcNamePrefix( &pkgname, &fullsymbol );
 
 #if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
-	fprintf( stderr, "getQualifiedSymbol:   fullsymbol:`%s'  pkgname: '%s'\n", ec_strdata( &fullsymbol ), ec_strdata( &pkgname ) );
+	ec_stderr_printf( "getQualifiedSymbol:   fullsymbol:`%s'  pkgname: '%s'\n", ec_strdata( &fullsymbol ), ec_strdata( &pkgname ) );
 #endif
 
 	pkgObj = _ec_package_loaded( ec_strdata( &pkgname ) );
@@ -4856,19 +4895,19 @@ static void dumpScope( ec_compiler_ctxt ctxt, Scope scope )
 		break;
 	}
 
-	ec_fprintf( stderr, "\nScope:\n" );
-	ec_fprintf( stderr, "\tType         : %s\n", stype );
-	ec_fprintf( stderr, "\tPackage      : %w\n", scope->package );
-	ec_fprintf( stderr, "\tTarget       : %r\n", scope->target );
-	ec_fprintf( stderr, "\tBytecode     : %r\n", scope->bytecode );
-	ec_fprintf( stderr, "\tLFrame       : %r\n", scope->lframe );
-	ec_fprintf( stderr, "\tFunction Type: %s\n", ftype );
+	ec_stderr_printf( "\nScope:\n" );
+	ec_stderr_printf( "\tType         : %s\n", stype );
+	ec_stderr_printf( "\tPackage      : %w\n", scope->package );
+	ec_stderr_printf( "\tTarget       : %r\n", scope->target );
+	ec_stderr_printf( "\tBytecode     : %r\n", scope->bytecode );
+	ec_stderr_printf( "\tLFrame       : %r\n", scope->lframe );
+	ec_stderr_printf( "\tFunction Type: %s\n", ftype );
 
-	ec_fprintf( stderr, "\n" );
-	ec_fprintf( stderr, "\tStack dim    : %I\n", scope->stackdim );
-	ec_fprintf( stderr, "\tStack max dim: %I\n", scope->maxstackdim );
+	ec_stderr_printf( "\n" );
+	ec_stderr_printf( "\tStack dim    : %I\n", scope->stackdim );
+	ec_stderr_printf( "\tStack max dim: %I\n", scope->maxstackdim );
 
-	ec_fprintf( stderr, "\tSymbol table :\n" );
+	ec_stderr_printf( "\tSymbol table :\n" );
 	for (stentry = scope->symtab; stentry; stentry = stentry->next)
 	{
 		switch (stentry->symclass)
@@ -4889,13 +4928,13 @@ static void dumpScope( ec_compiler_ctxt ctxt, Scope scope )
 			sclass = "public";
 			break;
 		}
-		ec_fprintf( stderr, "\t  %s %k (const: %b, initialized: %b, pos: %I)\n",
+		ec_stderr_printf( "\t  %s %k (const: %b, initialized: %b, pos: %I)\n",
 					sclass, stentry->symid,
 					stentry->isconst, stentry->initialized, stentry->position );
 	}
 
-	ec_fprintf( stderr, "\n" );
-	ec_fprintf( stderr, "\tNext serv v. : %I\n", (EcInt)scope->next_srv_var );
+	ec_stderr_printf( "\n" );
+	ec_stderr_printf( "\tNext serv v. : %I\n", (EcInt)scope->next_srv_var );
 }
 #endif
 
@@ -4916,14 +4955,14 @@ static const char *classname( SymbolClass symclass )
 
 static void printVInfo( EcVarRef ref )
 {
-	fprintf( stderr, "VARIABLE  : '%s'\n", V_ENTRY(ref) ? EcSymbolAt( V_ENTRY(ref)->symid ) : "--" );
-	fprintf( stderr, "     Class: %s\n",   classname( V_CLASS(ref) ) );
-	fprintf( stderr, "       pkg: %ld\n",  (long)V_PKG(ref) );
-	fprintf( stderr, "        up: %ld\n",  (long)V_UP(ref) );
-	fprintf( stderr, "       pos: %ld\n",  (long)V_POS(ref) );
-	fprintf( stderr, "     const: %s\n",   V_CONST(ref) ? "YES" : "NO" );
-	fprintf( stderr, "      init: %s\n",   V_INITIALIZED(ref) ? "YES" : "NO" );
-	fprintf( stderr, "   indexed: %s\n",   V_INDEXED(ref) ? "YES" : "NO" );
+	ec_stderr_printf( "VARIABLE  : '%s'\n", V_ENTRY(ref) ? EcSymbolAt( V_ENTRY(ref)->symid ) : "--" );
+	ec_stderr_printf( "     Class: %s\n",   classname( V_CLASS(ref) ) );
+	ec_stderr_printf( "       pkg: %ld\n",  (long)V_PKG(ref) );
+	ec_stderr_printf( "        up: %ld\n",  (long)V_UP(ref) );
+	ec_stderr_printf( "       pos: %ld\n",  (long)V_POS(ref) );
+	ec_stderr_printf( "     const: %s\n",   V_CONST(ref) ? "YES" : "NO" );
+	ec_stderr_printf( "      init: %s\n",   V_INITIALIZED(ref) ? "YES" : "NO" );
+	ec_stderr_printf( "   indexed: %s\n",   V_INDEXED(ref) ? "YES" : "NO" );
 }
 #endif
 
@@ -5009,7 +5048,7 @@ static EcBool define_label( ec_compiler_ctxt ctxt, EcUInt labelid )
 {
 	labelinfo *linfo;
 
-	/*ec_fprintf( stderr, "define_label \"%k\" (bc: %w)\n", labelid, CCTXT(currentBytecode) );*/
+	/*ec_stderr_printf( "define_label \"%k\" (bc: %w)\n", labelid, CCTXT(currentBytecode) );*/
 	/*print_labels();*/
 
 	/* check if labelinfo exists, eventually creating it */
@@ -5020,7 +5059,7 @@ static EcBool define_label( ec_compiler_ctxt ctxt, EcUInt labelid )
 	/* set current position */
 	LI_POS(linfo) = EC_COMPILEDNCODE(CCTXT(currentBytecode));
 
-	/*ec_fprintf( stderr, "define_label \"%k\" (pos: %ld, bc: %w) --> OK\n\n", labelid, (long)LI_POS(linfo), CCTXT(currentBytecode) );*/
+	/*ec_stderr_printf( "define_label \"%k\" (pos: %ld, bc: %w) --> OK\n\n", labelid, (long)LI_POS(linfo), CCTXT(currentBytecode) );*/
 	/*print_labels();*/
 
 	return TRUE;
@@ -5043,7 +5082,7 @@ static EcBool reference_label( ec_compiler_ctxt ctxt, EcUInt labelid, EcInt posi
 	EcInt res;
 	EcAny any;
 
-	/*ec_fprintf( stderr, "reference_label \"%k\" (pos: %ld, bc: %w)\n", labelid, (long)position, CCTXT(currentBytecode) );*/
+	/*ec_stderr_printf( "reference_label \"%k\" (pos: %ld, bc: %w)\n", labelid, (long)position, CCTXT(currentBytecode) );*/
 
 	/* get a labelinfo, eventually creating it */
 	linfo = labelinfo_get( ctxt, CCTXT(currentBytecode), labelid, TRUE );
@@ -5052,7 +5091,7 @@ static EcBool reference_label( ec_compiler_ctxt ctxt, EcUInt labelid, EcInt posi
 	res = ec_hash_get( CCTXT(labels), (EcAny) CCTXT(currentBytecode), &any );
 	ASSERT( res );
 	ASSERT( (ec_list)any != INVALID_LIST );
-	/*ec_fprintf( stderr, "  list: 0x%08lX\n", (unsigned long) any );*/
+	/*ec_stderr_printf( "  list: 0x%08lX\n", (unsigned long) any );*/
 
 	/* add a reference */
 	if (! LI_REF(linfo))
@@ -5122,7 +5161,7 @@ static labelinfo *labelinfo_get( ec_compiler_ctxt ctxt, EC_OBJ bytecode, EcUInt 
 	labelinfo *linfo;
 	EcBool res;
 
-	/*ec_fprintf( stderr, "\tlabelinfo_get  \"%k\" bc: %w  create: %d\n", labelid, bytecode, (int)create );*/
+	/*ec_stderr_printf( "\tlabelinfo_get  \"%k\" bc: %w  create: %d\n", labelid, bytecode, (int)create );*/
 
 	if ((! CCTXT(labels)) && create)
 	{
@@ -5213,7 +5252,7 @@ static void labels_cleanup( ec_compiler_ctxt ctxt )
 #if defined(WITH_STDIO)
 static void print_labels( ec_compiler_ctxt ctxt )
 {
-	ec_fprintf( stderr, "labels: %%{\n" );
+	ec_stderr_printf( "labels: %%{\n" );
 	if (CCTXT(labels))
 	{
 		ec_hash_iterator hiter;
@@ -5226,15 +5265,15 @@ static void print_labels( ec_compiler_ctxt ctxt )
 		while (ec_hash_iterator_next( hiter, &any ))
 		{
 			bytecode = (EC_OBJ) any;
-			ec_fprintf( stderr, "\tbc: %w\n", bytecode );
-			ec_fprintf(stderr, "\tlabels: 0x%08lX  bytecode: 0x%08lX\n", (unsigned long)CCTXT(labels), (unsigned long)bytecode);
+			ec_stderr_printf( "\tbc: %w\n", bytecode );
+			ec_stderr_printf("\tlabels: 0x%08lX  bytecode: 0x%08lX\n", (unsigned long)CCTXT(labels), (unsigned long)bytecode);
 			if (! ec_hash_get( CCTXT(labels), (EcAny) bytecode, &any ))
 				continue;
 			linfo_list = (ec_list) any;
 			print_linfo_list( linfo_list );
 		}
 	}
-	ec_fprintf( stderr, "}%%\n\n" );
+	ec_stderr_printf( "}%%\n\n" );
 }
 
 static void print_linfo_list( ec_list linfo_list )
@@ -5242,7 +5281,7 @@ static void print_linfo_list( ec_list linfo_list )
 	ec_list_iterator linfo_iter;
 	ec_list_node     linfo_node;
 
-	ec_fprintf( stderr, "\tlinfo_list: {\n" );
+	ec_stderr_printf( "\tlinfo_list: {\n" );
 	if (linfo_list)
 	{
 		linfo_iter = ec_list_iterator_create( linfo_list );
@@ -5250,7 +5289,7 @@ static void print_linfo_list( ec_list linfo_list )
 			print_linfo( ec_list_data(linfo_node) );
 		ec_list_iterator_destroy( linfo_iter );
 	}
-	ec_fprintf( stderr, "\t}\n" );
+	ec_stderr_printf( "\t}\n" );
 }
 
 static void print_linfo( labelinfo *linfo )
@@ -5259,19 +5298,19 @@ static void print_linfo( labelinfo *linfo )
 	ec_list_node     node;
 	EcBool first = TRUE;
 
-	ec_fprintf( stderr, "\t\t(linfo: \"%k\", %ld, (", LI_ID(linfo), (unsigned long)LI_POS(linfo) );
+	ec_stderr_printf( "\t\t(linfo: \"%k\", %ld, (", LI_ID(linfo), (unsigned long)LI_POS(linfo) );
 	if (LI_REF(linfo))
 	{
 		iter = ec_list_iterator_create( LI_REF(linfo) );
 		while ((node = ec_list_iterator_next(iter)))
 		{
-			if (! first) ec_fprintf( stderr, ", " );
-			ec_fprintf( stderr, "%ld", ec_list_data(node) );
+			if (! first) ec_stderr_printf( ", " );
+			ec_stderr_printf( "%ld", ec_list_data(node) );
 			first = FALSE;
 		}
 		ec_list_iterator_destroy( iter );
 	}
-	ec_fprintf( stderr, ")\n" );
+	ec_stderr_printf( ")\n" );
 }
 #endif /* end of defined(WITH_STDIO) */
 #endif

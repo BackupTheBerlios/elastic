@@ -7,7 +7,7 @@
  *
  *   Created: Sun May 25 08:05:50 MEST 2003
  *
- *   $Id: compile2c_head.h,v 1.1 2003/05/29 10:36:00 panta Exp $
+ *   $Id: compile2c_head.h,v 1.2 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -61,13 +61,13 @@
 
 /*	LPRIVATE(rt.vm_level)++; */ /* We are not in the VM... #JP */
 
-/*	fprintf( stderr, "VM LEVEL: %ld\n", LPRIVATE(rt.vm_level) );*/
+/*	ec_stderr_printf( "VM LEVEL: %ld\n", LPRIVATE(rt.vm_level) );*/
 
 #if TRACE_EXECUTION
-	printf("\n");
+	ec_stderr_printf("\n");
 	EcDumpCompiled( compiled, 0 );
-	printf("\n");
-	printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+	ec_stderr_printf("\n");
+	ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 
 	/* Set current compiled object & line number */

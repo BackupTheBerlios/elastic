@@ -7,7 +7,7 @@
  *
  *   Created: Tue Oct  2 16:24:25 CEST 2001
  *
- *   $Id: ecrt.c,v 1.4 2005/03/03 23:51:43 panta Exp $
+ *   $Id: ecrt.c,v 1.5 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -149,7 +149,7 @@ static int doExecute( const char *name, int argc, char *argv[] )
 	int l;
 
 	if (option_verbose)
-		fprintf( stderr, "Loading `%s'\n", name );
+		ec_stderr_printf( "Loading `%s'\n", name );
 	l = strlen( name );
 	pkgname = alloca( l + 1 );
 	if (! pkgname) return 0;
@@ -169,7 +169,7 @@ static int doExecute( const char *name, int argc, char *argv[] )
 			error( "Bad package binary file specified." );
 	}
 	if (option_verbose)
-		fprintf( stderr, "Load completed.\n" );
+		ec_stderr_printf( "Load completed.\n" );
 
 	EcSetArgs( argc, argv );
 	res = EcMainExecute( package );
@@ -179,29 +179,29 @@ static int doExecute( const char *name, int argc, char *argv[] )
 
 static void banner( void )
 {
-	fprintf( stderr, "ecrt version %s (elastiC %s)\n", ecrt_version, EcVersionString() );
-	fprintf( stderr, "Copyright (C) 2001 Marco Pantaleoni. All rights reserved.\n" );
+	ec_stderr_printf( "ecrt version %s (elastiC %s)\n", ecrt_version, EcVersionString() );
+	ec_stderr_printf( "Copyright (C) 2001 Marco Pantaleoni. All rights reserved.\n" );
 }
 
 static void usage( void )
 {
 	banner();
-	fprintf( stderr, "\nUsage: ecrt [options] objectfile [program options]\n" );
-	fprintf( stderr, "Options:\n" );
-	fprintf( stderr, "   -h                    Show usage information\n" );
-	fprintf( stderr, "   -v                    Be verbose\n" );
-	fprintf( stderr, "   -V                    Display version information\n" );
-	fprintf( stderr, "\n" );
+	ec_stderr_printf( "\nUsage: ecrt [options] objectfile [program options]\n" );
+	ec_stderr_printf( "Options:\n" );
+	ec_stderr_printf( "   -h                    Show usage information\n" );
+	ec_stderr_printf( "   -v                    Be verbose\n" );
+	ec_stderr_printf( "   -V                    Display version information\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void version( void )
 {
-	fprintf( stderr, "ecrt version: %s\n", ecrt_version );
-	fprintf( stderr, "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
+	ec_stderr_printf( "ecrt version: %s\n", ecrt_version );
+	ec_stderr_printf( "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
 }
 
 static void error( const char *msg )
 {
-	fprintf( stderr, "ERROR: %s\n\n", msg );
+	ec_stderr_printf( "ERROR: %s\n\n", msg );
 	exit( EXIT_FAILURE );
 }

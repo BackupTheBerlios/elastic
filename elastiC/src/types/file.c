@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.c,v 1.5 2002/06/12 17:42:53 panta Exp $
+ *   $Id: file.c,v 1.6 2005/03/08 13:40:06 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -496,13 +496,13 @@ EC_API EC_OBJ EcLibFile_Printf( EC_OBJ stack, EcAny userdata )
 		return res;
 
 	ASSERT( EC_STRINGP(res) );
-/*	fprintf( stderr, "WRITTEN %ld %d string: '%s'\n", EC_STRLEN(res), strlen( EC_STRDATA(res) ), EC_STRDATA(res) );*/
+/*	ec_stderr_printf( "WRITTEN %ld %d string: '%s'\n", EC_STRLEN(res), strlen( EC_STRDATA(res) ), EC_STRDATA(res) );*/
 	r = fwrite( EC_STRDATA(res), 1, EC_STRLEN(res), EC_FILEH(f) );
 	if (r != EC_STRLEN(res))
 	{
 		if (ferror( EC_FILEH(f) ))
-			fprintf( stderr, "FILE ERROR: %d %s\n", errno, strerror( errno ) );
-		fprintf( stderr, "ARGH: %ld\n", (long)r );
+			ec_stderr_printf( "FILE ERROR: %d %s\n", errno, strerror( errno ) );
+		ec_stderr_printf( "ARGH: %ld\n", (long)r );
 		r = EOF;
 	}
 

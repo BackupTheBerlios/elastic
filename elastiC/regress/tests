@@ -31,7 +31,6 @@
 ./nestedfor
 ./nobug
 ./numparams
-./outofmem
 ./prog
 ./shash
 ./sm

@@ -7,7 +7,7 @@
  *
  *   Created: Tue Jan 19 09:18:54 MET 1999
  *
- *   $Id: debug.c,v 1.2 2002/06/13 17:44:18 panta Exp $
+ *   $Id: debug.c,v 1.3 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -254,7 +254,7 @@ EC_API EcBool EcCheckAll( void )
 EC_API void EcDump( EC_OBJ obj )
 {
 #if defined(WITH_STDIO)
-	ec_fprintf( stderr, "OBJECT DUMP: (obj: 0x%08lX)\n%r\n\n", (unsigned long)obj, obj );
+	ec_stderr_printf( "OBJECT DUMP: (obj: 0x%08lX)\n%r\n\n", (unsigned long)obj, obj );
 #endif /* end of defined(WITH_STDIO) */
 }
 
@@ -275,24 +275,24 @@ EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 	else
 		compname = "$ANONYMOUS$";
 
-	printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
-	printf( "Bytecode len.        : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
-	printf( "# req. arguments     : %ld\n", (long)EC_COMPILEDNARG(compiled) );
-	printf( "  of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );
-	printf( "         varargs     : %s\n",  EC_COMPILEDVARG(compiled) ? "yes" : "no" );
-	printf( "# locals             : %ld\n", (long)EC_COMPILEDNLOC(compiled) );
-	printf( "# max. temps         : %ld\n", (long)EC_COMPILEDMAXTEMPS(compiled) );
-	printf( "\n" );
-	printf( "-- Literal Frame --(0x%08lX)------------------------\n", (unsigned long) EC_COMPILEDLFRAME(compiled) );
+	ec_stderr_printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
+	ec_stderr_printf( "Bytecode len.        : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
+	ec_stderr_printf( "# req. arguments     : %ld\n", (long)EC_COMPILEDNARG(compiled) );
+	ec_stderr_printf( "  of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );
+	ec_stderr_printf( "         varargs     : %s\n",  EC_COMPILEDVARG(compiled) ? "yes" : "no" );
+	ec_stderr_printf( "# locals             : %ld\n", (long)EC_COMPILEDNLOC(compiled) );
+	ec_stderr_printf( "# max. temps         : %ld\n", (long)EC_COMPILEDMAXTEMPS(compiled) );
+	ec_stderr_printf( "\n" );
+	ec_stderr_printf( "-- Literal Frame --(0x%08lX)------------------------\n", (unsigned long) EC_COMPILEDLFRAME(compiled) );
 	for (i = 0; i < EC_ARRAYLEN(EC_COMPILEDLFRAME(compiled)); i++)
 	{
-		printf( "%5ld  ", (long)i );
-		ec_fprintf( stdout, "%r\n", EcArrayGet( EC_COMPILEDLFRAME(compiled), i ) );
+		ec_stderr_printf( "%5ld  ", (long)i );
+		ec_stderr_printf( "%r\n", EcArrayGet( EC_COMPILEDLFRAME(compiled), i ) );
 	}
-	printf( "\n" );
-	printf( "-- Listing --------------------------------------------------------\n" );
-	printf( "   ADDR            BYTECODE           OP1           OP2       STACK\n" );
-	printf( "-------------------------------------------------------------------\n" );
+	ec_stderr_printf( "\n" );
+	ec_stderr_printf( "-- Listing --------------------------------------------------------\n" );
+	ec_stderr_printf( "   ADDR            BYTECODE           OP1           OP2       STACK\n" );
+	ec_stderr_printf( "-------------------------------------------------------------------\n" );
 	for (i = 0; i < EC_COMPILEDNCODE(compiled); i++)
 	{
 		bc = EC_COMPILEDCODE(compiled)[i];
@@ -300,34 +300,34 @@ EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 		npar = EcBytecodeParams( bc );
 
 		if ((at >= 0) && (at == i))
-			printf( " *%5ld  ", (long)i );
+			ec_stderr_printf( " *%5ld  ", (long)i );
 		else
-			printf( "  %5ld  ", (long)i );
-		printf( "%18s", name );
+			ec_stderr_printf( "  %5ld  ", (long)i );
+		ec_stderr_printf( "%18s", name );
 		for (j = i+1; j <= i+npar; j++)
 		{
 			op[j - (i+1)] = EC_COMPILEDCODE(compiled)[j];
-			printf( "  %12ld", (long)EC_COMPILEDCODE(compiled)[j] );
+			ec_stderr_printf( "  %12ld", (long)EC_COMPILEDCODE(compiled)[j] );
 		}
 		if (npar < 1)
-			printf( "  %12s", "" );
+			ec_stderr_printf( "  %12s", "" );
 		if (npar < 2)
-			printf( "  %12s", "" );
+			ec_stderr_printf( "  %12s", "" );
 		switch (bc)
 		{
 		case CallOP:
 		case InlinedCallOP:
-			printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[0]));
+			ec_stderr_printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[0]));
 			break;
 		case CallMethodOP:
-			printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[1]));
+			ec_stderr_printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[1]));
 			break;
 		default:
-			printf( "%12d", (int)EcBytecodeStackgrow( bc ) );
+			ec_stderr_printf( "%12d", (int)EcBytecodeStackgrow( bc ) );
 			break;
 		}
 		i += npar;
-		printf( "\n" );
+		ec_stderr_printf( "\n" );
 	}
 #endif /* end of defined(WITH_STDIO) */
 }

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.8 2005/03/03 23:51:43 panta Exp $
+ *   $Id: stream.c,v 1.9 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -755,4 +755,143 @@ EC_API ec_stream *ec_stream_stdout( void )
 EC_API ec_stream *ec_stream_stderr( void )
 {
 	return PRIVATE(stream_stderr);
+}
+
+/* convenience functions */
+
+#if HAVE_FFLUSH
+#define FFLUSHERR()		do { fflush(stderr); } while(0)
+#else
+#define FFLUSHERR()		do { } while(0)
+#endif
+
+EC_API ssize_t ec_stdout_printf( const char *format, ... )
+{
+	va_list args;
+	ssize_t rv;
+
+	va_start( args, format );
+	rv = ec_stdout_vprintf( format, args );
+	va_end( args );
+	return rv;
+}
+
+EC_API ssize_t ec_stdout_vprintf( const char *format, va_list ap )
+{
+	if (PRIVATE(stream_stdout))
+	{
+		return ec_stream_vprintf( PRIVATE(stream_stdout), format, ap );
+	} else
+	{
+#if defined(WITH_STDIO)
+		return ec_vfprintf( stdout, format, ap );
+#else /* start of ! defined(WITH_STDIO) */
+
+		EcInt res;
+		ec_string ds;
+
+		ec_string_init( &ds, NULL );
+		res = ec_vsprintf( &ds, format, ap );
+		ASSERT( res == ec_strlen(&ds) );
+
+#if HAVE_FWRITE
+		if (fwrite( ec_strdata( &ds ), 1, res, stdout ) < res)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+#elif HAVE_FPUTS
+		if (fputs( ec_strdata( &ds ), stdout ) < 0)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+#elif HAVE_FPRINTF
+		fprintf( stdout, "%s", ec_strdata( &ds ) );
+#endif /* end of HAVE_FPRINTF */
+
+		ec_string_cleanup( &ds );
+
+#endif /* end of ! defined(WITH_STDIO) */
+	}
+}
+
+EC_API ssize_t ec_stderr_printf( const char *format, ... )
+{
+	va_list args;
+	ssize_t rv;
+
+	va_start( args, format );
+	rv = ec_stderr_vprintf( format, args );
+	va_end( args );
+	return rv;
+}
+
+EC_API ssize_t ec_stderr_vprintf( const char *format, va_list ap )
+{
+	if (PRIVATE(stream_stderr))
+	{
+		return ec_stream_vprintf( PRIVATE(stream_stderr), format, ap );
+	} else
+	{
+#if defined(WITH_STDIO)
+		return ec_vfprintf( stderr, format, ap );
+#else /* start of ! defined(WITH_STDIO) */
+
+		EcInt res;
+		ec_string ds;
+
+		ec_string_init( &ds, NULL );
+		res = ec_vsprintf( &ds, format, ap );
+		ASSERT( res == ec_strlen(&ds) );
+
+#if HAVE_FWRITE
+		if (fwrite( ec_strdata( &ds ), 1, res, stderr ) < res)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+#elif HAVE_FPUTS
+		if (fputs( ec_strdata( &ds ), stderr ) < 0)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+#elif HAVE_FPRINTF
+		fprintf( stderr, "%s", ec_strdata( &ds ) );
+#endif /* end of HAVE_FPRINTF */
+
+		ec_string_cleanup( &ds );
+
+#endif /* end of ! defined(WITH_STDIO) */
+	}
+}
+
+EC_API EcBool ec_stdout_flush( void )
+{
+	if (PRIVATE(stream_stdout))
+	{
+		return ec_stream_flush( PRIVATE(stream_stdout) );
+	} else
+	{
+#if HAVE_FFLUSH
+		return (fflush( stdout ) == 0) ? TRUE : FALSE;
+#endif /* HAVE_FFLUSH */
+	}
+	return FALSE;
+}
+
+EC_API EcBool ec_stderr_flush( void )
+{
+	if (PRIVATE(stream_stderr))
+	{
+		return ec_stream_flush( PRIVATE(stream_stderr) );
+	} else
+	{
+#if HAVE_FFLUSH
+		return (fflush( stderr ) == 0) ? TRUE : FALSE;
+#endif /* HAVE_FFLUSH */
+	}
+
+	return FALSE;
 }

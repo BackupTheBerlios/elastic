@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 20:34:10 MEST 1998
  *
- *   $Id: ast.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: ast.c,v 1.4 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -688,40 +688,42 @@ static void indent( int lev );
 static void printChar( char ch )
 {
 	if (isprint( (int)ch ))
-		fputc( ch, stdout );
-	else
+	{
+		/* fputc( ch, stdout ); */
+		ec_stderr_printf( "%c", ch );
+	} else
 	{
 		switch (ch)
 		{
 		case '\n':
-			printf( "\\n" );
+			ec_stderr_printf( "\\n" );
 			break;
 		case '\t':
-			printf( "\\t" );
+			ec_stderr_printf( "\\t" );
 			break;
 		case '\b':
-			printf( "\\b" );
+			ec_stderr_printf( "\\b" );
 			break;
 		case '\r':
-			printf( "\\r" );
+			ec_stderr_printf( "\\r" );
 			break;
 		case '\f':
-			printf( "\\f" );
+			ec_stderr_printf( "\\f" );
 			break;
 		case '\v':
-			printf( "\\v" );
+			ec_stderr_printf( "\\v" );
 			break;
 		case '\a':
-			printf( "\\a" );
+			ec_stderr_printf( "\\a" );
 			break;
 		case '\?':
-			printf( "\\?" );
+			ec_stderr_printf( "\\?" );
 			break;
 		case '\0':
-			printf( "\\0" );
+			ec_stderr_printf( "\\0" );
 			break;
 		default:
-			printf( "\\x%02x", (unsigned int)ch );
+			ec_stderr_printf( "\\x%02x", (unsigned int)ch );
 		}
 	}
 }
@@ -741,7 +743,7 @@ void ASTPrint( int lev, ASTNode node )
 {
 	if (! node)
 	{
-		indent( lev ); printf( "NULL" );
+		indent( lev ); ec_stderr_printf( "NULL" );
 		return;
 	}
 
@@ -762,7 +764,7 @@ void ASTPrint( int lev, ASTNode node )
 	switch ( node->type )
 	{
 	case nullType:
-		indent( lev ); printf( "<nullType>" );
+		indent( lev ); ec_stderr_printf( "<nullType>" );
 		break;
 
 	case symbolType:
@@ -934,7 +936,7 @@ void ASTPrint( int lev, ASTNode node )
 static void printSymbol( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "<symbol `%s' (%ld)>",
+	ec_stderr_printf( "<symbol `%s' (%ld)>",
 			EcSymbolAt( node->vSymbol.symbolid ),
 			(long)node->vSymbol.symbolid );
 }
@@ -945,7 +947,7 @@ static void printQualifiedSymbol( int lev, ASTNode node )
 
 	indent( lev );
 	string = EcQualifiedString( QSYM(node) );
-	printf( "<qsymbol `%s'>", string );
+	ec_stderr_printf( "<qsymbol `%s'>", string );
 	ec_free( string );
 }
 
@@ -955,31 +957,31 @@ static void printConstant( int lev, ASTNode node )
 	switch (node->vConstExpr.type)
 	{
 	case inumberConst:
-		printf( "<const: %ld>", (long)node->vConstExpr.vInt );
+		ec_stderr_printf( "<const: %ld>", (long)node->vConstExpr.vInt );
 		break;
 	case fnumberConst:
-		printf( "<const: %g>", node->vConstExpr.vFloat );
+		ec_stderr_printf( "<const: %g>", node->vConstExpr.vFloat );
 		break;
 	case charConst:
 		if (isprint( (int) node->vConstExpr.vChar ))
-			printf( "<const: '%c'>", node->vConstExpr.vChar );
+			ec_stderr_printf( "<const: '%c'>", node->vConstExpr.vChar );
 		else
 		{
-			printf( "<const: '" );
+			ec_stderr_printf( "<const: '" );
 			printChar( node->vConstExpr.vChar );
-			printf( "'>" );
+			ec_stderr_printf( "'>" );
 		}
 		break;
 	case symbolConst:
-		printf( "<const: %s>", EcSymbolAt( node->vConstExpr.vSym ) );
+		ec_stderr_printf( "<const: %s>", EcSymbolAt( node->vConstExpr.vSym ) );
 		break;
 	case stringConst:
-		printf( "<const: \"" );
+		ec_stderr_printf( "<const: \"" );
 		printString( node->vConstExpr.vString );
-		printf( "\">" );
+		ec_stderr_printf( "\">" );
 		break;
 	case objectConst:
-		printf( "<const: EC_OBJ 0x%08lX>", (unsigned long)node->vConstExpr.vObject );
+		ec_stderr_printf( "<const: EC_OBJ 0x%08lX>", (unsigned long)node->vConstExpr.vObject );
 		break;
 	}
 }
@@ -991,24 +993,24 @@ static void printVariable( int lev, ASTNode node )
 	name = EcQualifiedString( QSYM(node) );
 
 	indent( lev );
-	printf( "<var `%s'>", name );
+	ec_stderr_printf( "<var `%s'>", name );
 	ec_free( name );
 }
 
 static void printArrayCons( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "#[ " );
+	ec_stderr_printf( "#[ " );
 	ASTPrint( 0, node->vArrayConsExpr.arglist );
-	printf( " ]" );
+	ec_stderr_printf( " ]" );
 }
 
 static void printHashCons( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "%%[ " );
+	ec_stderr_printf( "%%[ " );
 	ASTPrint( 0, node->vHashConsExpr.arglist );
-	printf( " ]" );
+	ec_stderr_printf( " ]" );
 }
 
 static void printUnary( int lev, ASTNode node )
@@ -1017,27 +1019,27 @@ static void printUnary( int lev, ASTNode node )
 	switch (node->vUnaryExpr.op)
 	{
 	case NEG_OP:
-		printf( "- " );
+		ec_stderr_printf( "- " );
 		break;
 
 	case POS_OP:
-		printf( "+ " );
+		ec_stderr_printf( "+ " );
 		break;
 
 	case INVERT_OP:
-		printf( "~ " );
+		ec_stderr_printf( "~ " );
 		break;
 
 	case LNOT_OP:
-		printf( "! " );
+		ec_stderr_printf( "! " );
 		break;
 
 	case PREINC_OP:
-		printf( "++" );
+		ec_stderr_printf( "++" );
 		break;
 
 	case PREDEC_OP:
-		printf( "--" );
+		ec_stderr_printf( "--" );
 		break;
 
 	case POSTINC_OP:
@@ -1051,11 +1053,11 @@ static void printUnary( int lev, ASTNode node )
 	switch (node->vUnaryExpr.op)
 	{
 	case POSTINC_OP:
-		printf( "++" );
+		ec_stderr_printf( "++" );
 		break;
 
 	case POSTDEC_OP:
-		printf( "--" );
+		ec_stderr_printf( "--" );
 		break;
 
 	case NEG_OP:
@@ -1076,75 +1078,75 @@ static void printBinary( int lev, ASTNode node )
 	switch (node->vBinaryExpr.op)
 	{
 	case ADD_OP:
-		printf( " + " );
+		ec_stderr_printf( " + " );
 		break;
 
 	case SUB_OP:
-		printf( " - " );
+		ec_stderr_printf( " - " );
 		break;
 
 	case MUL_OP:
-		printf( " * " );
+		ec_stderr_printf( " * " );
 		break;
 
 	case DIV_OP:
-		printf( " / " );
+		ec_stderr_printf( " / " );
 		break;
 
 	case MOD_OP:
-		printf( " %% " );
+		ec_stderr_printf( " %% " );
 		break;
 
 	case POW_OP:
-		printf( " ** " );
+		ec_stderr_printf( " ** " );
 		break;
 
 	case LSHIFT_OP:
-		printf( " << " );
+		ec_stderr_printf( " << " );
 		break;
 
 	case RSHIFT_OP:
-		printf( " >> " );
+		ec_stderr_printf( " >> " );
 		break;
 
 	case AND_OP:
-		printf( " & " );
+		ec_stderr_printf( " & " );
 		break;
 
 	case OR_OP:
-		printf( " | " );
+		ec_stderr_printf( " | " );
 		break;
 
 	case XOR_OP:
-		printf( " ^ " );
+		ec_stderr_printf( " ^ " );
 		break;
 
 	case IN_OP:
-		printf( " in " );
+		ec_stderr_printf( " in " );
 		break;
 
 	case LT_OP:
-		printf( " < " );
+		ec_stderr_printf( " < " );
 		break;
 
 	case GT_OP:
-		printf( " > " );
+		ec_stderr_printf( " > " );
 		break;
 
 	case LE_OP:
-		printf( " <= " );
+		ec_stderr_printf( " <= " );
 		break;
 
 	case GE_OP:
-		printf( " >= " );
+		ec_stderr_printf( " >= " );
 		break;
 
 	case EQ_OP:
-		printf( " == " );
+		ec_stderr_printf( " == " );
 		break;
 
 	case NE_OP:
-		printf( " != " );
+		ec_stderr_printf( " != " );
 		break;
 
 	default:
@@ -1158,30 +1160,30 @@ static void printBinary( int lev, ASTNode node )
 static void printConditional( int lev, ASTNode node )
 {
 	ASTPrint( lev, node->vCondExpr.cond );
-	printf( " ? " );
+	ec_stderr_printf( " ? " );
 	ASTPrint( 0, node->vCondExpr.texpr );
-	printf( " : " );
+	ec_stderr_printf( " : " );
 	ASTPrint( 0, node->vCondExpr.fexpr );
 }
 
 static void printOr( int lev, ASTNode node )
 {
 	ASTPrint( lev, node->vOrExpr.first );
-	printf( " || " );
+	ec_stderr_printf( " || " );
 	ASTPrint( 0, node->vOrExpr.second );
 }
 
 static void printAnd( int lev, ASTNode node )
 {
 	ASTPrint( lev, node->vAndExpr.first );
-	printf( " && " );
+	ec_stderr_printf( " && " );
 	ASTPrint( 0, node->vAndExpr.second );
 }
 
 static void printAssign( int lev, ASTNode node )
 {
 	ASTPrint( lev, node->vAssignExpr.lhs );
-	printf( " = " );
+	ec_stderr_printf( " = " );
 	ASTPrint( 0, node->vAssignExpr.rhs );
 }
 
@@ -1199,7 +1201,7 @@ static void printSimAssign( int lev, ASTNode node )
 	first = TRUE;
 	while (lhs_list)
 	{
-		if (! first) printf( ", " );
+		if (! first) ec_stderr_printf( ", " );
 		first = FALSE;
 		lhs = lhs_list->vStmtList.stmt;
 
@@ -1208,12 +1210,12 @@ static void printSimAssign( int lev, ASTNode node )
 		lhs_list = lhs_list->vStmtList.next;
 	}
 
-	printf( " = " );
+	ec_stderr_printf( " = " );
 
 	first = TRUE;
 	while (rhs_list)
 	{
-		if (! first) printf( ", " );
+		if (! first) ec_stderr_printf( ", " );
 		first = FALSE;
 		rhs = rhs_list->vStmtList.stmt;
 
@@ -1226,9 +1228,9 @@ static void printSimAssign( int lev, ASTNode node )
 static void printArrayRef( int lev, ASTNode node )
 {
 	ASTPrint( lev, node->vArrayRefExpr.ref );
-	printf( "[" );
+	ec_stderr_printf( "[" );
 	ASTPrint( 0, node->vArrayRefExpr.idx );
-	printf( "]" );
+	ec_stderr_printf( "]" );
 }
 
 static void printDecl( int lev, ASTNode node )
@@ -1237,23 +1239,23 @@ static void printDecl( int lev, ASTNode node )
 	ASTNode decllist;
 
 	indent( lev );
-	printf( "<" );
+	ec_stderr_printf( "<" );
 	switch (node->vDecl.symclass)
 	{
 	case SymbolParam:
-		printf( "param " );
+		ec_stderr_printf( "param " );
 		break;
 	case SymbolLocal:
-		printf( "local " );
+		ec_stderr_printf( "local " );
 		break;
 	case SymbolStatic:
-		printf( "static " );
+		ec_stderr_printf( "static " );
 		break;
 	case SymbolPrivate:
-		printf( "private " );
+		ec_stderr_printf( "private " );
 		break;
 	case SymbolPublic:
-		printf( "public " );
+		ec_stderr_printf( "public " );
 		break;
 	}
 	targetScope = currentScope;
@@ -1263,18 +1265,18 @@ static void printDecl( int lev, ASTNode node )
 	{
 		ASTPrint( 0, decllist->vStmtList.stmt );
 		decllist = decllist->vStmtList.next;
-		if (decllist) printf( ", " );
+		if (decllist) ec_stderr_printf( ", " );
 	}
-	printf( ">" );
+	ec_stderr_printf( ">" );
 }
 
 static void printDeclAtom( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "`%s' id:%ld",
+	ec_stderr_printf( "`%s' id:%ld",
 			EcSymbolAt( SYMID(node->vDeclAtom.sym) ), (long)SYMID(node->vDeclAtom.sym) );
 	if (node->vDeclAtom.init) {
-		printf( " = " );
+		ec_stderr_printf( " = " );
 		ASTPrint( 0, node->vDeclAtom.init );
 	}
 }
@@ -1287,7 +1289,7 @@ static void printStatement( int lev, ASTNode node )
 static void printLabeledStmt( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "%s:\n", EcSymbolAt( node->vLabeledStmt.label ) );
+	ec_stderr_printf( "%s:\n", EcSymbolAt( node->vLabeledStmt.label ) );
 	ASTPrint( lev, node->vLabeledStmt.stmt );
 }
 
@@ -1299,58 +1301,58 @@ static void printExprStmt( int lev, ASTNode node )
 static void printIf( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "if " );
+	ec_stderr_printf( "if " );
 	ASTPrint( 0, node->vIfStmt.cond );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev+1, node->vIfStmt.thenClause );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	if (node->vIfStmt.elseClause)
 	{
 		ASTPrint( lev+1, node->vIfStmt.elseClause );
-		printf( "\n" );
+		ec_stderr_printf( "\n" );
 	}
 }
 
 static void printWhile( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "while " );
+	ec_stderr_printf( "while " );
 	ASTPrint( 0, node->vWhileStmt.cond );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev+1, node->vWhileStmt.body );
 }
 
 static void printDo( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "do\n" );
+	ec_stderr_printf( "do\n" );
 	ASTPrint( lev+1, node->vDoStmt.body );
 	indent( lev );
-	printf( "while " );
+	ec_stderr_printf( "while " );
 	ASTPrint( 0, node->vDoStmt.cond );
 }
 
 static void printFor( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "for (" );
+	ec_stderr_printf( "for (" );
 	ASTPrint( 0, node->vForStmt.init );
-	printf( ", " );
+	ec_stderr_printf( ", " );
 	ASTPrint( 0, node->vForStmt.cond );
-	printf( ", " );
+	ec_stderr_printf( ", " );
 	ASTPrint( 0, node->vForStmt.restart );
-	printf( ")\n" );
+	ec_stderr_printf( ")\n" );
 	ASTPrint( lev+1, node->vForStmt.body );
 }
 
 static void printForIn( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "for (" );
+	ec_stderr_printf( "for (" );
 	ASTPrint( 0, node->vForInStmt.var );
-	printf( " in " );
+	ec_stderr_printf( " in " );
 	ASTPrint( 0, node->vForInStmt.sequence );
-	printf( ")\n" );
+	ec_stderr_printf( ")\n" );
 	ASTPrint( lev+1, node->vForInStmt.body );
 }
 
@@ -1359,13 +1361,13 @@ static void printBreak( int lev, ASTNode node )
 	indent( lev );
 	if (node->vBreakStmt.lev)
 	{
-		printf( "break " );
+		ec_stderr_printf( "break " );
 		ASTPrint( 0, node->vBreakStmt.lev );
 	} else
 	{
-		printf( "break" );
+		ec_stderr_printf( "break" );
 	}
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printContinue( int lev, ASTNode node )
@@ -1373,49 +1375,49 @@ static void printContinue( int lev, ASTNode node )
 	indent( lev );
 	if (node->vContinueStmt.lev)
 	{
-		printf( "continue " );
+		ec_stderr_printf( "continue " );
 		ASTPrint( 0, node->vContinueStmt.lev );
 	} else
 	{
-		printf( "continue" );
+		ec_stderr_printf( "continue" );
 	}
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printGoto( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "goto " );
+	ec_stderr_printf( "goto " );
 	ASTPrint( 0, node->vGotoStmt.target );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printTry( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "try\n" );
+	ec_stderr_printf( "try\n" );
 	ASTPrint( lev, node->vTryStmt.block );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev, node->vTryStmt.catchlist );
 }
 
 static void printCatch( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "catch " );
+	ec_stderr_printf( "catch " );
 	ASTPrint( 0, node->vCatchStmt.type );
 	if (node->vCatchStmt.var)
 		ASTPrint( 0, node->vCatchStmt.var );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev, node->vCatchStmt.handler );
 }
 
 static void printThrow( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "throw " );
+	ec_stderr_printf( "throw " );
 	ASTPrint( 0, node->vThrowStmt.expr );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printImport( int lev, ASTNode node )
@@ -1423,19 +1425,19 @@ static void printImport( int lev, ASTNode node )
 	indent( lev );
 	if (node->vImportStmt.detailed)
 	{
-		printf( "from " );
+		ec_stderr_printf( "from " );
 		ASTPrint( 0, node->vImportStmt.package );
-		printf( " import " );
+		ec_stderr_printf( " import " );
 		if (! node->vImportStmt.symlist)
-			printf( "*" );
+			ec_stderr_printf( "*" );
 		else
 			ASTPrint( 0, node->vImportStmt.symlist );
 	} else
 	{
-		printf( "import " );
+		ec_stderr_printf( "import " );
 		ASTPrint( 0, node->vImportStmt.package );
 	}
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printParam( int lev, ASTNode node )
@@ -1448,7 +1450,7 @@ static void printParam( int lev, ASTNode node )
 	ASTPrint( 0, var );
 	if (init)
 	{
-		printf( " = " );
+		ec_stderr_printf( " = " );
 		ASTPrint( 0, init );
 	}
 }
@@ -1463,17 +1465,17 @@ static void printParamList( int lev, ASTNode node )
 	list    = node->vParamList.list;
 
 	indent( lev );
-	printf( "(" );
+	ec_stderr_printf( "(" );
 	while (list)
 	{
-		if (! first) printf( ", " );
+		if (! first) ec_stderr_printf( ", " );
 		first = FALSE;
 		ASTPrint( 0, list->vStmtList.stmt );
 
 		list = list->vStmtList.next;
-		if (varargs && !list) printf( "..." );
+		if (varargs && !list) ec_stderr_printf( "..." );
 	}
-	printf( ")" );
+	ec_stderr_printf( ")" );
 }
 
 static void printCall( int lev, ASTNode node )
@@ -1486,15 +1488,15 @@ static void printCall( int lev, ASTNode node )
 static void printMethodCall( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "[" );
+	ec_stderr_printf( "[" );
 	if (! node->vMethodCall.super)
 		ASTPrint( 0, node->vMethodCall.receiver );
 	else
-		printf( "super" );
-	printf( " " );
+		ec_stderr_printf( "super" );
+	ec_stderr_printf( " " );
 	ASTPrint( 0, node->vMethodCall.method );
 	ASTPrint( 0, node->vMethodCall.arglist );
-	printf( "]" );
+	ec_stderr_printf( "]" );
 }
 
 static void printStmtList( int lev, ASTNode node )
@@ -1502,49 +1504,49 @@ static void printStmtList( int lev, ASTNode node )
 	if (! node->vStmtList.asArg)
 	{
 		indent( lev );
-		printf( "{" );
+		ec_stderr_printf( "{" );
 		while (node)
 		{
-			printf( "\n" );
+			ec_stderr_printf( "\n" );
 			ASTPrint( lev+1, node->vStmtList.stmt );
 
 			node = node->vStmtList.next;
 		}
-		printf( "\n" );
+		ec_stderr_printf( "\n" );
 		indent( lev );
-		printf( "}" );
+		ec_stderr_printf( "}" );
 	} else
 	{
 		EcBool first = TRUE;
 
 		indent( lev );
-		printf( "(" );
+		ec_stderr_printf( "(" );
 		while (node)
 		{
-			if (! first) printf( ", " );
+			if (! first) ec_stderr_printf( ", " );
 			first = FALSE;
 			ASTPrint( 0, node->vStmtList.stmt );
 
 			node = node->vStmtList.next;
 		}
-		printf( ")" );
+		ec_stderr_printf( ")" );
 	}
 }
 
 static void printFunction( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "function " );
+	ec_stderr_printf( "function " );
 	ASTPrint( 0, node->vFunction.funcName );	
 	if (node->vFunction.decl)
 	{
-		printf( " " );
+		ec_stderr_printf( " " );
 		ASTPrint( 0, node->vFunction.decl );
 	}
 	currentScope = node->vFunction.scope;
-	printf( " " );
+	ec_stderr_printf( " " );
 	ASTPrint( 0, node->vFunction.paramList );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev, node->vFunction.body );
 	if (currentScope)
 		currentScope = currentScope->upper;
@@ -1553,27 +1555,27 @@ static void printFunction( int lev, ASTNode node )
 static void printReturn( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "return " );
+	ec_stderr_printf( "return " );
 	ASTPrint( 0, node->vReturn.expr );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void printClass( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "class " );
+	ec_stderr_printf( "class " );
 	ASTPrint( 0, node->vClassDef.name );	
 	if (node->vClassDef.decl)
 	{
-		printf( " " );
+		ec_stderr_printf( " " );
 		ASTPrint( 0, node->vClassDef.decl );
 	}
-	printf( " extends " );
+	ec_stderr_printf( " extends " );
 	ASTPrint( 0, node->vClassDef.base );	
 	currentScope = node->vClassDef.scope;
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev, node->vClassDef.body );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	if (currentScope)
 		currentScope = currentScope->upper;
 }
@@ -1582,14 +1584,14 @@ static void printMethod( int lev, ASTNode node )
 {
 	indent( lev );
 	if (node->vMethodDef.classmethod)
-		printf( "class method " );
+		ec_stderr_printf( "class method " );
 	else
-		printf( "method " );
+		ec_stderr_printf( "method " );
 	ASTPrint( 0, node->vMethodDef.name );	
 	currentScope = node->vMethodDef.scope;
-	printf( " " );
+	ec_stderr_printf( " " );
 	ASTPrint( 0, node->vMethodDef.paramList );
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
 	ASTPrint( lev, node->vMethodDef.body );
 	if (currentScope)
 		currentScope = currentScope->upper;
@@ -1598,12 +1600,12 @@ static void printMethod( int lev, ASTNode node )
 static void printPackage( int lev, ASTNode node )
 {
 	indent( lev );
-	printf( "Package: " );
+	ec_stderr_printf( "Package: " );
 	if (node->vPackage.name)
 		ASTPrint( 0, node->vPackage.name );
 	else
-		printf( DEFAULT_PACKAGENAME );
-	printf( "\n" );
+		ec_stderr_printf( DEFAULT_PACKAGENAME );
+	ec_stderr_printf( "\n" );
 #if 0
 	currentScope = node->vPackage.scope;
 	ASTPrint( lev, node->vPackage.body );
@@ -1619,6 +1621,6 @@ static void indent( int lev )
 
 	if (lev < 0) lev = 0;
 	for(i = 0; i < lev; i++)
-		printf( "   " );
+		ec_stderr_printf( "   " );
 }
 #endif /* end of defined(WITH_STDIO) && EC_AST_DEBUG */

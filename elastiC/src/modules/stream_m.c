@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun 12 10:52:30 CEST 2002
  *
- *   $Id: stream_m.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: stream_m.c,v 1.4 2005/03/08 13:40:06 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -281,7 +281,10 @@ EC_API EC_OBJ EcLibStream_Gets( EC_OBJ stack, EcAny userdata )
 		return EC_STREAM_STR(obj)->exc;
 	}
 
-	res = EcMakeString( ec_strdata(&ds), -1 );
+	if (nread <= 0)
+		res = EC_NIL;
+	else
+		res = EcMakeString( ec_strdata(&ds), -1 );
 	ec_string_cleanup( &ds );
 	return res;
 }

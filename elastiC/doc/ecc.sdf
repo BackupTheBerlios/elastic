@@ -38,7 +38,11 @@
 
 H1: SYNOPSIS
 
-B<ecc> S<[ B<-d> ]>
+B<ecc> S<[ B<-h> ]>
+
+B<ecc> S<[ B<-V> ]>
+
+B<ecc> S<[ B<-d> ]> S<[ B<-v> ]> S<[ B<-l> ]>
     S<[ B<-o> I<output> ]> [ I<source> ]
 
 H1: DESCRIPTION
@@ -53,6 +57,14 @@ H1: OPTIONS
 * B<-d> enable debugging information in the generated code
 
 * B<-o> specify the output bytecode filename
+
+* B<-h> show usage information
+
+* B<-v> be verbose
+
+* B<-l> lazy programmer mode: variable declaration is optional
+
+* B<-V> display version information
 
 H1: RETURN VALUE
 

@@ -7,7 +7,7 @@
  *
  *   Created: Fri Dec  4 14:35:43 MET 1998
  *
- *   $Id: symbol.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: symbol.c,v 1.3 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -88,7 +88,7 @@ EC_API EcUInt EcInternSymbol( const char *string )
 	if (! PRIVATE(symName)[PRIVATE(currentId)])
 		return 0;
 
-	/*fprintf( stderr, "EcInternSymbol %3d <- %s\n", PRIVATE(currentId), string );*/
+	/*ec_stderr_printf( "EcInternSymbol %3d <- %s\n", PRIVATE(currentId), string );*/
 	return PRIVATE(currentId);
 }
 

@@ -11,7 +11,7 @@
  *
  *     This new update fixes Alpha compatibility problems.
  *
- *   $Id: strtod.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: strtod.c,v 1.4 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2001-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -204,7 +204,7 @@ typedef	u_int32_t ULong;
 #if HAVE_STDIO_H
 #include "stdio.h"
 #endif
-#define Bug(x) {fprintf(stderr, "%s\n", x); exit(1);}
+#define Bug(x) {ec_strerr_printf("%s\n", x); exit(1);}
 #endif
 #endif
 

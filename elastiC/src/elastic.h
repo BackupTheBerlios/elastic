@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.10 2003/05/29 10:36:00 panta Exp $
+ *   $Id: elastic.h,v 1.11 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -101,6 +101,8 @@ typedef struct ec_compiler_options_struct
 	EcBool  save;												/* TRUE if compiled packages must be saved to disk */
 	char      *outputfile;										/* output filename or NULL                         */
 	ec_stream *outputstream;									/* output stream (or NULL)                         */
+
+	EcBool  lazy;												/* lazy programmer: allow implicit variable declaration */
 } ec_compiler_options;
 
 /* Qualified Symbol */

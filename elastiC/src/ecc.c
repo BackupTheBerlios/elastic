@@ -7,9 +7,9 @@
  *
  *   Created: Thu Jul 16 15:05:56 MEST 1998
  *
- *   $Id: ecc.c,v 1.3 2005/03/03 23:51:43 panta Exp $
+ *   $Id: ecc.c,v 1.4 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2005 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -51,7 +51,7 @@ char *__progname = "ecc";
  * ======================================================================== */
 
 int           main( int argc, char *argv[] );
-static EcBool doCompile( const char *name, const char *output );
+static EcBool doCompile( const char *name, const char *output, EcBool lazy );
 static void   banner( void );
 static void   usage( void );
 static void   version( void );
@@ -64,8 +64,9 @@ static void   error( const char *msg );
 static char ecc_version[] = "0.03";
 
 static char   *option_outputfile = NULL;
-static EcBool  option_debug = FALSE;
-static EcBool  option_verbose = FALSE;
+static EcBool  option_debug      = FALSE;
+static EcBool  option_verbose    = FALSE;
+static EcBool  option_lazy       = FALSE;
 
 /* ========================================================================
  * I M P L E M E N T A T I O N
@@ -86,7 +87,7 @@ int main( int argc, char *argv[] )
 	char *source;
 
 	/* Scan options */
-	while ((ch = getopt( argc, argv, "dhvVo:" )) != -1)
+	while ((ch = getopt( argc, argv, "dhvlVo:" )) != -1)
 	{
 		switch ((char) ch)
 		{
@@ -105,6 +106,10 @@ int main( int argc, char *argv[] )
 
 		case 'v':
 			option_verbose = TRUE;
+			break;
+
+		case 'l':
+			option_lazy = TRUE;
 			break;
 
 		case 'V':
@@ -137,7 +142,7 @@ int main( int argc, char *argv[] )
 		goto onError;
 	}
 
-	if (! doCompile( source, option_outputfile ))
+	if (! doCompile( source, option_outputfile, option_lazy ))
 	{
 		error( "error during compilation" );
 		goto onError;
@@ -154,7 +159,7 @@ onError:
 	exit( EXIT_FAILURE );
 }
 
-static EcBool doCompile( const char *name, const char *output )
+static EcBool doCompile( const char *name, const char *output, EcBool lazy )
 {
 	ec_compiler_ctxt    ctxt;
 	ec_compiler_options comp_opts;
@@ -165,6 +170,7 @@ static EcBool doCompile( const char *name, const char *output )
 	comp_opts.in_package    = EC_NIL;
 	comp_opts.save          = TRUE;								/* save compiled packages */
 	comp_opts.outputfile    = (char *) output;					/* output filename        */
+	comp_opts.lazy          = lazy;
 	ctxt = EcCompilerContextCreate();
 
 	compiled = EcCompile( ctxt, name, FALSE, FALSE, &comp_opts );
@@ -177,30 +183,31 @@ static EcBool doCompile( const char *name, const char *output )
 
 static void banner( void )
 {
-	fprintf( stderr, "ecc version %s (elastiC %s)\n", ecc_version, EcVersionString() );
-	fprintf( stderr, "Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.\n" );
+	ec_stderr_printf( "ecc version %s (elastiC %s)\n", ecc_version, EcVersionString() );
+	ec_stderr_printf( "Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.\n" );
 }
 
 static void usage( void )
 {
 	banner();
-	fprintf( stderr, "\nUsage: ecc [options] sourcefile\n" );
-	fprintf( stderr, "Options:\n" );
-	fprintf( stderr, "   -o FILE               Set output file name\n" );
-	fprintf( stderr, "   -d                    Enable debugging information\n" );
-	fprintf( stderr, "   -h                    Show usage information\n" );
-	fprintf( stderr, "   -v                    Be verbose\n" );
-	fprintf( stderr, "   -V                    Display version information\n" );
-	fprintf( stderr, "\n" );
+	ec_stderr_printf( "\nUsage: ecc [options] sourcefile\n" );
+	ec_stderr_printf( "Options:\n" );
+	ec_stderr_printf( "   -o FILE               Set output file name\n" );
+	ec_stderr_printf( "   -d                    Enable debugging information\n" );
+	ec_stderr_printf( "   -h                    Show usage information\n" );
+	ec_stderr_printf( "   -v                    Be verbose\n" );
+	ec_stderr_printf( "   -l                    Lazy programmer. Allow implicit variable declaration\n" );
+	ec_stderr_printf( "   -V                    Display version information\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void version( void )
 {
-	fprintf( stderr, "ecc version: %s\n", ecc_version );
-	fprintf( stderr, "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
+	ec_stderr_printf( "ecc version: %s\n", ecc_version );
+	ec_stderr_printf( "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
 }
 
 static void error( const char *msg )
 {
-	fprintf( stderr, "ERROR: %s\n\n", msg );
+	ec_stderr_printf( "ERROR: %s\n\n", msg );
 }

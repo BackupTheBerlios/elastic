@@ -1,3 +1,17 @@
+2005-03-08  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/modules/stream_m.c (EcLibStream_Gets): Fixed EOF condition
+	handling.
+
+	* src/compile.c (compileVariable) src/ec.c src/ecc.c src/ec2c.c:
+	added a 'lazy' option. When enabled allows implicit parameter
+	declaration (read: you can omit variable declaration, *only* for
+	package and function/method variables).
+
+	* ...: abandoned libc stdio wherever possible and switched to
+	the new stream mechanism. This allows to use esotic streams
+	for elastiC input/output.
+
 2005-03-04  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/elastic.c src/private.h ...: integrated patch from Anand

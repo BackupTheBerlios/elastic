@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec 12 22:01:08 MET 1998
  *
- *   $Id: oop.c,v 1.4 2002/06/13 17:44:18 panta Exp $
+ *   $Id: oop.c,v 1.5 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -481,7 +481,7 @@ EC_API EC_OBJ EcFindMethod( EC_OBJ obj, EC_OBJ *at_class, EcUInt methodid )
 
 	ASSERT( EC_OBJECTP(obj) );
 
-	/*ec_fprintf( stderr, "EcFindMethod  methodid: %ld %k\n", (long)methodid, methodid );*/
+	/*ec_stderr_printf( "EcFindMethod  methodid: %ld %k\n", (long)methodid, methodid );*/
 	if (at_class && EC_NNULLP(*at_class))
 		classobj = *at_class;
 	else
@@ -530,9 +530,8 @@ EC_API EC_OBJ EcDispatchObjectMessage( EC_OBJ obj, EC_OBJ at_class, EcUInt metho
 
 	ASSERT( EC_OBJECTP(obj) );
 
-/*	ec_fprintf( stderr,
-				"EcDispatchObjectMessage   receiver: %w.%w  method: %k  nargs: %ld\n",
-				at_class, obj, methodid, EC_NNULLP(stack) ? (long)EC_STACKNARGS_LOGICAL(stack) : 0 );*/
+/*	ec_stderr_printf( "EcDispatchObjectMessage   receiver: %w.%w  method: %k  nargs: %ld\n",
+                      at_class, obj, methodid, EC_NNULLP(stack) ? (long)EC_STACKNARGS_LOGICAL(stack) : 0 );*/
 
 	if (EC_BOOLP(at_class))
 		classobj = EC_OBJECTCLASS(obj);
@@ -542,9 +541,8 @@ EC_API EC_OBJ EcDispatchObjectMessage( EC_OBJ obj, EC_OBJ at_class, EcUInt metho
 	while (EC_NNULLP(classobj))
 	{
 		at = search_method( EC_CLASSNMETHODS(classobj), EC_CLASSMTABLE(classobj), methodid ); 
-/*		ec_fprintf( stderr,
-					"   in class %w  at: %ld\n",
-					classobj, (long)at );*/
+/*		ec_stderr_printf( "   in class %w  at: %ld\n",
+					      classobj, (long)at );*/
 		if (at >= 0)
 		{
 			callable = EC_CLASSMTABLE(classobj)[at].impl;
@@ -621,11 +619,11 @@ EC_API EC_OBJ EcGetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varS
 		at_class = EC_OBJECTCLASS(obj);
 
 	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), varSymbol );
-/*	ec_fprintf( stderr, "GetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
-	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf( "GetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
+	ec_stderr_printf( "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
 	if (offs < 0)
 		return Ec_ERROR;
-/*	fprintf( stderr, "GetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf(  "GetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
 	return EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs];
 }
 
@@ -637,11 +635,11 @@ EC_API EC_OBJ EcGetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *na
 		at_class = EC_OBJECTCLASS(obj);
 
 	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), EcInternSymbol( name ) );
-/*	ec_fprintf( stderr, "GetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, name );
-	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf( "GetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, name );
+	ec_stderr_printf( "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
 	if (offs < 0)
 		return Ec_ERROR;
-/*	fprintf( stderr, "GetIV: `%s'  offs: %d   coffs: %d\n", name, offs, EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf(  "GetIV: `%s'  offs: %d   coffs: %d\n", name, offs, EC_CLASSIOFFSET(at_class) );*/
 	return EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs];
 }
 
@@ -653,11 +651,11 @@ EC_API EC_OBJ EcSetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varS
 		at_class = EC_OBJECTCLASS(obj);
 
 	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), varSymbol );
-/*	ec_fprintf( stderr, "SetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
-	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf( "SetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
+	ec_stderr_printf( "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
 	if (offs < 0)
 		return Ec_ERROR;
-/*	fprintf( stderr, "SetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf(  "SetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
 	return (EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs] = value);
 }
 
@@ -669,11 +667,11 @@ EC_API EC_OBJ EcSetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *na
 		at_class = EC_OBJECTCLASS(obj);
 
 	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), EcInternSymbol( name ) );
-/*	ec_fprintf( stderr, "SetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, name );
-	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf( "SetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, name );
+	ec_stderr_printf( "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
 	if (offs < 0)
 		return Ec_ERROR;
-/*	fprintf( stderr, "SetIV: `%s'  offs: %d   coffs: %d\n", name, offs, EC_CLASSIOFFSET(at_class) );*/
+/*	ec_stderr_printf(  "SetIV: `%s'  offs: %d   coffs: %d\n", name, offs, EC_CLASSIOFFSET(at_class) );*/
 	return (EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs] = value);
 }
 
@@ -727,13 +725,13 @@ EC_API EcBool EcIsOfClass( EC_OBJ obj, EC_OBJ classobj )
 
 	if (! EC_OBJECTP(obj)) return FALSE;
 
-/*	ec_fprintf( stderr, "obj  : %w\n", obj );
-	ec_fprintf( stderr, "class: %w\n", classobj );*/
+/*	ec_stderr_printf( "obj  : %w\n", obj );
+	ec_stderr_printf( "class: %w\n", classobj );*/
 
 	objclass = EC_OBJECTCLASS(obj);
 	while (EC_NNULLP(objclass))
 	{
-/*		ec_fprintf( stderr, "objclass: %w\n", objclass );*/
+/*		ec_stderr_printf( "objclass: %w\n", objclass );*/
 		if (objclass == classobj)
 			return TRUE;
 
@@ -747,7 +745,7 @@ static inline EcInt search_method( EcInt nmethods, EcMethodEntry *mtable, EcUInt
 {
 	EcInt i, j, k, cmp;
 
-	/*ec_fprintf( stderr, "search_method  methodid: %ld %k\n", (long)methodid, methodid );*/
+	/*ec_stderr_printf( "search_method  methodid: %ld %k\n", (long)methodid, methodid );*/
 
 	/* Binary Search */
 	i = 0;
@@ -756,7 +754,7 @@ static inline EcInt search_method( EcInt nmethods, EcMethodEntry *mtable, EcUInt
 	{
 		k = (i + j) / 2;
 		cmp = mtable[k].symid - methodid;
-		/*fprintf( stderr,
+		/*ec_stderr_printf( 
 				 "i: %ld   j: %ld   k: %ld   sym[k]: %ld   method: %ld   cmp: %ld\n",
 				 (long)i, (long)j, (long)k, (long)mtable[k].symid, (long)methodid, (long)cmp );*/
 		if (cmp < 0)
@@ -765,7 +763,7 @@ static inline EcInt search_method( EcInt nmethods, EcMethodEntry *mtable, EcUInt
 			j = k - 1;
 		else
 		{
-			/*fprintf( stderr, "FOUND   k: %ld\n", (long)k );*/
+			/*ec_stderr_printf(  "FOUND   k: %ld\n", (long)k );*/
 			/* Found ! */
 			ASSERT( k >= 0 );
 			ASSERT( k < nmethods );

@@ -7,7 +7,7 @@
  *
  *   Created: 
  *
- *   $Id: packageio.c,v 1.5 2003/05/29 10:36:00 panta Exp $
+ *   $Id: packageio.c,v 1.6 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -62,7 +62,7 @@
 
 #if defined(WITH_STDIO) && SHOW_MAP
 static int s_lev = 0;
-static void indent(void) { int i; for (i = 0; i < s_lev; i++) fprintf(stderr, "  "); }
+static void indent(void) { int i; for (i = 0; i < s_lev; i++) ec_stderr_printf("  "); }
 #define S_IN	do { s_lev++; } while (0)
 #define S_OUT	do { s_lev--; } while (0)
 #define PKG_OK(obj)			(EC_PACKAGEP(obj) && (EC_PACKAGE(obj)))
@@ -70,7 +70,7 @@ static void indent(void) { int i; for (i = 0; i < s_lev; i++) fprintf(stderr, " 
 #define SHOW_READ(id,type,obj,cached)	\
 do {                                                     \
 	indent();                                            \
-	ec_fprintf( stderr, "R  %3ld  type: %15s %8s %W\n",  \
+	ec_stderr_printf( "R  %3ld  type: %15s %8s %W\n",  \
 				(long)(id), EcTypeName( (type) ),        \
 				(cached) ? "(CACHED)" : "",              \
 				(cached) ? (obj) : SHOW_IF_PKGOK(obj) ); \
@@ -78,14 +78,14 @@ do {                                                     \
 #define SHOW_WRITE(id,type,obj,cached)	\
 do {                                                     \
 	indent();                                            \
-	ec_fprintf( stderr, "W  %3ld  type: %15s %8s %W\n",  \
+	ec_stderr_printf( "W  %3ld  type: %15s %8s %W\n",  \
 				(long)(id), EcTypeName( (type) ),        \
 				(cached) ? "(CACHED)" : "", (obj) );     \
 } while (0)
 #define SHOW_READ_LATER(id,obj)	\
 do {                                    \
 	indent();                           \
-	ec_fprintf( stderr, "   %3ld  %W\n", \
+	ec_stderr_printf( "   %3ld  %W\n", \
 				(long)(id), (obj) );    \
 } while (0)
 #define SHOW_PKGREAD(id,obj,cached)		 SHOW_READ(id,tc_package,obj,cached)
@@ -190,7 +190,7 @@ EC_API EcBool EcPackageSave( EC_OBJ package, const char *pathname )
 	ec_string realpathname;										/* final pathname used */
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "EcPackageSave  PATH: '%s'\n",
+	ec_stderr_printf( "EcPackageSave  PATH: '%s'\n",
 			 pathname ? pathname : "--" );
 #endif
 
@@ -247,7 +247,7 @@ EC_API EC_OBJ EcPackageLoadStream( ec_stream  *stream,			/* input stream      */
 	ASSERT( stream );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "LOADING PACKAGE  NAME: %s  (from stream) (exec: %s, %s)\n",
+	ec_stderr_printf( "LOADING PACKAGE  NAME: %s  (from stream) (exec: %s, %s)\n",
 			 name ? name : "--",
 			 execute ? "YES" : "NO",
 			 executeImported ? "YES" : "NO" );
@@ -261,7 +261,7 @@ EC_API EC_OBJ EcPackageLoadStream( ec_stream  *stream,			/* input stream      */
 		{
 			EC_CHECK( obj );
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-			fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY IN)\n\n", name ? name : "(no name)" );
+			ec_stderr_printf( "PACKAGE '%s' LOADED. (ALREADY IN)\n\n", name ? name : "(no name)" );
 #endif
 			return obj;
 		}
@@ -306,7 +306,7 @@ EC_API EC_OBJ EcPackageLoadByName( const char *name,
 	ASSERT( name );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "LOADING PACKAGE BY NAME: %s  (exec: %s, %s)\n",
+	ec_stderr_printf( "LOADING PACKAGE BY NAME: %s  (exec: %s, %s)\n",
 			 name ? name : "--",
 			 execute ? "YES" : "NO",
 			 executeImported ? "YES" : "NO" );
@@ -318,7 +318,7 @@ EC_API EC_OBJ EcPackageLoadByName( const char *name,
 	{
 		EC_CHECK( obj );
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY PRESENT)\n\n", name );
+		ec_stderr_printf( "PACKAGE '%s' LOADED. (ALREADY PRESENT)\n\n", name );
 #endif
 		return obj;
 	}
@@ -353,7 +353,7 @@ EC_API EC_OBJ EcPackageLoadByName( const char *name,
 		ec_stream_close( stream );
 	}
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "PACKAGE '%s' LOADED.\n\n", name );
+	ec_stderr_printf( "PACKAGE '%s' LOADED.\n\n", name );
 #endif
 
 	EC_CHECKALL();
@@ -375,7 +375,7 @@ EC_API EC_OBJ EcPackageLoadByPath( const char *pathname,
 	ASSERT( pathname );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "LOADING PACKAGE BY PATH: %s  (exec: %s, %s)\n",
+	ec_stderr_printf( "LOADING PACKAGE BY PATH: %s  (exec: %s, %s)\n",
 			 pathname ? pathname : "--",
 			 execute ? "YES" : "NO",
 			 executeImported ? "YES" : "NO" );
@@ -414,7 +414,7 @@ EC_API EC_OBJ EcPackageLoadByPath( const char *pathname,
 	if (EC_PACKAGEP(obj))
 		ec_msg_printf( "PACKAGE '%w' LOADED.\n\n", EC_PACKAGENAME(obj) );
 	else
-		ec_msg_printf( stderr, "PACKAGE with path '%s' LOADED.\n\n", pathname );
+		ec_msg_printf( "PACKAGE with path '%s' LOADED.\n\n", pathname );
 #endif
 
 	EC_CHECKALL();
@@ -445,7 +445,7 @@ static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 	EC_OBJ exc;
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "SAVING PACKAGE TO FILE: '%s'\n",
+	ec_stderr_printf( "SAVING PACKAGE TO FILE: '%s'\n",
 			 pathname ? pathname : "--" );
 #endif
 
@@ -498,17 +498,17 @@ static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 
 	/* Import list */
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf(stderr, "SAVE HELPER:\n");
-	fprintf(stderr, "   name     : %s\n",  EC_STRDATA(EC_PACKAGENAME(package)));
-	fprintf(stderr, "   npackages: %ld\n", (long)PRIVATE(npackages));
-	fprintf(stderr, "   ncurpkg  : %ld\n", (long)ncurpkg);
+	ec_stderr_printf("SAVE HELPER:\n");
+	ec_stderr_printf("   name     : %s\n",  EC_STRDATA(EC_PACKAGENAME(package)));
+	ec_stderr_printf("   npackages: %ld\n", (long)PRIVATE(npackages));
+	ec_stderr_printf("   ncurpkg  : %ld\n", (long)ncurpkg);
 #endif
 	write_dword( stream, PRIVATE(npackages) );
 	write_dword( stream, ncurpkg );								/* ourselves */
 	for (i = 0; i < PRIVATE(npackages); i++)
 	{
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, ec_strdata( PRIVATE(package)[i].name ));
+		ec_stderr_printf("   pkg[%ld]  : %s\n",  (long)i, ec_strdata( PRIVATE(package)[i].name ));
 #endif
 		write_string( stream, ec_strdata( PRIVATE(package)[i].name ) );
 	}
@@ -569,7 +569,7 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 	ec_string_init( &pkgname, NULL );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "READING PACKAGE '%s'  (exec: %s, %s)\n",
+	ec_stderr_printf( "READING PACKAGE '%s'  (exec: %s, %s)\n",
 			 name ? name : "UNSPECIFIED", execute ? "YES" : "NO", executeImported ? "YES" : "NO" );
 #endif
 
@@ -602,8 +602,8 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 
 	if (strcmp( ec_strdata(&packagename), lname ) != 0)
 	{
-/*		fprintf( stderr, "REQUESTED: '%s'\n", lname );
-		fprintf( stderr, "FOUND    : '%s'\n", ec_strdata(&packagename) ); */
+/*		ec_stderr_printf( "REQUESTED: '%s'\n", lname );
+		ec_stderr_printf( "FOUND    : '%s'\n", ec_strdata(&packagename) ); */
 		EcAlert( EcError, "loaded a package with a different name from requested" );
 		goto onError;
 	}
@@ -621,10 +621,10 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 	saved_ncurpkg   = read_dword( stream );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf(stderr, "LOAD HELPER:\n");
-	fprintf(stderr, "   saved_name     : %s\n",  lname);
-	fprintf(stderr, "   saved_npackages: %ld\n", (long)saved_npackages);
-	fprintf(stderr, "   saved_ncurpkg  : %ld\n", (long)saved_ncurpkg);
+	ec_stderr_printf("LOAD HELPER:\n");
+	ec_stderr_printf("   saved_name     : %s\n",  lname);
+	ec_stderr_printf("   saved_npackages: %ld\n", (long)saved_npackages);
+	ec_stderr_printf("   saved_ncurpkg  : %ld\n", (long)saved_ncurpkg);
 #endif
 
 	if (saved_npackages < saved_ncurpkg)
@@ -657,8 +657,8 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 		if (! strp) goto onError;
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, ec_strdata(&pkgname));
-		fprintf( stderr, "IMP %s\n", ec_strdata(&pkgname) );
+		ec_stderr_printf("   pkg[%ld]  : %s\n",  (long)i, ec_strdata(&pkgname));
+		ec_stderr_printf( "IMP %s\n", ec_strdata(&pkgname) );
 #endif
 		if (i != saved_ncurpkg)
 		{
@@ -689,7 +689,7 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 			pkg_now_at[i] = n-1;								/* last position */
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "Package %ld  now at  %ld (name: %s)\n", (long)i, (long)pkg_now_at[i], ec_strdata(&pkgname) );
+		ec_stderr_printf( "Package %ld  now at  %ld (name: %s)\n", (long)i, (long)pkg_now_at[i], ec_strdata(&pkgname) );
 #endif
 	}
 
@@ -723,7 +723,7 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 		ASSERT( saved_ncoreglobals == PRIVATE(ncoreglobals) );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		ec_fprintf(stderr, "@@ PATCH BYTECODE from PACKAGE_LOAD_HELPER(%s): %w\n", lname, obj);
+		ec_stderr_printf("@@ PATCH BYTECODE from PACKAGE_LOAD_HELPER(%s): %w\n", lname, obj);
 #endif
 		ASSERT( PRIVATE(patchmap) );
 		patch_bytecode( PRIVATE(patchmap), obj, saved_npackages, pkg_now_at );
@@ -736,13 +736,13 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 	if (execute)
 	{
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "Going to execute package '%s'.\n", lname );
+		ec_stderr_printf( "Going to execute package '%s'.\n", lname );
 #endif
 		EC_CHECK( obj );
 		EcMainExecute( obj );
 		EC_CHECK( obj );
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "DONE.\n" );
+		ec_stderr_printf( "DONE.\n" );
 #endif
 	}
 
@@ -796,7 +796,7 @@ static EcBool find_package( const char *name, const char *pathname, ec_stream **
 	if (pathname)
 	{
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "pathname given: '%s'\n", pathname );
+		ec_stderr_printf( "pathname given: '%s'\n", pathname );
 #endif
 		stream = ec_filestream_fopen( pathname, "rb", &exc );
 		if ((! stream) || EC_ERRORP(exc))
@@ -825,7 +825,7 @@ static EcBool find_package( const char *name, const char *pathname, ec_stream **
 	ASSERT( name );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "pkg name: '%s'\n", name );
+	ec_stderr_printf( "pkg name: '%s'\n", name );
 #endif
 
 	ec_string_init( &pkgname, name );
@@ -889,7 +889,7 @@ static EcBool find_package( const char *name, const char *pathname, ec_stream **
 			ec_strcatd( &realpathname, &pathname_tail );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-			fprintf( stderr, "Trying file '%s'\n", ec_strdata( &realpathname ) );
+			ec_stderr_printf( "Trying file '%s'\n", ec_strdata( &realpathname ) );
 #endif
 			stream = ec_filestream_fopen( ec_strdata( &realpathname ), "rb", &exc );
 			if ((! stream) || EC_ERRORP(exc))
@@ -1246,7 +1246,7 @@ static void patch_bytecode( objectmap map, EC_OBJ obj, EcInt npkgs, EcInt *pkg_n
 
 						ASSERT( pkg < npkgs );
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-					    fprintf( stderr, "Patching %ld -> %ld (npkgs: %ld)\n", (long)pkg, (long)pkg_now_at[pkg], (long)npkgs );
+					    ec_stderr_printf( "Patching %ld -> %ld (npkgs: %ld)\n", (long)pkg, (long)pkg_now_at[pkg], (long)npkgs );
 #endif
 						pkg = pkg_now_at[pkg];
 
@@ -1405,11 +1405,11 @@ static void write_object( objectmap map, ec_stream *stream, EC_OBJ obj )
 /*	if (EC_NULLP(obj))
 	{
 		write_word( stream, tc_none );
-		fprintf( stderr, "%ld OBJECT   TYPE: %2d  (%s)\n", id, tc_none, EcTypeName( tc_none ) );
+		ec_stderr_printf( "%ld OBJECT   TYPE: %2d  (%s)\n", id, tc_none, EcTypeName( tc_none ) );
 		return;
 	}*/
 
-/*	fprintf( stderr, "%ld OBJECT   TYPE: %2d  (%s)\n", (long)id, EC_TYPE(obj), EcTypeName( EC_TYPE(obj) ) );*/
+/*	ec_stderr_printf( "%ld OBJECT   TYPE: %2d  (%s)\n", (long)id, EC_TYPE(obj), EcTypeName( EC_TYPE(obj) ) );*/
 
 	write_word( stream, EC_TYPE(obj) );
 	switch (EC_TYPE(obj))
@@ -2392,7 +2392,7 @@ static EC_OBJ id2object( objectmap map, EcUInt id )
 	if (! ec_hash_get( map->id2obj, (EcAny)(EcPointerInteger)id, (EcAny *)&obj ))
 	{
 #if defined(WITH_STDIO) && SHOW_MAP
-		fprintf( stderr, "INVALID_OBJECT at id = %ld\n", (long)id );
+		ec_stderr_printf( "INVALID_OBJECT at id = %ld\n", (long)id );
 #endif
 		return INVALID_OBJECT;
 	}

@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ec.c,v 1.4 2005/03/03 23:51:43 panta Exp $
+ *   $Id: ec.c,v 1.5 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -65,6 +65,7 @@ static void error( const char *msg );
 static char ec_version[] = "0.03";
 
 static EcBool option_verbose = FALSE;
+static EcBool option_lazy    = FALSE;
 
 /* ========================================================================
  * I M P L E M E N T A T I O N
@@ -85,7 +86,7 @@ int main( int argc, char *argv[] )
 	int ch;
 
 	/* Scan options */
-	while ((ch = getopt( argc, argv, "hvV" )) != -1)
+	while ((ch = getopt( argc, argv, "hvlV" )) != -1)
 	{
 		switch ((char) ch)
 		{
@@ -96,6 +97,10 @@ int main( int argc, char *argv[] )
 
 		case 'v':
 			option_verbose = TRUE;
+			break;
+
+		case 'l':
+			option_lazy = TRUE;
 			break;
 
 		case 'V':
@@ -152,7 +157,7 @@ static int doExecute( const char *name, int argc, char *argv[] )
 	int l;
 
 	if (option_verbose)
-		fprintf( stderr, "Loading `%s'\n", name );
+		ec_stderr_printf( "Loading `%s'\n", name );
 	l = strlen( name );
 	pkgname = alloca( l + 1 );
 	if (! pkgname) return 0;
@@ -168,12 +173,13 @@ static int doExecute( const char *name, int argc, char *argv[] )
 			   (strcmp( &name[l - strlen(EC_SOURCESUFFIX)], EC_SOURCESUFFIX ) == 0))
 	{
 		if (option_verbose)
-			fprintf( stderr, "Compiling `%s'\n", name );
+			ec_stderr_printf( "Compiling `%s'\n", name );
 
 		comp_opts.whole_package = TRUE;							/* it's a whole package         */
 		comp_opts.in_package    = EC_NIL;
 		comp_opts.save          = FALSE;						/* don't save compiled packages */
 		comp_opts.outputfile    = NULL;							/* output filename              */
+		comp_opts.lazy          = option_lazy;					/* lazy programmer              */
 		ctxt = EcCompilerContextCreate();
 		package = EcCompile( ctxt,
 							 name,
@@ -184,7 +190,7 @@ static int doExecute( const char *name, int argc, char *argv[] )
 		if (! EC_PACKAGEP(package))
 			error( "Bad package source file specified." );
 		if (option_verbose)
-			fprintf( stderr, "Compilation done.\n" );
+			ec_stderr_printf( "Compilation done.\n" );
 	} else
 	{
 		strcpy( pkgname, name );
@@ -193,7 +199,7 @@ static int doExecute( const char *name, int argc, char *argv[] )
 			error( "Bad package binary file specified." );
 	}
 	if (option_verbose)
-		fprintf( stderr, "Load completed.\n" );
+		ec_stderr_printf( "Load completed.\n" );
 
 	EcSetArgs( argc, argv );
 	res = EcMainExecute( package );
@@ -203,29 +209,30 @@ static int doExecute( const char *name, int argc, char *argv[] )
 
 static void banner( void )
 {
-	fprintf( stderr, "ec version %s (elastiC %s)\n", ec_version, EcVersionString() );
-	fprintf( stderr, "Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.\n" );
+	ec_stderr_printf( "ec version %s (elastiC %s)\n", ec_version, EcVersionString() );
+	ec_stderr_printf( "Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.\n" );
 }
 
 static void usage( void )
 {
 	banner();
-	fprintf( stderr, "\nUsage: ec [options] objectfile [program options]\n" );
-	fprintf( stderr, "Options:\n" );
-	fprintf( stderr, "   -h                    Show usage information\n" );
-	fprintf( stderr, "   -v                    Be verbose\n" );
-	fprintf( stderr, "   -V                    Display version information\n" );
-	fprintf( stderr, "\n" );
+	ec_stderr_printf( "\nUsage: ec [options] objectfile [program options]\n" );
+	ec_stderr_printf( "Options:\n" );
+	ec_stderr_printf( "   -h                    Show usage information\n" );
+	ec_stderr_printf( "   -v                    Be verbose\n" );
+	ec_stderr_printf( "   -l                    Lazy programmer. Allow implicit variable declaration\n" );
+	ec_stderr_printf( "   -V                    Display version information\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void version( void )
 {
-	fprintf( stderr, "ec version: %s\n", ec_version );
-	fprintf( stderr, "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
+	ec_stderr_printf( "ec version: %s\n", ec_version );
+	ec_stderr_printf( "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
 }
 
 static void error( const char *msg )
 {
-	fprintf( stderr, "ERROR: %s\n\n", msg );
+	ec_stderr_printf( "ERROR: %s\n\n", msg );
 	exit( EXIT_FAILURE );
 }

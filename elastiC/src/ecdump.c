@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ecdump.c,v 1.4 2005/03/03 23:51:43 panta Exp $
+ *   $Id: ecdump.c,v 1.5 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -154,7 +154,7 @@ static int doDump( const char *filename )
 	EcInt   linenum;
 
 	if (option_verbose)
-		fprintf( stderr, "Loading `%s'\n", filename );
+		ec_stderr_printf( "Loading `%s'\n", filename );
 	package = EcPackageLoadByPath( filename, /* execute: */ FALSE, /* executeImported: */ FALSE );
 	if (! EC_PACKAGEP(package))
 	{
@@ -162,7 +162,7 @@ static int doDump( const char *filename )
 		return 0;
 	}
 	if (option_verbose)
-		fprintf( stderr, "Load completed.\n" );
+		ec_stderr_printf( "Load completed.\n" );
 
 	/*
 	 * Read source file
@@ -199,8 +199,8 @@ static void indent( EcInt level )
 	EcInt i;
 
 	for (i = 0; i < level; i++)
-		fprintf( stdout, "    " );
-	fflush( stdout );
+		ec_stdout_printf( "    " );
+	ec_stdout_flush();
 }
 
 #define IND0	do { indent( level );     } while (0)
@@ -216,46 +216,46 @@ static void dump( FILE *sourcefh, EcInt level, EC_OBJ obj )
 
 	if (EC_ARRAYP(obj))
 	{
-		IND0; ec_fprintf( stdout, "ARRAY %r:\n", obj ); fflush( stdout );
+		IND0; ec_stdout_printf( "ARRAY %r:\n", obj ); ec_stdout_flush();
 		if (option_all)
 		{
 			for (i = 0; i < EC_ARRAYLEN(obj); i++)
 			{
 				sub = EcArrayGet( obj, i );
-				IND1; ec_fprintf( stdout, "ELEMENT %ld: %w\n", i, sub ); fflush( stdout );
-				dump( sourcefh, level + 1, sub ); fflush( stdout );
+				IND1; ec_stdout_printf( "ELEMENT %ld: %w\n", i, sub ); ec_stdout_flush();
+				dump( sourcefh, level + 1, sub ); ec_stdout_flush();
 			}
 		}
 	} else if (EC_PACKAGEP(obj))
 	{
-		IND0; ec_fprintf( stdout, "PACKAGE %r:\n", obj ); fflush( stdout );
-		dump( sourcefh, level + 1, EC_PACKAGECODE(obj) ); fflush( stdout );
+		IND0; ec_stdout_printf( "PACKAGE %r:\n", obj ); ec_stdout_flush();
+		dump( sourcefh, level + 1, EC_PACKAGECODE(obj) ); ec_stdout_flush();
 		if (option_all)
 		{
 			for (i = 0; i < EC_PACKAGENEXPORT(obj); i++)
 			{
-				ec_fprintf( stdout, "\n" ); fflush( stdout );
+				ec_stdout_printf( "\n" ); ec_stdout_flush();
 				sub = EcArrayGet( EC_PACKAGEFRAME(obj), EC_PACKAGEEXPORT(obj)[i].pos );
-				IND1; ec_fprintf( stdout, "EXPORTED %k at %ld: %w\n", EC_PACKAGEEXPORT(obj)[i].sym, (long)i, sub ); fflush( stdout );
-				dump( sourcefh, level + 1, sub ); fflush( stdout );
+				IND1; ec_stdout_printf( "EXPORTED %k at %ld: %w\n", EC_PACKAGEEXPORT(obj)[i].sym, (long)i, sub ); ec_stdout_flush();
+				dump( sourcefh, level + 1, sub ); ec_stdout_flush();
 			}
 
-			dump( sourcefh, level + 1, EC_PACKAGEFRAME(obj) ); fflush( stdout );
+			dump( sourcefh, level + 1, EC_PACKAGEFRAME(obj) ); ec_stdout_flush();
 		}
 	} else if (EC_COMPILEDP(obj))
 	{
-		IND0; ec_fprintf( stdout, "BYTECODE %r:\n", obj ); fflush( stdout );
-		dump_bytecode( sourcefh, level + 1, obj, 0 ); fflush( stdout );
+		IND0; ec_stdout_printf( "BYTECODE %r:\n", obj ); ec_stdout_flush();
+		dump_bytecode( sourcefh, level + 1, obj, 0 ); ec_stdout_flush();
 	} else if (EC_HANDLERP(obj))
 	{
-		IND0; ec_fprintf( stdout, "HANDLER %r:\n", obj ); fflush( stdout );
+		IND0; ec_stdout_printf( "HANDLER %r:\n", obj ); ec_stdout_flush();
 		if (option_all)
 		{
-			dump( sourcefh, level + 1, EC_HANDLERCODE(obj) ); fflush( stdout );
+			dump( sourcefh, level + 1, EC_HANDLERCODE(obj) ); ec_stdout_flush();
 		}
 	} else if (EC_CLASSP(obj))
 	{
-		IND0; ec_fprintf( stdout, "CLASS %r:\n", obj ); fflush( stdout );
+		IND0; ec_stdout_printf( "CLASS %r:\n", obj ); ec_stdout_flush();
 		if (option_all)
 		{
 			EcUInt symid;
@@ -265,8 +265,8 @@ static void dump( FILE *sourcefh, EcInt level, EC_OBJ obj )
 				symid = EC_CLASSMTABLE(obj)[i].symid;
 				sub   = EC_CLASSMTABLE(obj)[i].impl;
 
-				IND1; ec_fprintf( stdout, "METHOD %k: %w\n", symid, sub ); fflush( stdout );
-				dump( sourcefh, level + 1, sub ); fflush( stdout );
+				IND1; ec_stdout_printf( "METHOD %k: %w\n", symid, sub ); ec_stdout_flush();
+				dump( sourcefh, level + 1, sub ); ec_stdout_flush();
 			}
 
 			for (i = 0; i < EC_CLASSNCMETHODS(obj); i++)
@@ -274,41 +274,41 @@ static void dump( FILE *sourcefh, EcInt level, EC_OBJ obj )
 				symid = EC_CLASSCMTABLE(obj)[i].symid;
 				sub   = EC_CLASSCMTABLE(obj)[i].impl;
 
-				IND1; ec_fprintf( stdout, "CLASS METHOD %k: %w\n", symid, sub ); fflush( stdout );
-				dump( sourcefh, level + 1, sub ); fflush( stdout );
+				IND1; ec_stdout_printf( "CLASS METHOD %k: %w\n", symid, sub ); ec_stdout_flush();
+				dump( sourcefh, level + 1, sub ); ec_stdout_flush();
 			}
 		}
 	}
-	fflush( stdout );
+	ec_stdout_flush();
 }
 
 static void banner( void )
 {
-	fprintf( stderr, "ecdump version %s (elastiC %s)\n", ecdump_version, EcVersionString() );
-	fprintf( stderr, "Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.\n" );
+	ec_stderr_printf( "ecdump version %s (elastiC %s)\n", ecdump_version, EcVersionString() );
+	ec_stderr_printf( "Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.\n" );
 }
 
 static void usage( void )
 {
 	banner();
-	fprintf( stderr, "\nUsage: ecdump [options] objectfile\n" );
-	fprintf( stderr, "Options:\n" );
-	fprintf( stderr, "   -a                    Dump all\n" );
-	fprintf( stderr, "   -h                    Show usage information\n" );
-	fprintf( stderr, "   -v                    Be verbose\n" );
-	fprintf( stderr, "   -V                    Display version information\n" );
-	fprintf( stderr, "\n" );
+	ec_stderr_printf( "\nUsage: ecdump [options] objectfile\n" );
+	ec_stderr_printf( "Options:\n" );
+	ec_stderr_printf( "   -a                    Dump all\n" );
+	ec_stderr_printf( "   -h                    Show usage information\n" );
+	ec_stderr_printf( "   -v                    Be verbose\n" );
+	ec_stderr_printf( "   -V                    Display version information\n" );
+	ec_stderr_printf( "\n" );
 }
 
 static void version( void )
 {
-	fprintf( stderr, "ecdump version: %s\n", ecdump_version );
-	fprintf( stderr, "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
+	ec_stderr_printf( "ecdump version: %s\n", ecdump_version );
+	ec_stderr_printf( "elastiC version: %s (dec: %lu)\n", EcVersionString(), (unsigned long)EcVersionNumber() );
 }
 
 static void error( const char *msg )
 {
-	fprintf( stderr, "ERROR: %s\n\n", msg );
+	ec_stderr_printf( "ERROR: %s\n\n", msg );
 	exit( EXIT_FAILURE );
 }
 
@@ -338,25 +338,25 @@ static void dump_bytecode( FILE *sourcefh, EcInt level, EC_OBJ compiled, EcInt a
 	else
 		compname = "$ANONYMOUS$";
 
-	IND0; printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
-	IND0; printf( "Bytecode len.       : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
-	IND0; printf( "# req. arguments    : %ld\n", (long)EC_COMPILEDNARG(compiled) );
-	IND0; printf( " of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );
-	IND0; printf( "         varargs    : %s\n",  EC_COMPILEDVARG(compiled) ? "yes" : "no" );
-	IND0; printf( "# locals            : %ld\n", (long)EC_COMPILEDNLOC(compiled) );
-	IND0; printf( "# max. temps        : %ld\n", (long)EC_COMPILEDMAXTEMPS(compiled) );
-	IND0; printf( "\n" );
-	IND0; printf( "-- Literal Frame --------------------------------------\n" ); fflush( stdout );
+	IND0; ec_stdout_printf( "== Compiled   %-20s  0x%08lX ========\n", compname, (unsigned long)compiled );
+	IND0; ec_stdout_printf( "Bytecode len.       : %ld\n", (long)EC_COMPILEDNCODE(compiled) );
+	IND0; ec_stdout_printf( "# req. arguments    : %ld\n", (long)EC_COMPILEDNARG(compiled) );
+	IND0; ec_stdout_printf( " of which, defaulted: %ld\n", (long)EC_COMPILEDNARG_DEF(compiled) );
+	IND0; ec_stdout_printf( "         varargs    : %s\n",  EC_COMPILEDVARG(compiled) ? "yes" : "no" );
+	IND0; ec_stdout_printf( "# locals            : %ld\n", (long)EC_COMPILEDNLOC(compiled) );
+	IND0; ec_stdout_printf( "# max. temps        : %ld\n", (long)EC_COMPILEDMAXTEMPS(compiled) );
+	IND0; ec_stdout_printf( "\n" );
+	IND0; ec_stdout_printf( "-- Literal Frame --------------------------------------\n" ); ec_stdout_flush();
 	for (i = 0; i < EC_ARRAYLEN(EC_COMPILEDLFRAME(compiled)); i++)
 	{
-		IND0; printf( "%5ld  ", (long)i );
-		ec_fprintf( stdout, "%r\n", EcArrayGet( EC_COMPILEDLFRAME(compiled), i ) );
+		IND0; ec_stdout_printf( "%5ld  ", (long)i );
+		ec_stdout_printf( "%r\n", EcArrayGet( EC_COMPILEDLFRAME(compiled), i ) );
 		dump( sourcefh, level + 1, EcArrayGet( EC_COMPILEDLFRAME(compiled), i ) );
 	}
-	IND0; printf( "\n" );
-	IND0; printf( "-- Listing --------------------------------------------------------\n" );
-	IND0; printf( "   ADDR            BYTECODE           OP1           OP2       STACK\n" );
-	IND0; printf( "-------------------------------------------------------------------\n" );
+	IND0; ec_stdout_printf( "\n" );
+	IND0; ec_stdout_printf( "-- Listing --------------------------------------------------------\n" );
+	IND0; ec_stdout_printf( "   ADDR            BYTECODE           OP1           OP2       STACK\n" );
+	IND0; ec_stdout_printf( "-------------------------------------------------------------------\n" );
 	for (i = 0; i < EC_COMPILEDNCODE(compiled); i++)
 	{
 		if (ln_len > 0)
@@ -381,7 +381,7 @@ static void dump_bytecode( FILE *sourcefh, EcInt level, EC_OBJ compiled, EcInt a
 			{
 				fseek( sourcefh, lineoffs[line_num - 1], SEEK_SET );
 				fgets( line, MAXLINE, sourcefh );
-				IND0; printf( "\n%3ld: %s\n", (long)line_num, line );
+				IND0; ec_stdout_printf( "\n%3ld: %s\n", (long)line_num, line );
 			}
 		}
 
@@ -390,35 +390,35 @@ static void dump_bytecode( FILE *sourcefh, EcInt level, EC_OBJ compiled, EcInt a
 		npar = EcBytecodeParams( bc );
 
 		if ((at >= 0) && (at == i)) {
-			IND0; printf( " *%5ld  ", (long)i );
+			IND0; ec_stdout_printf( " *%5ld  ", (long)i );
 		} else {
-			IND0; printf( "  %5ld  ", (long)i );
+			IND0; ec_stdout_printf( "  %5ld  ", (long)i );
 		}
-		printf( "%18s", name );
+		ec_stdout_printf( "%18s", name );
 		for (j = i+1; j <= i+npar; j++)
 		{
 			op[j - (i+1)] = EC_COMPILEDCODE(compiled)[j];
-			printf( "  %12ld", (long)EC_COMPILEDCODE(compiled)[j] );
+			ec_stdout_printf( "  %12ld", (long)EC_COMPILEDCODE(compiled)[j] );
 		}
 		if (npar < 1)
-			printf( "  %12s", "" );
+			ec_stdout_printf( "  %12s", "" );
 		if (npar < 2)
-			printf( "  %12s", "" );
+			ec_stdout_printf( "  %12s", "" );
 
 		switch (bc)
 		{
 		case CallOP:
 		case InlinedCallOP:
-			printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[0]));
+			ec_stdout_printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[0]));
 			break;
 		case CallMethodOP:
-			printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[1]));
+			ec_stdout_printf( "%12d", (int)(EcBytecodeStackgrow( bc ) - op[1]));
 			break;
 		default:
-			printf( "%12d", (int)EcBytecodeStackgrow( bc ) );
+			ec_stdout_printf( "%12d", (int)EcBytecodeStackgrow( bc ) );
 			break;
 		}
 		i += npar;
-		printf( "\n" );
+		ec_stdout_printf( "\n" );
 	}
 }

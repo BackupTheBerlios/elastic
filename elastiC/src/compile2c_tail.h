@@ -7,7 +7,7 @@
  *
  *   Created: Sun May 25 08:05:50 MEST 2003
  *
- *   $Id: compile2c_tail.h,v 1.1 2003/05/29 10:36:00 panta Exp $
+ *   $Id: compile2c_tail.h,v 1.2 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -51,7 +51,7 @@ on_error:
 	EcInt  i, nargs;
 	EC_OBJ handlerchain;
 
-	printf("\n*** ERROR ***\n");
+	ec_stderr_printf("\n*** ERROR ***\n");
 	/* ------------------------------------------------------------------------
 	 * E X C E P T I O N   H A N D L I N G
 	 * ------------------------------------------------------------------------ */
@@ -73,22 +73,22 @@ on_error:
 	while (EC_NNULLP(sf) && EC_NNULLP(comp))
 	{
 		ASSERT( EC_COMPILEDP(comp) );
-		/* ec_fprintf( stderr, "sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
+		/* ec_stderr_printf( "sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
 		handlerchain = EC_COMPILEDHANDLER(comp);
 		if (EC_NNULLP(handlerchain))
 		{
 			EC_OBJ handler;
 			EcInt  i;
 
-/*			ec_fprintf( stderr, "# handlers: %ld\n", EC_ARRAYLEN(handlerchain) );*/
+/*			ec_stderr_printf( "# handlers: %ld\n", EC_ARRAYLEN(handlerchain) );*/
 			for (i = 0; i < EC_ARRAYLEN(handlerchain); i++)
 			{
 				ASSERT(EC_ARRAYLEN(handlerchain) > i);
 /*				handler = EC_ARRAYMEM(handlerchain)[i];*/
 				handler = EC_ARRAYGET(handlerchain, i);
 
-				/* ec_fprintf( stderr, "Exception object: %w\n", LPRIVATE(rt).exc ); */
-				/* ec_fprintf( stderr, "Handler type    : %w\n", EC_HANDLERTYPE(handler) );*/
+				/* ec_stderr_printf( "Exception object: %w\n", LPRIVATE(rt).exc ); */
+				/* ec_stderr_printf( "Handler type    : %w\n", EC_HANDLERTYPE(handler) );*/
 				if (EcIsOfClass( LPRIVATE(rt).exc, EC_HANDLERTYPE(handler) ))
 				{
 					/*
@@ -175,10 +175,10 @@ on_error:
 
 					BACKTRACE( stack, compiled );
 #if TRACE_EXECUTION
-					printf("\n");
+					ec_stderr_printf("\n");
 					EcDumpCompiled( compiled, 0 );
-					printf("\n");
-					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+					ec_stderr_printf("\n");
+					ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 					LPRIVATE(rt.exc_line_num) = -1;
 					goto restart;*/
@@ -194,7 +194,7 @@ on_error:
 			comp = EC_STACKGET( sf, 0 );
 			sf   = EC_STACKUP(sf);
 		}
-		/* ec_fprintf( stderr, "NOW sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
+		/* ec_stderr_printf( "NOW sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
 	}
 
 	if (LPRIVATE(rt.vm_level) == 0)

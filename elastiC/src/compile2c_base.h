@@ -7,7 +7,7 @@
  *
  *   Created: Sun May 25 08:05:50 MEST 2003
  *
- *   $Id: compile2c_base.h,v 1.1 2003/05/29 10:36:00 panta Exp $
+ *   $Id: compile2c_base.h,v 1.2 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -135,8 +135,8 @@ do {                                                                        \
 #if 0
 static void dmp( const char *msg, EC_OBJ stack, EC_OBJ compiled )
 {
-	ec_fprintf( stderr, "-> %-15s    STACK   : %r   0x%08lX       COMPILED: %r   0x%08lX\n",
-				msg, stack, (unsigned long)stack, compiled, (unsigned long)compiled );
+	ec_stderr_printf( "-> %-15s    STACK   : %r   0x%08lX       COMPILED: %r   0x%08lX\n",
+					  msg, stack, (unsigned long)stack, compiled, (unsigned long)compiled );
 }
 
 #define DMP(msg, sf,comp)		do { dmp( msg, sf, comp ); } while (0)

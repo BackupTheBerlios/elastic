@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.12 2005/03/03 23:51:43 panta Exp $
+ *   $Id: elastic.c,v 1.13 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -132,7 +132,7 @@ EC_API EcBool EcThreadingInit()
 	rc = pthread_key_create( &_ec_private, (void *) _ec_threading_cleanup );
 	if (rc != 0)
 	{
-		fprintf( stderr, "Could not create thread-specific key: %s\n", strerror(rc) );
+		ec_stderr_printf( "Could not create thread-specific key: %s\n", strerror(rc) );
 		return FALSE;
 	}
 	
@@ -156,7 +156,7 @@ EC_API EcBool EcInit( void )
 		i = pthread_setspecific( _ec_private, (void *) ec_private );
 		if (i != 0)
 		{
-			fprintf( stderr, "Could not set thread-specific key data: %s - %d\n", strerror(i) );
+			ec_stderr_printf( "Could not set thread-specific key data: %s - %d\n", strerror(i) );
 			return FALSE;
 		}
 	}
@@ -165,7 +165,7 @@ EC_API EcBool EcInit( void )
 	if (! EcDLInit())
 	{
 #if defined(WITH_STDIO)
-		fprintf( stderr, "DL error: %s\n", EcDLError() );
+		ec_stderr_printf( "DL error: %s\n", EcDLError() );
 #endif
 		return FALSE;
 	}
@@ -399,10 +399,10 @@ EC_API void EcCleanup( void )
 	PRIVATE(in_cleanup) = TRUE;
 
 #if defined(WITH_STDIO) && MEM_STATS
-	fprintf( stderr, "\nTYPE                   ALLOCATED    MARKINGS\n" );
-	fprintf( stderr, "============================================\n" );
+	ec_stderr_printf( "\nTYPE                   ALLOCATED    MARKINGS\n" );
+	ec_stderr_printf( "============================================\n" );
 	for (i = 0; i <= PRIVATE(usertypes); i++)
-		fprintf( stderr, "%-20s    %8ld    %8ld\n", EcTypeName( i ), _ec_make_stats[i], _ec_mark_stats[i] );
+		ec_stderr_printf( "%-20s    %8ld    %8ld\n", EcTypeName( i ), _ec_make_stats[i], _ec_mark_stats[i] );
 #endif
 
 	_ec_packageio_cleanup();
@@ -435,18 +435,18 @@ EC_API void EcCleanup( void )
 		EcInt j;
 
 #if defined(WITH_STDIO) && EC_STACK_RECYCLE_STATS
-		fprintf( stderr, "\n== Stack statistics =================\n" );
-		fprintf( stderr, "Calls to EcMakeStack()   : %ld\n", (long)PRIVATE(n_makestack) );
-		fprintf( stderr, "# stores in recycle bin  : %ld\n", (long)PRIVATE(n_recycle_put) );
-		fprintf( stderr, "# failed stores          : %ld\n", (long)(PRIVATE(n_recycle_put_attempts) - PRIVATE(n_recycle_put)) );
-		fprintf( stderr, "# fetched from rec. bin  : %ld\n", (long)PRIVATE(n_recycle_get) );
-		fprintf( stderr, "# failed fetches         : %ld\n", (long)(PRIVATE(n_recycle_get_attempts) - PRIVATE(n_recycle_get)) );
-		fprintf( stderr, "# times the bin was empty: %ld\n", (long)PRIVATE(n_pool_empty) );
-		fprintf( stderr, "# times the bin was full : %ld\n", (long)PRIVATE(n_pool_full) );
-		/* fprintf( stderr, "bin max fill             : %ld\n", (long)PRIVATE(pool_max_fill) ); */
-		fprintf( stderr, "# refcount increments    : %ld\n", (long)PRIVATE(n_ref_inc) );
-		fprintf( stderr, "# refcount decrements    : %ld\n", (long)PRIVATE(n_ref_dec) );
-		fprintf( stderr, "\n" );
+		ec_stderr_printf( "\n== Stack statistics =================\n" );
+		ec_stderr_printf( "Calls to EcMakeStack()   : %ld\n", (long)PRIVATE(n_makestack) );
+		ec_stderr_printf( "# stores in recycle bin  : %ld\n", (long)PRIVATE(n_recycle_put) );
+		ec_stderr_printf( "# failed stores          : %ld\n", (long)(PRIVATE(n_recycle_put_attempts) - PRIVATE(n_recycle_put)) );
+		ec_stderr_printf( "# fetched from rec. bin  : %ld\n", (long)PRIVATE(n_recycle_get) );
+		ec_stderr_printf( "# failed fetches         : %ld\n", (long)(PRIVATE(n_recycle_get_attempts) - PRIVATE(n_recycle_get)) );
+		ec_stderr_printf( "# times the bin was empty: %ld\n", (long)PRIVATE(n_pool_empty) );
+		ec_stderr_printf( "# times the bin was full : %ld\n", (long)PRIVATE(n_pool_full) );
+		/* ec_stderr_printf( "bin max fill             : %ld\n", (long)PRIVATE(pool_max_fill) ); */
+		ec_stderr_printf( "# refcount increments    : %ld\n", (long)PRIVATE(n_ref_inc) );
+		ec_stderr_printf( "# refcount decrements    : %ld\n", (long)PRIVATE(n_ref_dec) );
+		ec_stderr_printf( "\n" );
 #endif
 
 		for (j = 0; j < EC_STACK_POOL_SIZE; j++)
@@ -1525,23 +1525,26 @@ void _ec_dbg_dump_stack( EC_OBJ stack )
 {
 	EcInt i;
 
-/*	fprintf( stderr, "SP - SB: %d, SD: %ld\n", (EC_STACKPOINTER(stack) - EC_STACKBASE(stack)), EC_STACKDIM(stack) );*/
-	fflush( stdout );
+	if (ec_stream_stdout())
+		ec_stream_flush( ec_stream_stdout() );
+
+/*	ec_stderr_printf( "SP - SB: %d, SD: %ld\n", (EC_STACKPOINTER(stack) - EC_STACKBASE(stack)), EC_STACKDIM(stack) );*/
+
 	ASSERT( (EC_STACKPOINTER(stack) - EC_STACKBASE(stack)) <= EC_STACKDIM(stack) );
 	ASSERT( (EC_STACKBP(stack) - EC_STACKBASE(stack))      <= EC_STACKDIM(stack) );
 
-	printf( "/--STACK  dim:%3ld --(0x%08lX)----------\\\n", (long)EC_STACKDIM(stack), (unsigned long)stack );
+	ec_stderr_printf( "/--STACK  dim:%3ld --(0x%08lX)----------\\\n", (long)EC_STACKDIM(stack), (unsigned long)stack );
 	/*for (i = 0; i < EC_STACKDIM(stack); i++)*/
 	for (i = 0; i < (EC_STACKPOINTER(stack) - EC_STACKBASE(stack)); i++)
 	{
 		if ((EC_STACKBP(stack) - EC_STACKBASE(stack)) == i)
-			printf( " BP %3ld  ", (long)i );
+			ec_stderr_printf( " BP %3ld  ", (long)i );
 		else
-			printf( " %6ld  ", (long)i );
-		ec_fprintf( stdout, "%r\n", EC_STACKGET(stack, i) );
+			ec_stderr_printf( " %6ld  ", (long)i );
+		ec_stderr_printf( "%r\n", EC_STACKGET(stack, i) );
 	}
-	printf( "\\-----------------------------------------/\n" );
-	fflush( stdout );
+	ec_stderr_printf( "\\-----------------------------------------/\n" );
+	ec_stderr_flush();
 }
 
 void _ec_dbg_dump_literal( EC_OBJ lframe )
@@ -1550,15 +1553,17 @@ void _ec_dbg_dump_literal( EC_OBJ lframe )
 
 	ASSERT( EC_ARRAYP(lframe) );
 
-	fflush( stdout );
-	printf( "/--LITERAL FRAME--------------------------\\\n" );
+	if (ec_stream_stdout())
+		ec_stream_flush( ec_stream_stdout() );
+
+	ec_stderr_printf( "/--LITERAL FRAME--------------------------\\\n" );
 	for (i = 0; i < EC_ARRAYLEN(lframe); i++)
 	{
-		printf( " %-3ld  ", (long)i );
-		ec_fprintf( stdout, "%r\n", EcArrayGet( lframe, i ) );
+		ec_stderr_printf( " %-3ld  ", (long)i );
+		ec_stderr_printf( "%r\n", EcArrayGet( lframe, i ) );
 	}
-	printf( "\\-----------------------------------------/\n" );
-	fflush( stdout );
+	ec_stderr_printf( "\\-----------------------------------------/\n" );
+	ec_stderr_flush();
 }
 
 void _ec_dbg_dump_package_frame( EC_OBJ pframe )
@@ -1567,15 +1572,17 @@ void _ec_dbg_dump_package_frame( EC_OBJ pframe )
 
 	ASSERT( EC_ARRAYP(pframe) );
 
-	fflush( stdout );
-	printf( "/--PACKAGE FRAME--------------------------\\\n" );
+	if (ec_stream_stdout())
+		ec_stream_flush( ec_stream_stdout() );
+
+	ec_stderr_printf( "/--PACKAGE FRAME--------------------------\\\n" );
 	for (i = 0; i < EC_ARRAYLEN(pframe); i++)
 	{
-		printf( " %-3ld  ", (long)i );
-		ec_fprintf( stdout, "%r\n", EcArrayGet( pframe, i ) );
+		ec_stderr_printf( " %-3ld  ", (long)i );
+		ec_stderr_printf( "%r\n", EcArrayGet( pframe, i ) );
 	}
-	printf( "\\-----------------------------------------/\n" );
-	fflush( stdout );
+	ec_stderr_printf( "\\-----------------------------------------/\n" );
+	ec_stderr_flush();
 }
 
 void _ec_dbg_print_instruction( EC_OBJ compiled, EcUInt PC )
@@ -1588,19 +1595,23 @@ void _ec_dbg_print_instruction( EC_OBJ compiled, EcUInt PC )
 
 	ASSERT( EC_COMPILEDP(compiled) );
 
+	if (ec_stream_stdout())
+		ec_stream_flush( ec_stream_stdout() );
+
 	code = EC_COMPILEDCODE(compiled);
 	instr = code[PC];
 
 	name = EcBytecodeName( instr );
 	npar = EcBytecodeParams( instr );
 
-	printf( "%5ld  ", (long)PC );
-	printf( "%18s",   name );
+	ec_stderr_printf( "%5ld  ", (long)PC );
+	ec_stderr_printf( "%18s",   name );
 	for (j = PC+1; j <= PC+npar; j++)
 	{
-		printf( "  %12ld", (long)code[j] );
+		ec_stderr_printf( "  %12ld", (long)code[j] );
 	}
-	printf( "\n" );
+	ec_stderr_printf( "\n" );
+	ec_stderr_flush();
 }
 
 #endif /* end of defined(WITH_STDIO) && (EC_DEBUG || EC_DEBUG_MINIMUM) */

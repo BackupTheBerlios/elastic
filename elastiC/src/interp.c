@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.5 2005/03/03 23:51:43 panta Exp $
+ *   $Id: interp.c,v 1.6 2005/03/08 13:40:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -556,13 +556,13 @@ EC_API EC_OBJ EcExecute( EC_OBJ self, EC_OBJ at_class, EC_OBJ compiled, EC_OBJ s
 
 	LPRIVATE(rt.vm_level)++;
 
-/*	fprintf( stderr, "VM LEVEL: %ld\n", LPRIVATE(rt.vm_level) );*/
+/*	ec_stderr_printf( "VM LEVEL: %ld\n", LPRIVATE(rt.vm_level) );*/
 
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-	printf("\n");
+	ec_stderr_printf("\n");
 	EcDumpCompiled( compiled, codepc - code );
-	printf("\n");
-	printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+	ec_stderr_printf("\n");
+	ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 
 	/* Set current compiled object & line number */
@@ -585,7 +585,7 @@ restart:
 		}
 
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-		printf( "\n" );
+		ec_stderr_printf( "\n" );
 		_ec_dbg_dump_stack( stack );
 		_ec_dbg_print_instruction( compiled, codepc - code );
 #endif
@@ -702,7 +702,7 @@ restart:
 				sf = EC_STACKLEXICAL(sf);
 				op1--;
 			}
-/*			printf( "PushLiteral: " ); ec_fprintf( stdout, "%w\n", obj ); */
+/*			ec_stderr_printf( "PushLiteral: " ); ec_stderr_printf( "%w\n", obj ); */
 			EC_STACKPUSH( stack, obj );
 			continue;
 
@@ -1054,12 +1054,12 @@ restart:
 
 					BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-					printf("\n");
+					ec_stderr_printf("\n");
 					EcDumpCompiled( compiled, codepc - code );
-					printf("\n");
-					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+					ec_stderr_printf("\n");
+					ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
-					/* fprintf(stderr, "Restarting cycle\n"); fflush(stderr); */
+					/* ec_stderr_printf( "Restarting cycle\n"); ec_stderr_flush(); */
 				}
 #else  /* !EC_COMPILE2C */
 				compiled = obj;
@@ -1074,12 +1074,12 @@ restart:
 
 				BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-				printf("\n");
+				ec_stderr_printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
-				printf("\n");
-				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+				ec_stderr_printf("\n");
+				ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
-				/* fprintf(stderr, "Restarting cycle\n"); fflush(stderr); */
+				/* ec_stderr_printf("Restarting cycle\n"); ec_stderr_flush(); */
 #endif /* end of !EC_COMPILE2C */
 			}
 			continue;
@@ -1089,21 +1089,21 @@ restart:
 			op2 = (EcInt)iFETCH;								/* nargs    */
 			obj = EC_STACKPOP( stack );							/* receiver */
 
-/*			ec_fprintf( stderr, "Calling method %k for object %w, with %ld args.\n", op1, obj, op2 );*/
+/*			ec_stderr_printf( "Calling method %k for object %w, with %ld args.\n", op1, obj, op2 );*/
 
 /*			if (! (EC_OBJECTP(obj) || EC_CLASSP(obj)))
 			{
-				ec_fprintf(stderr, "[1] 0x%08lX %W\n", obj, obj);
+				ec_stderr_printf("[1] 0x%08lX %W\n", obj, obj);
 				backtrace(stack, compiled);
 			}*/
 			ASSERT( EC_OBJECTP(obj) || EC_CLASSP(obj) );
-			/*ec_fprintf(stderr, "[1b] %W\n", obj);*/
+			/*ec_stderr_printf("[1b] %W\n", obj);*/
 
 			CHECKGC;
 
 /*			if (! (EC_OBJECTP(obj) || EC_CLASSP(obj)))
 			{
-				ec_fprintf(stderr, "[2] 0x%08lX %W\n", obj, obj);
+				ec_stderr_printf("[2] 0x%08lX %W\n", obj, obj);
 				backtrace(stack, compiled);
 			}*/
 			ASSERT( EC_OBJECTP(obj) || EC_CLASSP(obj) );
@@ -1151,7 +1151,7 @@ restart:
 				mcache_misses++;
 				if (mcache_pos >= MCACHE_SIZE) mcache_pos = 0;
 #endif
-/*				ec_fprintf( stderr, "Found method %k at class %w\n", op1, receiver_class );*/
+/*				ec_stderr_printf( "Found method %k at class %w\n", op1, receiver_class );*/
 			} else
 			{
 				receiver       = obj;
@@ -1217,7 +1217,7 @@ restart:
 				/* Calling a method of self: put in 'self' and 'at_class' */
 				ret = EC_CMETHOD(obj1)( receiver, receiver_class, stack );
 				if (EC_ERRORP(ret)) goto on_error;
-/*				ec_fprintf( stderr, "CMethod returns object %w\n", ret );*/
+/*				ec_stderr_printf( "CMethod returns object %w\n", ret );*/
 				EC_STACKPUSH( stack, ret );
 				continue;
 			} else
@@ -1366,10 +1366,10 @@ restart:
 
 					BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-					printf("\n");
+					ec_stderr_printf("\n");
 					EcDumpCompiled( compiled, codepc - code );
-					printf("\n");
-					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+					ec_stderr_printf("\n");
+					ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 				}
 #else /* !EC_COMPILE2C */
@@ -1387,10 +1387,10 @@ restart:
 
 				BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-				printf("\n");
+				ec_stderr_printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
-				printf("\n");
-				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+				ec_stderr_printf("\n");
+				ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 #endif /* end of !EC_COMPILE2C */
 			}
@@ -1401,7 +1401,7 @@ restart:
 			op2 = (EcInt)iFETCH;								/* nargs    */
 			obj = self;											/* receiver */
 
-/*			ec_fprintf( stderr, "Calling method %k for super of object %w, with %ld args.\n", op1, obj, op2 ); */
+/*			ec_stderr_printf( "Calling method %k for super of object %w, with %ld args.\n", op1, obj, op2 ); */
 
 			ASSERT( EC_OBJECTP(obj) || EC_CLASSP(obj) );
 			ASSERT( obj == self );
@@ -1415,9 +1415,9 @@ restart:
 				receiver       = self;
 				receiver_class = EC_CLASSSUPER(at_class);
 
-/*				ec_fprintf( stderr, "Searching method %k\n", op1 );*/
+/*				ec_stderr_printf( "Searching method %k\n", op1 );*/
 				obj1 = EcFindMethod( receiver, &receiver_class, op1 );
-/*				ec_fprintf( stderr, "Found method %k at class %w\n", op1, receiver_class );*/
+/*				ec_stderr_printf( "Found method %k at class %w\n", op1, receiver_class );*/
 			} else
 			{
 				receiver       = EC_CLASSSUPER(obj);
@@ -1479,7 +1479,7 @@ restart:
 				/* Calling a method of self: put in 'self' and 'at_class' */
 				ret = EC_CMETHOD(obj1)( receiver, receiver_class, stack );
 				if (EC_ERRORP(ret)) goto on_error;
-/*				ec_fprintf( stderr, "CMethod returns object %w\n", ret );*/
+/*				ec_stderr_printf( "CMethod returns object %w\n", ret );*/
 				EC_STACKPUSH( stack, ret );
 				continue;
 			} else
@@ -1628,10 +1628,10 @@ restart:
 
 					BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-					printf("\n");
+					ec_stderr_printf("\n");
 					EcDumpCompiled( compiled, codepc - code );
-					printf("\n");
-					printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+					ec_stderr_printf("\n");
+					ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 				}
 #else /* !EC_COMPILE2C */
@@ -1649,10 +1649,10 @@ restart:
 
 				BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-				printf("\n");
+				ec_stderr_printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
-				printf("\n");
-				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+				ec_stderr_printf("\n");
+				ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 #endif /* !EC_COMPILE2C */
 			}
@@ -1797,10 +1797,10 @@ restart:
 
 				BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-				printf("\n");
+				ec_stderr_printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
-				printf("\n");
-				printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+				ec_stderr_printf("\n");
+				ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 			}
 #else /* !EC_COMPILE2C */
@@ -1816,10 +1816,10 @@ restart:
 
 			BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-			printf("\n");
+			ec_stderr_printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
-			printf("\n");
-			printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+			ec_stderr_printf("\n");
+			ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 #endif /* !EC_COMPILE2C */
 			continue;
@@ -1870,10 +1870,10 @@ restart:
 #endif
 
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-			printf("\n");
+			ec_stderr_printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
-			printf("\n");
-			printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+			ec_stderr_printf("\n");
+			ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 			continue;
 
@@ -1917,10 +1917,10 @@ restart:
 #endif
 			EC_STACKPUSH( stack, ret );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-			printf("\n");
+			ec_stderr_printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
-			printf("\n");
-			printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+			ec_stderr_printf("\n");
+			ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 			continue;
 
@@ -2269,22 +2269,22 @@ restart:
 		while (EC_NNULLP(sf) && EC_NNULLP(comp))
 		{
 			ASSERT( EC_COMPILEDP(comp) );
-			/* ec_fprintf( stderr, "sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
+			/* ec_stderr_printf( "sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
 			handlerchain = EC_COMPILEDHANDLER(comp);
 			if (EC_NNULLP(handlerchain))
 			{
 				EC_OBJ handler;
 				EcInt  i;
 
-/*				ec_fprintf( stderr, "# handlers: %ld\n", EC_ARRAYLEN(handlerchain) );*/
+/*				ec_stderr_printf( "# handlers: %ld\n", EC_ARRAYLEN(handlerchain) );*/
 				for (i = 0; i < EC_ARRAYLEN(handlerchain); i++)
 				{
 					ASSERT(EC_ARRAYLEN(handlerchain) > i);
 /*					handler = EC_ARRAYMEM(handlerchain)[i];*/
 					handler = EC_ARRAYGET(handlerchain, i);
 
-					/* ec_fprintf( stderr, "Exception object: %w\n", LPRIVATE(rt).exc ); */
-					/* ec_fprintf( stderr, "Handler type    : %w\n", EC_HANDLERTYPE(handler) );*/
+					/* ec_stderr_printf( "Exception object: %w\n", LPRIVATE(rt).exc ); */
+					/* ec_stderr_printf( "Handler type    : %w\n", EC_HANDLERTYPE(handler) );*/
 					if (EcIsOfClass( LPRIVATE(rt).exc, EC_HANDLERTYPE(handler) ))
 					{
 						/*
@@ -2366,10 +2366,10 @@ restart:
 
 						BACKTRACE( stack, compiled );
 #if defined(WITH_STDIO) && TRACE_EXECUTION
-						printf("\n");
+						ec_stderr_printf("\n");
 						EcDumpCompiled( compiled, codepc - code );
-						printf("\n");
-						printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
+						ec_stderr_printf("\n");
+						ec_stderr_printf("LEXICALLY UPPER FRAME: 0x%08lX\n", (unsigned long)EC_STACKLEXICAL(stack));
 #endif
 						LPRIVATE(rt.exc_line_num) = -1;			/* reset exception origin */
 						goto restart;
@@ -2385,7 +2385,7 @@ restart:
 				comp = EC_STACKGET( sf, 0 );
 				sf   = EC_STACKUP(sf);
 			}
-			/* ec_fprintf( stderr, "NOW sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
+			/* ec_stderr_printf( "NOW sf: 0x%08lX   comp: 0x%08lX %w\n", (unsigned long)sf, (unsigned long)comp, comp ); */
 		}
 
 		if (LPRIVATE(rt.vm_level) == 0)
