@@ -1,0 +1,171 @@
+dnl ==========================================================================
+dnl configure.in
+dnl ==========================================================================
+dnl configure script for the 'unicode' elastiC module.
+dnl --------------------------------------------------------------------------
+dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
+dnl
+dnl   Created: 18 Oct 2001
+dnl
+dnl   $Id: configure.in,v 1.1 2002/05/30 18:39:45 panta Exp $
+dnl --------------------------------------------------------------------------
+dnl    Copyright (C) 2001-2002 Marco Pantaleoni. All rights reserved.
+dnl
+dnl  The contents of this file are subject to the elastiC License version 1.0
+dnl  (the "elastiC License"); you may not use this file except in compliance
+dnl  with the elastiC License. You may obtain a copy of the elastiC License at
+dnl  http://www.elasticworld.org/LICENSE
+dnl
+dnl  IN NO EVENT SHALL THE AUTHOR OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+dnl  FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+dnl  ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+dnl  DERIVATIVES THEREOF, EVEN IF THE AUTHOR HAS BEEN ADVISED OF THE
+dnl  POSSIBILITY OF SUCH DAMAGE.
+dnl
+dnl  THE AUTHOR AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+dnl  INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+dnl  FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+dnl  IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHOR AND DISTRIBUTORS HAVE
+dnl  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+dnl  MODIFICATIONS.
+dnl
+dnl  See the elastiC License for the specific language governing rights and
+dnl  limitations under the elastiC License.
+dnl ==========================================================================
+
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT(unicode.c)
+
+dnl Set VERSION so we only need to edit in here
+AC_SUBST(PACKAGE)
+AC_SUBST(VERSION)
+VERSION=0.2
+PACKAGE=unicode
+
+AM_INIT_AUTOMAKE($PACKAGE, $VERSION, no-define)
+
+dnl Specify a configuration file
+AM_CONFIG_HEADER(config.h)
+
+dnl Check for Cygwin32
+AC_SUBST(CYGWIN)
+AC_CYGWIN
+AM_CONDITIONAL(CYGWIN, test x$CYGWIN = xyes)
+
+dnl Check for Mingw32
+AC_SUBST(MINGW32)
+AC_MINGW32
+AM_CONDITIONAL(MINGW32, test x$MINGW32 = xyes)
+
+AM_CONDITIONAL(WIN32, test x$MINGW32 = xyes || test x$CYGWIN = xyes)
+
+AC_SUBST(MAKEDLL)
+if test "x$MINGW32" = "xyes"; then
+  MAKEDLL='${top_srcdir}/mingw32-makedll'
+fi
+
+dnl Check executable extension
+AC_EXEEXT
+
+dnl Cross compilation
+CROSSCOMPILING=$cross_compiling
+AC_SUBST(CROSSCOMPILING)
+AM_CONDITIONAL(CROSSCOMPILING, test x$cross_compiling = xyes)
+
+dnl Set name for machine-dependent library files
+AC_SUBST(MACHDEP)
+AC_MSG_CHECKING(MACHDEP)
+if test -z "$MACHDEP"
+then
+	ac_sys_system=`uname -s`
+	if test "$ac_sys_system" = "AIX" ; then
+		ac_sys_release=`uname -v`
+	else
+		ac_sys_release=`uname -r`
+	fi
+	ac_md_system=`echo $ac_sys_system |
+			tr -d '[/ ]' | tr '[[A-Z]]' '[[a-z]]'`
+	ac_md_release=`echo $ac_sys_release |
+			tr -d '[/ ]' | sed 's/\..*//'`
+	MACHDEP="$ac_md_system$ac_md_release"
+
+	case $MACHDEP in
+	'')     MACHDEP="unknown";;
+	esac
+fi
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+dnl Checks for libraries.
+AC_CHECK_LIB(m, sin)
+AC_CHECK_LIB(dl, dlopen)
+AC_CHECK_LIB(unicode, uni_strlen)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(limits.h malloc.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_C_INLINE
+
+dnl Checks for library functions.
+AC_FUNC_ALLOCA
+AC_FUNC_MEMCMP
+AC_FUNC_SETPGRP
+AC_TYPE_SIGNAL
+AC_FUNC_VPRINTF
+AC_FUNC_WAIT3
+AC_CHECK_FUNCS(getcwd)
+
+AC_SUBST(CC)
+
+dnl elastiC libs & flags
+
+AM_PATH_ELASTIC
+
+AC_SUBST(SO)
+AC_SUBST(CCSHARED)
+AC_SUBST(CFLAGS)
+AC_SUBST(LIBS)
+AC_SUBST(MKMODULE)
+AC_SUBST(MKMODULEFLAGS)
+AC_SUBST(MKMODULELIBS)
+CFLAGS="$ELASTIC_CFLAGS"
+LIBS="$ELASTIC_LIBS"
+CCSHARED="$ELASTIC_CCSHARED"
+SO="$ELASTIC_SO"
+MKMODULE="$ELASTIC_MKMODULE"
+MKMODULEFLAGS="$ELASTIC_MKMODULEFLAGS"
+MKMODULELIBS="$ELASTIC_MKMODULELIBS"
+
+dnl Compiler options
+
+AC_SUBST(MODULE_CFLAGS)
+
+if test "x$MINGW32" = "xyes"; then
+  test "$cflags_set" = set || CFLAGS="$CFLAGS -fnative-struct"
+fi
+
+if test "x$CYGWIN" = "xyes"; then
+  test "$cflags_set" = set || CFLAGS="$CFLAGS -DCYGWIN"
+fi
+
+if test "x$MINGW32" = "xyes"; then
+  test "$cflags_set" = set || CFLAGS="$CFLAGS -DMINGW32"
+fi
+
+test "$cflags_set" = set || CFLAGS="$CFLAGS"
+MODULE_CFLAGS="$CFLAGS"
+
+dnl Check for cutting edge elastiC functions
+AC_CHECK_LIB(elastic, EcPackageIntroduce)
+dnl AC_CHECK_FUNCS(EcLibString_Sub)
+
+AC_OUTPUT(Makefile)
