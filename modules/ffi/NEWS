@@ -1,0 +1,8 @@
+Overview of Changes in ffi 0.2:
+
+* Switched to the more portable elastiC API for shared object
+  handling.
+
+Overview of Changes in ffi 0.1:
+
+* created.

@@ -1,0 +1,171 @@
+		       'FFI' module for elastiC
+		       ========================
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+'ffi' is a Foreign Function Interface (FFI) module for elastiC, that
+means to call directly C library functions from an elastiC program
+without writing any C code.
+For a quick introduction to these modules see QUICKSTART below.
+
+USAGE
+-----
+
+'ffi' makes use of automake & autoconf.
+elastiC 0.0.22 is required in order to compile the module.
+This module also requires that libffi-2.0 is installed on the system.
+libffi-2.0 has not been released yet, but you can obtain a beta
+version through CVS (see the libffi home page:
+http://sources.redhat.com/libffi/).
+Since the CVS version appears to be broken (at least on debian slink),
+it is possible to download a fixed version from the elastiC web site
+as:
+
+  http://www.elasticworld.org/libffi-2.0-beta.tar.gz
+
+Compile and install libffi-2.0-beta before compiling the 'ffi'
+module:
+
+  % su
+  % tar xvfz libffi-2.0-beta.tar.gz
+  % cd libffi-2.0-beta
+  % ./configure
+  % make
+  % make install
+
+Then, to compile the 'ffi' module, simply issue the commands:
+
+  % cd WHEREVER_FFI_HAS_BEEN_UNPACKED
+  % configure
+  % make
+  % make install
+
+There is a simple test program: 'testffi.ec':
+
+  % ec testffi.ec
+
+
+QUICKSTART
+----------
+
+Waiting for a man page, look at the following examples for the ffi
+module:
+
+   testffi.ec             - very simple example
+
+The C functions that one could want to access through FFI could be
+classified in two categories:
+
+  - those residing in shared objects (dynamically loadable libraries)
+  - those provided by the interpreter (the current executable)
+
+To be able to identify and access a function, it is necessary to
+obtain an handle to the shared object where the function resides, or
+to the current executable, if the function happens to "live" there.
+This is accomplished with the ffi.open function:
+
+  local handle = ffi.open( "libm.so" )
+
+will save in the variable `handle' the handle to the mathematical
+library (which happens to be named, guess what, "libm.so").
+An handle to the current executable is obtained by passing @nil to
+ffi.open().
+When you have this handle, you can obtain an elastiC function acting
+as a bridge to a C function inside libm, with ffi.declare. It will be
+necessary to specify the C function name that is to be accessed, the
+type of the return value and the types of parameters.
+Fundamental C types are specified with elastiC symbols. The
+equivalence between elastiC symbols and C types is described in the
+following table:
+
+   elastiC symbol    | C type
+   ------------------|-----------------
+   #void             | void
+   #int              | int
+   #uint             | unsigned int
+   #sint             | signed int
+   #short            | short
+   #ushort           | unsigned short
+   #long             | long
+   #ulong            | unsigned long
+   #slong            | signed long
+   #float            | float
+   #double           | double
+   #longdouble       | longdouble
+   #uint8            | uint8_t
+   #sint8            | int8_t
+   #int8             | int8_t
+   #uint16           | uint16_t
+   #sint16           | int16_t
+   #int16            | int16_t
+   #uint32           | uint32_t
+   #sint32           | int32_t
+   #int32            | int32_t
+   #uint64           | uint64_t
+   #sint64           | int64_t
+   #int64            | int64_t
+   #pointer          | void *
+   #string           | char *
+   #string-dynamic   | char *
+
+The parameter list is specified as an array of type specifiers (symbols).
+For example, to declare the cosine `cos' function in the mathematical
+library, returning a double and accepting a double:
+
+  local sin = ffi.declare(handle, "sin", #double, #[#double]);
+
+From this point it will be possible to invoke the newly introduced
+function as a common elastiC function:
+
+  local v = sin(3.141592 / 4.0);
+
+C strings are specified with #string or #string-dynamic, where the
+latter is used to specify return types of C functions that expect the
+user to free the memory for the returned string.
+At this time, it is not possible to specify structures as parameters,
+but its support is planned for the immediate future.
+
+
+ELASTIC WEB SITE
+----------------
+
+elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other important information.
+
+INSTALLATION
+------------
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+27-28 September 2001

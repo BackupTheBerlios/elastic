@@ -1,0 +1,13 @@
+2001-10-24  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ffi.c (ffi_marshaler): updated. Now works on elastiC >= 0.0.26
+
+2001-09-29  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ffi.c: switched to platform independent elastiC shared object
+	API (EcDL... functions).
+
+2001-09-27  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Created.
+
