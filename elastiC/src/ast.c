@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 20:34:10 MEST 1998
  *
- *   $Id: ast.c,v 1.4 2005/03/08 13:40:05 panta Exp $
+ *   $Id: ast.c,v 1.5 2005/03/17 23:10:11 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -241,11 +241,12 @@ ASTNode makeArrayCons( ASTNode arglist )
 	return res;
 }
 
-ASTNode makeHashCons( ASTNode arglist )
+ASTNode makeHashCons( ASTNode arglist, EcBool oldstyle )
 {
 	ASTNode res;
 
 	res = ASTNodeAdd( hashConstructionExprType );
+	res->vHashConsExpr.oldstyle = oldstyle;
 	res->vHashConsExpr.arglist = arglist;
 
 	return res;
@@ -613,6 +614,49 @@ ASTNode makeList( EcBool asArg, EcBool retVal, ASTNode prefix, ASTNode stmt )
 		return prefix;
 
 	return res;
+}
+
+ASTNode makePair( ASTNode left, ASTNode right )
+{
+	return makeList( TRUE, FALSE, makeList( TRUE, FALSE, NULL, left ), right );
+}
+
+ASTNode astPairLeft( ASTNode astPair )
+{
+	ASSERT( astPair );
+
+	return astPair->vStmtList.stmt;
+}
+
+ASTNode astPairRight( ASTNode astPair )
+{
+	ASTNode next;
+
+	ASSERT( astPair );
+	next = astPair->vStmtList.next;
+	ASSERT( next );
+
+	return next->vStmtList.stmt;
+}
+
+ASTNode astListHead( ASTNode astList )
+{
+	return astList;
+}
+
+ASTNode astListTail( ASTNode astList )
+{
+	ASTNode node;
+
+	node = astList;
+	while (node)
+	{
+		if (! node->vStmtList.next) break;
+
+		node = node->vStmtList.next;
+	}
+
+	return node;
 }
 
 ASTNode makeFunction( ASTNode funcName, ASTNode decl, ASTNode paramList, ASTNode body )
@@ -1008,9 +1052,17 @@ static void printArrayCons( int lev, ASTNode node )
 static void printHashCons( int lev, ASTNode node )
 {
 	indent( lev );
-	ec_stderr_printf( "%%[ " );
-	ASTPrint( 0, node->vHashConsExpr.arglist );
-	ec_stderr_printf( " ]" );
+	if (node->vHashConsExpr.oldstyle)
+	{
+		ec_stderr_printf( "%%[ " );
+		ASTPrint( 0, node->vHashConsExpr.arglist );
+		ec_stderr_printf( " ]" );
+	} else
+	{
+		ec_stderr_printf( "{ " );
+		ASTPrint( 0, node->vHashConsExpr.arglist );
+		ec_stderr_printf( " }" );
+	}
 }
 
 static void printUnary( int lev, ASTNode node )

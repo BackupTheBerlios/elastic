@@ -7,7 +7,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_s.l,v 1.4 2005/03/08 14:30:51 panta Exp $
+ *   $Id: elastic_s.l,v 1.5 2005/03/17 23:10:11 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -191,6 +191,8 @@ WS		[ \t\n]
 {KEYWORD}                      { start(); count(); yylval.sym = EcInternSymbol( yytext ); return T_KEYWORD; }
 "'"{CSYM}                      { start(); count(); yylval.sym = EcInternSymbol( yytext + 1 ); return T_CONSTSYM; }
 "#"{CSYM}                      { start(); count(); yylval.sym = EcInternSymbol( yytext + 1 ); return T_CONSTSYM; }
+
+":"			       { start(); count(); return T_HASHKEYSEP; }
 
 "<="                           { start(); count(); return T_LE;      }
 ">="                           { start(); count(); return T_GE;      }

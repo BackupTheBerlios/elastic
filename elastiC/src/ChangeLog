@@ -1,3 +1,8 @@
+2005-03-18  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* ast.* elastic_s.l elastic_p.y: added new syntax for hash
+	tables. Now it's possible to write {key : value, key : value ...}
+
 2005-03-17  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* types/string.c (string_mod): added named parametes support to

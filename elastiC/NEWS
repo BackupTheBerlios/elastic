@@ -1,5 +1,10 @@
 Overview of Changes in elastiC 0.0.38:
 
+* added new syntax for hash tables. Now it's possible to write
+  something like
+
+    {key : value, key : value ...}
+
 * Added named parametes support to the '%' string operator.
   Now it's possible to use parameters of the %(name)X (where X can
   be one of the supported specifiers, lile s, g, ...), passing

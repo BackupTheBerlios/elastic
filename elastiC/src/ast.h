@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 20:34:10 MEST 1998
  *
- *   $Id: ast.h,v 1.2 2002/06/13 17:44:18 panta Exp $
+ *   $Id: ast.h,v 1.3 2005/03/17 23:10:11 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -145,6 +145,7 @@ typedef struct
 typedef struct
 {
 	ASTNode arglist;
+	EcBool  oldstyle;
 } HashConstruction;
 
 typedef struct
@@ -557,7 +558,7 @@ ASTNode makeConstInt( EcInt number ), makeConstFloat( EcFloat number ),
 	    makeSymbol( EcUInt symid ), makeQualifiedSymbol( ASTNode prefix, ASTNode symbol ),
 		makeVariable( ASTNode node ),
 		makeArrayCons( ASTNode arglist ),
-		makeHashCons( ASTNode arglist ),
+		makeHashCons( ASTNode arglist, EcBool oldstyle ),
 	    makeUnary( UnaryOp op, ASTNode operand ),
 	    makeBinary( BinaryOp op, ASTNode first, ASTNode second ),
 		makeConditional( ASTNode cond, ASTNode texpr, ASTNode fexpr ),
@@ -592,6 +593,13 @@ ASTNode makeConstInt( EcInt number ), makeConstFloat( EcFloat number ),
 		makeClass( ASTNode decl, ASTNode name, ASTNode base, ASTNode body ),
 		makeMethod( EcBool classmethod, ASTNode name, ASTNode paramList, ASTNode body ),
 		makePackage( ASTNode name );
+
+ASTNode makePair( ASTNode left, ASTNode right );
+ASTNode astPairLeft( ASTNode astPair );
+ASTNode astPairRight( ASTNode astPair );
+
+ASTNode astListHead( ASTNode astList );
+ASTNode astListTail( ASTNode astList );
 
 #if defined(WITH_STDIO) && EC_AST_DEBUG
 void    ASTPrint( int lev, ASTNode node );

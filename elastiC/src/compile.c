@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.6 2005/03/08 13:40:05 panta Exp $
+ *   $Id: compile.c,v 1.7 2005/03/17 23:10:11 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -162,6 +162,7 @@ static void   compile( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileConstant( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileVariable( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileArrayCons( ec_compiler_ctxt ctxt, ASTNode node );
+static void   compileHashConsOldStyle( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileHashCons( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileUnary( ec_compiler_ctxt ctxt, ASTNode node );
 static void   compileBinary( ec_compiler_ctxt ctxt, ASTNode node );
@@ -818,7 +819,7 @@ static void compile( ec_compiler_ctxt ctxt, ASTNode node )
 		ASSERT( ! EC_NULLP(CCTXT(package_package)) );
 	}
 
-	switch( node->type )
+	switch (node->type)
 	{
 	case nullType:
 		ASSERT( FALSE );
@@ -845,7 +846,10 @@ static void compile( ec_compiler_ctxt ctxt, ASTNode node )
 		break;
 
 	case hashConstructionExprType:
-		compileHashCons( ctxt, node );
+		if (node->vHashConsExpr.oldstyle)
+			compileHashConsOldStyle( ctxt, node );
+		else
+			compileHashCons( ctxt, node );
 		break;
 
 	case unaryExprType:
@@ -1156,7 +1160,7 @@ static void compileArrayCons( ec_compiler_ctxt ctxt, ASTNode node )
 	emit1( ctxt, ArrayConsOP, nargs );
 }
 
-static void compileHashCons( ec_compiler_ctxt ctxt, ASTNode node )
+static void compileHashConsOldStyle( ec_compiler_ctxt ctxt, ASTNode node )
 {
 	ASTNode argList;
 	EcInt nargs;
@@ -1184,6 +1188,43 @@ static void compileHashCons( ec_compiler_ctxt ctxt, ASTNode node )
 	}
 
 	emit1( ctxt, HashConsOP, nargs );
+}
+
+static void compileHashCons( ec_compiler_ctxt ctxt, ASTNode node )
+{
+	ASTNode argList;
+	ASTNode argPair, argKey, argVal;
+	EcInt npairs;
+
+	/* Count number of arguments
+	 *
+	 * Note that we must count the number of arguments, since
+	 * the callee, unknown until run-time, must know the number
+	 * of objects to fetch from the stack frame.
+	 */
+	npairs = 0;
+	argList = node->vHashConsExpr.arglist;
+	while (argList) {
+		npairs++;
+		argList = argList->vStmtList.next;
+	}
+
+	/* Compile arguments */
+	argList = node->vHashConsExpr.arglist;
+	while (argList) {
+		ASSERT( argList->vStmtList.stmt );
+		argPair = argList->vStmtList.stmt;
+		ASSERT( argPair );
+		argKey = astPairLeft( argPair );
+		argVal = astPairRight( argPair );
+
+		compile( ctxt, argKey );
+		compile( ctxt, argVal );
+
+		argList = argList->vStmtList.next;
+	}
+
+	emit1( ctxt, HashConsOP, npairs * 2 );
 }
 
 static void compileUnary( ec_compiler_ctxt ctxt, ASTNode node )
@@ -3480,7 +3521,7 @@ static void compilePackage_post( ec_compiler_ctxt ctxt )
 	ec_stderr_printf( "\nPACKAGE:\n" );
 	EcDumpCompiled( EC_PACKAGECODE(CCTXT(package_package)), 0 );
 #if 1
-	ec_dbg_dump_package_frame( EC_PACKAGEFRAME(CCTXT(package_package)) );
+	_ec_dbg_dump_package_frame( EC_PACKAGEFRAME(CCTXT(package_package)) );
 #endif
 #endif
 
