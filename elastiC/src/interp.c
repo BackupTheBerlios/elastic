@@ -7,7 +7,7 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.6 2005/03/08 13:40:05 panta Exp $
+ *   $Id: interp.c,v 1.7 2005/03/22 11:37:44 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -1096,6 +1096,11 @@ restart:
 				ec_stderr_printf("[1] 0x%08lX %W\n", obj, obj);
 				backtrace(stack, compiled);
 			}*/
+			if (! (EC_OBJECTP(obj) || EC_CLASSP(obj)))
+			{
+				EcTargetError( obj, "calling a method on wrong object type" );
+				goto on_error;
+			}
 			ASSERT( EC_OBJECTP(obj) || EC_CLASSP(obj) );
 			/*ec_stderr_printf("[1b] %W\n", obj);*/
 

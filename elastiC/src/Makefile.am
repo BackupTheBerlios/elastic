@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.9 2003/05/29 10:36:00 panta Exp $
+#   $Id: Makefile.am,v 1.10 2005/03/22 11:37:44 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -35,9 +35,9 @@
 
 EXTRA_DIST = EXCEPTIONS INCONSISTENCIES libltdl.patch gen-primetable.pl primes.gnu
 if WIN32_SDK
-SUBDIRS = libltdl arithmetic dl modules types win32 . modules-dynamic
+SUBDIRS = libltdl arithmetic dl types win32 modules . modules-dynamic
 else
-SUBDIRS = libltdl arithmetic dl modules types unix . modules-dynamic
+SUBDIRS = libltdl arithmetic dl types unix  modules . modules-dynamic
 endif
 
 CLEANFILES = elastic-$(EC_API_VERSION).def elastic-$(EC_API_VERSION).dll libelastic-$(EC_API_VERSION).a libelasticrt-$(EC_API_VERSION).a

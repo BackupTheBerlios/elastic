@@ -1,5 +1,8 @@
 2005-03-22  Marco Pantaleoni  <panta@elasticworld.org>
 
+	* interp.c (EcExecute): Closed BerliOS bug #323 (segfault when a
+	method is not found).
+
 	* added expat-based xml module.
 
 2005-03-20  Marco Pantaleoni  <panta@elasticworld.org>
