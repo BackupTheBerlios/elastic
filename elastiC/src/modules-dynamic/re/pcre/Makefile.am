@@ -38,7 +38,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL LICENCE NEWS NON-UNIX-USE README \
-	Makefile-libtool.am Makefile.in.orig configure.in configure \
+	Makefile-libtool.am Makefile.in.original configure.in configure \
 	pcre.in pcre.h pcre-config.in pcre-config RunTest.in RunTest dll.mk \
 	perltest perltest8 pcregrep.c pcredemo.c
 
@@ -123,6 +123,6 @@ endif
 
 dist-hook:
 	mkdir -p $(distdir)/doc
-	cp -p $(srcdir)/doc/* $(distdir)/doc
+	cp -a $(srcdir)/doc/* $(distdir)/doc
 	mkdir -p $(distdir)/testdata
-	cp -p $(srcdir)/testdata/* $(distdir)/testdata
+	cp -a $(srcdir)/testdata/* $(distdir)/testdata
