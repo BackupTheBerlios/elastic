@@ -1,4 +1,4 @@
-package testnamedprintf;
+package testnamedstringop;
 
 //import basic;
 

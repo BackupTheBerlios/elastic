@@ -61,6 +61,7 @@
 ./testinit2
 ./testnamedprintf
 ./testnamedstringop
+./testnewsyn
 ./testre
 ./testsend
 ./teststackref1

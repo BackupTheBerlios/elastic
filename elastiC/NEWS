@@ -1,6 +1,14 @@
 Overview of Changes in elastiC 0.0.38:
 
-* added new syntax for hash tables. Now it's possible to write
+* Added new syntax for arrays. Now it's possible to write
+  something like
+
+    (val1, val2, ...)
+
+  Empty arrays are specified as (,), and arrays with one element
+  as (value,) (to avoid conflicts with expressions).
+
+* Added new syntax for hash tables. Now it's possible to write
   something like
 
     {key : value, key : value ...}

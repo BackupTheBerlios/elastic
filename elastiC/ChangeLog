@@ -1,6 +1,15 @@
 2005-03-18  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/ast.* src/elastic_s.l src/elastic_p.y: added new syntax
+        for arrays.
+	Now it's possible to write
+
+	      (val1, val2, ...)
+
+	Empty arrays are specified as (,), and arrays with one element
+	as (value,) (to avoid conflicts with expressions).
+
+	* src/ast.* src/elastic_s.l src/elastic_p.y: added new syntax
 	for hash tables. Now it's possible to write
 	{key : value, key : value ...}
 

@@ -8,7 +8,7 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.6 2005/03/17 23:10:11 panta Exp $
+ *   $Id: elastic_p.y,v 1.7 2005/03/18 10:39:40 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -101,7 +101,6 @@ static ASTNode listconcat( ASTNode l1, ASTNode l2 );
 %token '(' ')' '<' '>'
 %token T_ARRAYCONS "#["
 %token T_HASHCONS  "%["
-%token T_HASHKEYSEP ":"
 %token T_LE "<="
 %token T_GE ">="
 %token T_POW "**"
@@ -136,7 +135,7 @@ static ASTNode listconcat( ASTNode l1, ASTNode l2 );
 
 /* Non terminal symbols */
 %type <ast>	primary.expression postfix.expression lvalue.expression
-%type <ast>	argument.list method.call array.construction hash.construction hash.argument.pair hash.argument.list
+%type <ast>	argument.list method.call array.construction array.argument.list.base array.argument.list hash.construction hash.argument.pair hash.argument.list
 %type <ast>	unary.expression exponentiation.expression multiplicative.expression additive.expression
 %type <ast>	shift.expression relational.expression
 %type <ast>	equality.expression and.expression exclusive.or.expression inclusive.or.expression
@@ -205,15 +204,19 @@ array.construction
 	: T_ARRAYCONS ']'                                          { $$ = makeArrayCons( NULL ); SAVE($$, @1); }
 	| T_ARRAYCONS argument.list ']'                            { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
 	| T_ARRAYCONS argument.list ',' ']'                        { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
+	| '(' ',' ')'                                              { $$ = makeArrayCons( NULL ); SAVE($$, @1); }
+	| '(' assignment.expression ',' ')'                        { $$ = makeArrayCons( makeList( TRUE, FALSE, NULL, $2 ) ); SAVE($$, @1); }
+	| '(' array.argument.list ')'                              { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
+	| '(' array.argument.list ',' ')'                          { $$ = makeArrayCons( $2 );   SAVE($$, @1); }
 ;
 
 hash.construction
-	: T_HASHCONS ']'                                          { $$ = makeHashCons( NULL, TRUE ); SAVE($$, @1); }
-	| '{' T_HASHKEYSEP '}'                                    { $$ = makeHashCons( NULL, FALSE ); SAVE($$, @1); }
-	| T_HASHCONS argument.list ']'                            { $$ = makeHashCons( $2, TRUE );   SAVE($$, @1); }
-	| '{' hash.argument.list '}'                              { $$ = makeHashCons( $2, FALSE );  SAVE($$, @1); }
-	| T_HASHCONS argument.list ',' ']'                        { $$ = makeHashCons( $2, TRUE );   SAVE($$, @1); }
-	| '{' hash.argument.list ',' '}'                          { $$ = makeHashCons( $2, FALSE );  SAVE($$, @1); }
+	: T_HASHCONS ']'                                          { $$ = makeHashCons( NULL, TRUE );  SAVE($$, @1); }
+	| T_HASHCONS argument.list ']'                            { $$ = makeHashCons( $2, TRUE );    SAVE($$, @1); }
+	| T_HASHCONS argument.list ',' ']'                        { $$ = makeHashCons( $2, TRUE );    SAVE($$, @1); }
+	| '{' ':' '}'                                             { $$ = makeHashCons( NULL, FALSE ); SAVE($$, @1); }
+	| '{' hash.argument.list '}'                              { $$ = makeHashCons( $2, FALSE );   SAVE($$, @1); }
+	| '{' hash.argument.list ',' '}'                          { $$ = makeHashCons( $2, FALSE );   SAVE($$, @1); }
 ;
 
 keyword.argument.list
@@ -239,8 +242,17 @@ argument.list
 	| argument.list ',' assignment.expression                  { $$ = makeList( TRUE, FALSE, $1, $3 );   SAVE($$, @1); }
 ;
 
+array.argument.list.base
+	: assignment.expression ',' assignment.expression          { $$ = makeList( TRUE, FALSE, makeList( TRUE, FALSE, NULL, $1 ), $3 ); SAVE($$, @1); }
+;
+
+array.argument.list
+	: array.argument.list.base                                 { $$ = $1;                                              }
+	| array.argument.list ',' assignment.expression            { $$ = makeList( TRUE, FALSE, $1, $3 );   SAVE($$, @1); }
+;
+
 hash.argument.pair
-	: assignment.expression T_HASHKEYSEP assignment.expression  { $$ = makePair( $1, $3 ); SAVE($$, @1); }
+	: assignment.expression ':' assignment.expression          { $$ = makePair( $1, $3 ); SAVE($$, @1); }
 ;
 
 hash.argument.list
