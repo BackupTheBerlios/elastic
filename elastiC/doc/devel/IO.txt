@@ -2,6 +2,87 @@ layered IO system
 
 C API:
 
-   plain C-stream based IO API      -> elastiC file type   |
-                                                           |--> implementation independent IO API
-   object oriented IO API (channel) -> elastiC file type   |
+   plain C-stream based IO API      -> elastiC stream type   |
+                                                             |--> implementation independent IO API
+   object oriented IO API (channel) -> elastiC stream type   |
+
+the elastiC I/O stream type (channel? stream?) should act
+as an abstraction built on lower levels (C streams, objects, ...).
+The high level API acts on these high-level streams.
+
+On the C side, the elastiC stream type should have the
+following API (rough draft):
+
+typedef EcInt ec_streamtype;
+
+typedef struct ec_streamdef_struct
+{
+	ec_streamtype  streamtype;		/* type index returned by ec_stream_register() */
+
+	ec_stream_mode_fcn	mode_fcn;
+	ec_stream_close_fcn	close_fcn;
+	ec_stream_eof		eof_fcn;
+	ec_stream_error		error_fcn;
+	ec_stream_clearerror	clearerror_fcn;
+	ec_stream_flush		flush_fcn;
+	ec_stream_read		read_fcn;
+	ec_stream_write		write_fcn;
+	ec_stream_getch		getch_fcn;
+	ec_stream_gets		gets_fcn;
+	ec_stream_putch		putch_fcn;
+	ec_stream_puts		puts_fcn;
+	ec_stream_ungetch	ungetch_fcn;
+	ec_stream_charready	ready_fcn;
+	ec_stream_seek		seek_fcn;
+	ec_stream_tell		tell_fcn;
+
+	ec_stream_store		store_fcn;		/* serialization: passivation */
+	ec_stream_restore	restore_fcn;		/* serialization: activation  */
+
+	/*
+	 * :TODO:
+	 *   select/poll
+	 *   sync (force synchronous operation: always commit)
+	 *   async I/O ?
+	 */
+
+        EcInt  user_size;	/* Size in bytes of user data in ec_stream  */
+        char  *name;            /* Name of stream type (file, socket, ...)  */
+} ec_streamdef;
+
+typedef ec_stream_struct
+{
+	ec_streamdef  *streamdef;
+
+	union {
+		EcInt   v_int;
+		EcDWord v_dword;
+		EcAny   v_any;
+	} userdata;
+
+	/* Serialization data */
+} ec_stream;
+
+const ec_streamdef  *ec_stream_register( ec_streamdef *streamdef );		/* returns a pointer to an ec_streamdef with
+										   an updated streamtype member */
+ec_stream           *ec_stream_create( ec_streamdef *streamdef );
+ec_stream           *ec_stream_create_from_type( ec_streamtype streamtype );
+void                 ec_stream_destroy( ec_stream *stream );
+
+EC_OBJ               EcMakeFileFromStream( ec_stream *stream );
+
+int                  ec_stream_mode( ec_stream *stream );
+EcBool               ec_stream_close( ec_stream *stream );
+...                  ...
+EcUInt               ec_stream_store( ec_stream *stream, EC_OBJ object,
+				      ec_serializer *serialization_delegate,
+				      const char *serialization_mode );
+EC_OBJ               ec_stream_restore( ec_stream *stream, ec_serializer *serialization_delegate,
+					const char *serialization_mode );
+
+...
+
+/* globals (should be in interpreter context ! */
+extern ec_stream *ec_stream_stdin;
+extern ec_stream *ec_stream_stdout;
+extern ec_stream *ec_stream_stderr;

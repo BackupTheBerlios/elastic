@@ -25,13 +25,14 @@ core
 	* add hooks to specify behavior for uncaught exceptions
 	  (asked by Anton A.Khorkov)
 	o unload functionality for elastiC modules (asked by Yuri)
-	* finish OO regular expression Re module.
 	o key filtering on dictionaries (hooks for key comparison
 	  and hashing, on the elastiC side).
 	o general iteration support
 	o add generic construction support
 	* API I/O functions.
 	* convert all libc I/O functions invocations.
+	* generic I/O with an elastiC high level file type acting as an
+	  abstraction built on lower levels (C streams, OO I/O API, ...)
 	o handle const flag (EC_CONSTP()).
 	* evaluate a simpler hashing scheme with doubling and simple linear
 	  searching (check and benchmark `src/hashtable_new').
@@ -205,6 +206,8 @@ modules
 	  to resolve a symbol (asked by Yuri)
 	o finish FFI
 	* add array.concat(), ...
+	* finish OO regular expression Re module.
+	* add an OO I/O module
 	* evaluate possibility of externally include (as dynamic modules),
 	  iconv (libiconv) and/or IBM ICU for Unicode. (Emiliano wrote
 	  a "unicode" module, stacking on top of libunicode).
