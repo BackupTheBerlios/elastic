@@ -40,14 +40,28 @@ core
 	o add Bytecode Description Blocks (& Package Description Blocks) to
 	  describe variables, line numbers, ... in code (for debugging
 	  support).
-	* add an object serialization framework (with optional filtering).
+	* add C pointer registration (with identification, for serialization
+	  and package save/reload). Pointer info should include versioning
+	  information for runtime linking.
+	* add an object serialization (passivation/activation) framework
+	  (with optional filtering). (See previous point on pointer registration).
 	  It should be implemented taking into account registration of new
 	  named streaming engines. Two built-in streaming modes are required
 	  ("binary", "text"). Support for streaming delegates ?
 	* consider making types first class objects too.
 	* consider adding method support to (every) type.
-	* consider making basic types subclassable.
 	* add classes to primitive types. (?)
+	  (perhaps changing EcFindMethod() to handle ordinary objects)
+	  o add automatic class generation with marshalling methods to packages
+	    defining functions which receive as first argument objects of the
+	    introduced type (via an ad-hoc API function to call after
+	    EcPackageIntroduce()).
+	* consider making basic types subclassable.
+          (problem: creation of instances of subclasses: how to create the
+           ordinary object at the base of hierarchy? Perhaps we need generic
+	   construction and have to modify EcLibObjectClass_New() (and
+	   EcMakeObject() or avoid EcMakeObject() and use something else, like
+	   generic construction))
 	* finish hash table expansion (use next prime calculation) (still
 	  needed?)
 	o change tc_compiled to tc_bytecode
@@ -152,7 +166,6 @@ core
         o add the 'switch' statement
         . evaluate optional (variable) typing and type-information
           flow/deduction
-	* add default values for formal parameters
 	* add named formal parameters
 	* add named argument support in string % operator
 	* syntax to add methods outside class declarations.
@@ -174,6 +187,7 @@ core
 	DONE: * multiple simultaneous assignment from an array.
 	DONE: * add expression 'in' (ala Python).
 	DONE: * add ++, --, +=, -=, *=, ... etc.
+	DONE: add default values for formal parameters (done in 0.0.33)
 
    /* code generation */
         . modularize code generation: switch to a modular backend
@@ -205,6 +219,7 @@ modules
 	o a `dl' module: dynamic loading of elastiC modules with the ability
 	  to resolve a symbol (asked by Yuri)
 	o finish FFI
+	* add EC_BEGIN_DECLS and EC_END_DECLS to external modules (inet, ...)
 	* add array.concat(), ...
 	* finish OO regular expression Re module.
 	* add an OO I/O module
