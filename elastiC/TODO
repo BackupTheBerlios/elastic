@@ -1,0 +1,292 @@
+// TODO
+
+/*
+ * elastiC TODO
+ *
+ * Inspired by antirez's "palla" TODO file.
+ */
+
+/* $Id */
+
+/* priority:
+ *
+ *      ! extremely urgent
+ *      * urgent
+ *      o normal
+ *      . low
+ *      ? very low, maybe never implemented.
+ */
+
+core
+{
+	* throw an error on wrong argcount to method `new'
+	* check order of EC_STACKPOP calls in lib.c
+	o fix exception handling in compiler (for basic.compile())
+	* add hooks to specify behavior for uncaught exceptions
+	  (asked by Anton A.Khorkov)
+	o unload functionality for elastiC modules (asked by Yuri)
+	* finish OO regular expression Re module.
+	o key filtering on dictionaries (hooks for key comparison
+	  and hashing, on the elastiC side).
+	o general iteration support
+	o add generic construction support
+	* API I/O functions.
+	* convert all libc I/O functions invocations.
+	o handle const flag (EC_CONSTP()).
+	* evaluate a simpler hashing scheme with doubling and simple linear
+	  searching (check and benchmark `src/hashtable_new').
+	* add caching to hash tables.
+	o add Bytecode Description Blocks (& Package Description Blocks) to
+	  describe variables, line numbers, ... in code (for debugging
+	  support).
+	* add an object serialization framework (with optional filtering).
+	  It should be implemented taking into account registration of new
+	  named streaming engines. Two built-in streaming modes are required
+	  ("binary", "text"). Support for streaming delegates ?
+	* consider making types first class objects too.
+	* consider adding method support to (every) type.
+	* consider making basic types subclassable.
+	* add classes to primitive types. (?)
+	* finish hash table expansion (use next prime calculation) (still
+	  needed?)
+	o change tc_compiled to tc_bytecode
+	o change object to instance (tc_object -> tc_instance, ...)
+	. evaluate the possibility of using bound functions & methods.
+	. add license file. Add --license (-L) option to programs: ec, ecc,
+	  ecdump, ecgtk, ...
+	* add -l ELASTICPATH to ec, ecc, ecdump, ecrt, ...
+	* handle circular reference problem in printing, passivating, ...
+	  ("hash table" or "hare and tortoise")
+	. add linux kernel module for elastiC executables.
+	o add the possibility of stripping debug info.
+	* change 2nd argument from 0 to -1 in EcMakeString().
+	* benchmark ec_hash_djb_*() vs ec_hash_pjw_*() and eventually use it
+	  by default.
+	o eliminate all EcParseStack*() calls in bundled libraries.
+	* add prefixes to (unprefixed) global symbols.
+	* move globals in private context structure.
+	* check EC_DEFAULTLIBPATH issue in cnf.h.in
+	* why some parts in the object union are not using the generic
+	  `usr' struct (like C Primitive and C Method) ?
+	* consider adding a configuration API, so that Win32 can use the
+	  registry or ini files and env. variables, while Unix can use env.
+	  variables and/or configuration files, ...
+	! [BUG] a buggy _print method does not generate an exception but
+	  is ignored.
+	! check printing of arrays (seems like that "[" is printed instead
+	  of "#[").
+	o change ec_find_upper_prime to ec_prime_next.
+	* check & correct method names without ending colon ':'
+	* FILE STRUCTURE REORGANIZATION:
+	    1. move files like hash.h and file.h in types/
+	    2. make a separate subdirectory for library primitives & classes
+	       (lib.[hc] & co.)
+	    3. separate subdirectory for utilities ?
+	    4. separate subdirectory for compiler ?
+	. remove old non-inlined code. Change when possible from EC_TYPE to
+	  EC_OBJTYPE (for example in gc.c, ...)
+	. remove boolean, ints, symbols implementations from object structure.
+	  Use only pointer comparison for undefined and booleans.
+	o move tc_undefined, tc_error and tc_bool away from the beginning of
+	  type codes (so to have tc_inum == 1, tc_symbol == 2).
+	. cache hash values in objects [DANGEROUS ?]
+
+	. implement Polymorphic Inline Caches [DIFFICULT]
+
+	DONE: * eliminate SetLineOP moving the line number information to
+	        a separate data structure, field of EcCompiled. This could
+		be a list (byte code index, line number). Could (should) be
+		part of debugging information.
+	DONE: * integrate GNU libltdl & use a machine independent shared module
+		layer.
+	DONE: o evaluate the possibility of incorporating `nargs' into stack
+		structure.
+	DONE: o make string construction at run-time.
+	DONE: * includes: <elastiC/*.h>
+	DONE: o change ELASTICLIBPATH to ELASTICPATH.
+	DONE: * add function pointers "getitem", "setitem", "promote" to user
+		data-types.
+	DONE: * implement generic math operations.
+	DONE: o named arguments in ec_*printf() functions (fetching from hashes).
+	DONE: o add the full path to errors/exceptions (asked by Yuri).
+	DONE: o make the source extension (.ec) configurable (asked by Yuri).
+	DONE: * modify hash function for floating point values.
+	DONE: o inlined small stack space, recycle stacks, stack space pool
+		(great performance improvement).
+	DONE: o try to speed up function/method invocation.
+	DONE: o for 0.0.25: option for separating the compiler and the
+		interpreter run-time.
+	DONE: o for 0.0.24: hash tables API.
+	DONE: ! [BUG] test nested packages written in C !!!
+	DONE: o eliminate SetLineOP (adding debug sections): it causes
+		otherwise equal bytecodes to appear different.
+	DONE: o add support for (native) integers bigger than 4 bytes (for
+		Alpha and other 64bit processors). On these platforms package
+		save/reload doesn't work right.
+	DONE: * some inlined math operations could be performed without
+		extraction (e.g. comparisons, ...). Do it.
+	DONE: * check instance trueness code.
+	DONE: ! [BUG] check possible bug: indexing nil not detected !
+	DONE: ! [BUG] empty methods don't work. Fix it.
+	DONE: ! EcMemoryError() cause infinite recursion. Preallocate stack
+		& object to avoid this behavior.
+	DONE: ! IMPORTANT !!! Disable key & value copy on hash expansion !!!
+	DONE: o change generic hashtable API names to ec_* convention.
+	DONE: o change EcStrTable* to ec_strtable*, ...
+	DONE: o finish adding copy construction to:
+		  handler.c, hash.c, object.c, package.c, stack.c, string.c
+	DONE: o add CopyOP bytecode (1 parameter: type, 1 operand: object)
+	DONE: o correct compileConstant for compiled objects.
+	DONE: o add object copy construction methods (class methods).
+	DONE: o add basic.copy(...), basic.shallowcopy(...),
+		basic.deepcopy(...).
+	DONE: * check static variables.
+	DONE: o add elastiC version number in code (and also print it in ec,
+		ecc).
+	DONE: o change package search in packageio.c (use EC_ELASTICLIBVAR +
+		an autoconfigured default path) and update accordingly
+		elastic-config.
+
+   /* language */
+        o add the 'switch' statement
+        . evaluate optional (variable) typing and type-information
+          flow/deduction
+	* add default values for formal parameters
+	* add named formal parameters
+	* add named argument support in string % operator
+	* syntax to add methods outside class declarations.
+	o syntax: slices a[l..h]
+	o syntax: invariants (pre/post-conditions, invariants, assertions, ...)
+	o syntax: code documentation
+	. syntax: add construct (???):
+	      for i in sequence where condition
+	o syntax: add 'break' in exception handlers (jumping to the end) ?
+	* syntax: add 'finally' block
+	o syntax: method catalogs/protocols (?)
+	o syntax: support for \nnn (octal) and \xnn (hex) in characters and
+		  strings.
+	* syntax: evaluate changing syntax for array and hash construction:
+		  #[ seems more appropriate to hashes, maybe @[ or @( for
+		  arrays.
+	DONE: * syntax: multiple simultaneous assignment:
+	        (a, b, c) = (b, c, a)
+	DONE: * multiple simultaneous assignment from an array.
+	DONE: * add expression 'in' (ala Python).
+	DONE: * add ++, --, +=, -=, *=, ... etc.
+
+   /* code generation */
+        . modularize code generation: switch to a modular backend
+          architecture
+        . add a backend emitting C code
+        . add backends emitting cross-refereces (ctag ?), pretty-prints, ...
+        . add an intermediate representation (tuple-based ?, other ?, RTL ?)
+        . evaluate a more general AST approach (give a look at treecc:
+          http://www.southern-storm.com.au/treecc.html)
+        . with the modular backend code generator in place, integrate
+          the lightning library as a Just In Time mechanism
+        . look at third-party generic backend code generators (MLRISC:
+          http://cs1.cs.nyu.edu/leunga/www/MLRISC/Doc/html/INTRO.html)
+
+   /* optimization */
+	. evaluate opportunity of switching to a register-based VM
+          (write two very simple test VMs: a stack-based and a register-based
+           and perform some tests on popular architectures)
+        . write a peephole bytecode optimizer
+        . write a local bytecode optimizer
+        . AST optimizer
+
+	DONE: * ...
+                ...
+}
+
+modules
+{
+	o a `dl' module: dynamic loading of elastiC modules with the ability
+	  to resolve a symbol (asked by Yuri)
+	o finish FFI
+	* add array.concat(), ...
+	* evaluate possibility of externally include (as dynamic modules),
+	  iconv (libiconv) and/or IBM ICU for Unicode. (Emiliano wrote
+	  a "unicode" module, stacking on top of libunicode).
+
+	DONE: * add `math' module.
+	DONE: * update SWIG module and gtk module for copy construction.
+}
+
+misc
+{
+	o adapt byacc || bison || zyacc to code re-entrancy.
+	o adapt lex || flex to code re-entrancy.
+	o adapt lex || flex to emit elastiC output.
+
+	DONE: o adapt byacc || bison || zyacc to emit elastiC output.
+}
+
+code_portability
+{
+}
+
+code_quality
+{
+	* clean-up warnings produced with --enable-devel=paranoid
+	  (mainly signed vs unsigned comparisons)
+}
+
+code_security
+{
+}
+
+packaging
+{
+	* fix library versioning
+	o install dynamically loadable C modules in ${libdir}/elastic-x.y.z
+	  instead of ${libdir}/elastic (where x.y.z are library versioning
+	  values)
+	o integrate debian package support
+	o add rpm package support
+
+   /* Win32 */
+	o update VC7 project files
+	o integrate Nullsoft NSIS installer generator in VC++ projects
+	o integrate Nullsoft NSIS installer generator in autoconf/automake
+          build system
+}
+
+build
+{
+	* rename makemodule to ec_makemodule, ...
+
+	DONE: * switch to 'configure' dependent basic types.
+
+   /* Win32 */
+	o update Cygwin / Ming32 support
+}
+
+documentation
+{
+	o evaluate switching from SDF to DocBook/XML with XSL or DocBook/SGML.
+	o write more introductory (and less dummy) examples
+}
+
+/* ========================================================================
+ *   PROBLEMS
+ * ------------------------------------------------------------------------ */
+
+(*) PROBLEM:
+
+When saving a package, we can save objects coming from imported
+packages too. In a future run, when loading the previously saved
+package, we'll load its imported packages, then load the objects.
+This means that objects coming from imported packages will be
+duplicated (they were loaded once when loading imported packages, then
+a second time when loading objects saved). This happens for example
+with super classes coming from imported objects.
+The problem is that, apart being a waste of space, for classes a
+loaded class doesn't get its class code executed when loaded, so that
+static variables don't get set.
+
+Solution: saving/loading also stacks in packageio.c and executing
+class code whenever a class is loaded (this was necessary anyway).
+
+Complete solution: full passivation implementation. Packages should
+stream completely also imported packages.

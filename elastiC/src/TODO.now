@@ -10,6 +10,12 @@
 - add hooks to specify behavior for uncaught exceptions
   (asked by Anton A.Khorkov)
 
+- finish OO regular expression Re module
+
+- add default values for formal parameters
+
+- add named formal parameters
+
 - add named argument support in string % operator
 
 - iterators
