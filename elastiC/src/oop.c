@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec 12 22:01:08 MET 1998
  *
- *   $Id: oop.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: oop.c,v 1.3 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -613,6 +613,22 @@ EC_API EC_OBJ EcDispatchClassMessage( EC_OBJ obj, EcUInt methodid, EC_OBJ stack 
 	return Ec_ERROR;
 }
 
+EC_API EC_OBJ EcGetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varSymbol )
+{
+	EcInt offs;
+
+	if (EC_NULLP(at_class))
+		at_class = EC_OBJECTCLASS(obj);
+
+	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), varSymbol );
+/*	ec_fprintf( stderr, "GetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
+	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+	if (offs < 0)
+		return Ec_ERROR;
+/*	fprintf( stderr, "GetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
+	return EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs];
+}
+
 EC_API EC_OBJ EcGetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *name )
 {
 	EcInt offs;
@@ -627,6 +643,22 @@ EC_API EC_OBJ EcGetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *na
 		return Ec_ERROR;
 /*	fprintf( stderr, "GetIV: `%s'  offs: %d   coffs: %d\n", name, offs, EC_CLASSIOFFSET(at_class) );*/
 	return EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs];
+}
+
+EC_API EC_OBJ EcSetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varSymbol, EC_OBJ value )
+{
+	EcInt offs;
+
+	if (EC_NULLP(at_class))
+		at_class = EC_OBJECTCLASS(obj);
+
+	offs = search_variable( EC_CLASSNIVARS(at_class), EC_CLASSIVTABLE(at_class), varSymbol );
+/*	ec_fprintf( stderr, "SetIV  obj: %w  at_class: %w  name: `%s'\n", obj, at_class, EcSymbolAt( varSymbol ) );
+	ec_fprintf( stderr, "      offs: %d  nivars: %d  ioffs: %d\n", offs, EC_CLASSNIVARS(at_class), EC_CLASSIOFFSET(at_class) );*/
+	if (offs < 0)
+		return Ec_ERROR;
+/*	fprintf( stderr, "SetIV: `%s'  offs: %d   coffs: %d\n", EcSymbolAt( varSymbol ), offs, EC_CLASSIOFFSET(at_class) );*/
+	return (EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs] = value);
 }
 
 EC_API EC_OBJ EcSetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *name, EC_OBJ value )
@@ -645,6 +677,16 @@ EC_API EC_OBJ EcSetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *na
 	return (EC_OBJECTIVARS(obj)[EC_CLASSIOFFSET(at_class) + offs] = value);
 }
 
+EC_API EC_OBJ EcGetClassVariableSym( EC_OBJ classobj, EcUInt varSymbol )
+{
+	EcInt offs;
+
+	offs = search_variable( EC_CLASSNCVARS(classobj), EC_CLASSCVTABLE(classobj), varSymbol );
+	if (offs < 0)
+		return Ec_ERROR;
+	return EcArrayGet( EC_CLASSLFRAME(classobj), offs );
+}
+
 EC_API EC_OBJ EcGetClassVariable( EC_OBJ classobj, const char *name )
 {
 	EcInt offs;
@@ -653,6 +695,17 @@ EC_API EC_OBJ EcGetClassVariable( EC_OBJ classobj, const char *name )
 	if (offs < 0)
 		return Ec_ERROR;
 	return EcArrayGet( EC_CLASSLFRAME(classobj), offs );
+}
+
+EC_API EC_OBJ EcSetClassVariableSym( EC_OBJ classobj, EcUInt varSymbol, EC_OBJ value )
+{
+	EcInt offs;
+
+	offs = search_variable( EC_CLASSNCVARS(classobj), EC_CLASSCVTABLE(classobj), varSymbol );
+	if (offs < 0)
+		return Ec_ERROR;
+	EcArraySet( EC_CLASSLFRAME(classobj), offs, value );
+	return value;
 }
 
 EC_API EC_OBJ EcSetClassVariable( EC_OBJ classobj, const char *name, EC_OBJ value )

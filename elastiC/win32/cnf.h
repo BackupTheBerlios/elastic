@@ -57,22 +57,22 @@
 #define SO_SUFFIX ".so"
 #endif
 
-#define EC_VERSION			EC_MAKEVERSION(0, 0, 37)
-#define EC_VERSION_STRING	"0.0.37"
+#define EC_VERSION			EC_MAKEVERSION(0, 0, 38)
+#define EC_VERSION_STRING	"0.0.38-testing"
 
 #define EC_MAJOR_VERSION	0
 #define EC_MINOR_VERSION	0
-#define EC_MICRO_VERSION	37
+#define EC_MICRO_VERSION	38
 
-#define EC_API_VERSION		10
-#define EC_API_REVISION		0
-#define EC_BINARY_AGE		1
+#define EC_API_VERSION		0.0
+#define EC_API_REVISION		@EC_API_REVISION@
+#define EC_BINARY_AGE		0
 
 #define CNF_PREFIX			"/home/panta/usrlocal"
 #define CNF_EXECPREFIX		"${prefix}"
 #define CNF_BINDIR			"${exec_prefix}/bin"
 #define CNF_LIBS			"-ldl -lm "
-#define CNF_CFLAGS			"-Wall -Winline -Wstrict-prototypes -Wno-protocols -D_GNU_SOURCE -I${top_builddir} -g -O0 -DEC_DEBUG"
+#define CNF_CFLAGS			"-g -O2 -g -O2 -DEC_DEBUG_MINIMUM"
 #define CNF_CC				"gcc"
 
 #define EC_PLATFORM_ALIGNMENT	8
@@ -80,10 +80,10 @@
 /*
  * Should we use EC_API_VERSION instead of EC_VERSION in EC_DEFAULTLIBPATH ???
  * Maybe we should use:
- *  .../usr/lib/elastic:/usr/lib/elastic/native-10...
+ *  .../usr/lib/elastic:/usr/lib/elastic/native-0.0...
  */
 #ifndef WIN32	/* UNIX */
-#define EC_DEFAULTLIBPATH	"/usr/lib/elastic:/usr/lib/elastic-0.0.37:/home/panta/usrlocal/lib/elastic:/home/panta/usrlocal/lib/elastic-0.0.37"
+#define EC_DEFAULTLIBPATH	"/usr/lib/elastic-0.0:/usr/lib/elastic:/home/panta/usrlocal/lib/elastic-0.0:/home/panta/usrlocal/lib/elastic"
 #else		/* WIN32 */
 /*
  * We are hardcoding default paths, which is *UGLY*
@@ -91,9 +91,9 @@
  * like the registry.
  */
 #if defined(CYGWIN)
-#define EC_DEFAULTLIBPATH	"C:\\elastic-0.0.37;C:\\elastic-0.0.37\\lib;C:\\elastic;C:\\elastic\\lib;/home/panta/usrlocal\\elastic;/home/panta/usrlocal\\elastic-0.0.37"
+#define EC_DEFAULTLIBPATH	"C:\\elastic-0.0;C:\\elastic-0.0\\lib;C:\\elastic;C:\\elastic\\lib;/home/panta/usrlocal\\elastic-0.0;/home/panta/usrlocal\\elastic"
 #else
-#define EC_DEFAULTLIBPATH	"C:\\elastic-0.0.37;C:\\elastic-0.0.37\\lib;C:\\elastic;C:\\elastic\\lib"
+#define EC_DEFAULTLIBPATH	"C:\\elastic-0.0;C:\\elastic-0.0\\lib;C:\\elastic;C:\\elastic\\lib"
 #endif
 
 #endif

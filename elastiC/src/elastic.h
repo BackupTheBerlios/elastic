@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.1 2002/05/23 21:17:01 panta Exp $
+ *   $Id: elastic.h,v 1.2 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -138,7 +138,7 @@ EC_API EC_OBJ  EcMakeException( EC_OBJ exc_class, const char *format, ... );
 EC_API EC_OBJ  EcMakeExceptionWithArgs( EC_OBJ exc_class, const char *msg, EcInt nargs, ... );
 EC_API EC_OBJ  EcUnimplementedError( const char *msg );
 EC_API EC_OBJ  EcMathError( const char *msg );
-EC_API EC_OBJ  EcIOError( EC_OBJ ioObject, const char *msg );
+EC_API EC_OBJ  EcIOError( EC_OBJ ioObject, EcUInt posixErrorSymbol, const char *msg );
 EC_API EC_OBJ  EcMemoryError( void );
 EC_API EC_OBJ  EcTypeError( EC_OBJ target, EC_OBJ function,
 							EcInt index,
@@ -319,9 +319,13 @@ EC_API EC_OBJ EcDispatchObjectMessage( EC_OBJ obj, EC_OBJ at_class, EcUInt metho
 EC_API EC_OBJ EcDispatchClassMessage( EC_OBJ obj, EcUInt methodid, EC_OBJ stack );
 
 	/* Modifing state */
+EC_API EC_OBJ EcGetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varSymbol );
 EC_API EC_OBJ EcGetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *name );
+EC_API EC_OBJ EcSetInstanceVariableSym( EC_OBJ obj, EC_OBJ at_class, EcUInt varSymbol, EC_OBJ value );
 EC_API EC_OBJ EcSetInstanceVariable( EC_OBJ obj, EC_OBJ at_class, const char *name, EC_OBJ value );
+EC_API EC_OBJ EcGetClassVariableSym( EC_OBJ classobj, EcUInt varSymbol );
 EC_API EC_OBJ EcGetClassVariable( EC_OBJ classobj, const char *name );
+EC_API EC_OBJ EcSetClassVariableSym( EC_OBJ classobj, EcUInt varSymbol, EC_OBJ value );
 EC_API EC_OBJ EcSetClassVariable( EC_OBJ classobj, const char *name, EC_OBJ value );
 
 

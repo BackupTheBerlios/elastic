@@ -7,7 +7,7 @@
 #
 #   Created: 24 Nov 1999
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:18:40 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/06/04 20:08:27 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
 #
@@ -44,7 +44,7 @@ SUBDIRS = pcre
 
 CLEANFILES = re.def re.dll libre.a $(MODULE) $(wildcard $.o)
 
-elasticlibdir = $(prefix)/lib/elastic
+elasticlibdir = $(prefix)/lib/elastic-$(EC_API_VERSION)
 elasticlib_DATA = $(MODULE)
 
 # dummy target to force proper automake behavior

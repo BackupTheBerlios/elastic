@@ -83,7 +83,7 @@
  *  .../usr/lib/elastic:/usr/lib/elastic/native-@EC_API_VERSION@...
  */
 #ifndef WIN32	/* UNIX */
-#define EC_DEFAULTLIBPATH	"/usr/lib/elastic:/usr/lib/elastic-@EC_VERSION@:@prefix@/lib/elastic:@prefix@/lib/elastic-@EC_VERSION@"
+#define EC_DEFAULTLIBPATH	"/usr/lib/elastic-@EC_API_VERSION@:/usr/lib/elastic:@prefix@/lib/elastic-@EC_API_VERSION@:@prefix@/lib/elastic"
 #else		/* WIN32 */
 /*
  * We are hardcoding default paths, which is *UGLY*
@@ -91,9 +91,9 @@
  * like the registry.
  */
 #if defined(CYGWIN)
-#define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_VERSION@;C:\\elastic-@EC_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib;@prefix@\\elastic;@prefix@\\elastic-@EC_VERSION@"
+#define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_API_VERSION@;C:\\elastic-@EC_API_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib;@prefix@\\elastic-@EC_API_VERSION@;@prefix@\\elastic"
 #else
-#define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_VERSION@;C:\\elastic-@EC_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib"
+#define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_API_VERSION@;C:\\elastic-@EC_API_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib"
 #endif
 
 #endif

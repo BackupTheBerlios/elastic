@@ -25,20 +25,24 @@ linkforshared="@LINKFORSHARED@"
 so="@SO@"
 cc="@CC@"
 
-version=@EC_VERSION@
-
+ecversion=@EC_VERSION@
 api_version=@EC_API_VERSION@
-api_revision=@EC_API_REVISION@
-binary_age=@EC_BINARY_AGE@
+
+api_interface=@LT_CURRENT@
+api_revision=@LT_REVISION@
+api_age=@LT_AGE@
+api_interface_lo=@LT_CURRENT_MINUS_AGE@
 lt_version_info=@LT_VERSION_INFO@
 
-elasticconfig_version=0.02
+moduledir="${prefix}/lib/elastic-${api_version}"
+
+elasticconfig_version=0.03
 
 usage()
 {
 	cat <<EOF
 elastic-config version $elasticconfig_version
-Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 Usage: elastic-config [OPTIONS]
 Options:
    --build  | --buildalias  | --buildtriplet
@@ -58,10 +62,13 @@ Options:
    --makemodule
    --makemoduleflags
    --makemodulelibs
-   --api-full-version
+   --moduledir
+   --elastic-version
    --api-version
+   --api-interface
+   --api-interface-first
    --api-revision
-   --binary-age
+   --api-age
    --version-info
    --version
 EOF
@@ -158,23 +165,32 @@ while test $# -gt 0; do
     --makemodulelibs | --mkmodulelibs | --make-module-libs | --mk-module-libs)
       echo_makemodulelibs=yes
       ;;
-    --api-full-version)
-      echo ${api_version}.${api_revision}
+    --moduledir)
+      echo ${moduledir}
+      ;;
+    --elastic-version)
+      echo ${ecversion}
       ;;
     --api-version)
       echo $api_version
       ;;
+    --api-interface)
+      echo $api_interface
+      ;;
+    --api-interface-first)
+      echo $api_interface_lo
+      ;;
     --api-revision)
       echo $api_revision
       ;;
-    --binary-age)
-      echo $binary_age
+    --api-age)
+      echo $api_age
       ;;
     --version-info)
       echo $lt_version_info
       ;;
     --version)
-      echo $version
+      echo $elasticconfig_version
       ;;
     *)
       usage 1 1>&2
@@ -248,7 +264,7 @@ if test "$echo_libs" = "yes"; then
         fi
       done
 
-      echo $libdirs -lelastic $my_libs
+      echo $libdirs -lelastic-${api_version} $my_libs
 fi
 
 if test "$echo_cflags" = "yes"; then
@@ -290,7 +306,7 @@ else
     elastic_config="${bindir}/elastic-config"
 fi
 makemodule="${bindir}/makemodule"
-makemoduleflags="-c ${elastic_config} --elastic-import=${libdir}/libelastic.a"
+makemoduleflags="-c ${elastic_config} --elastic-import=${libdir}/libelastic-${api_version}.a"
 makemodulelibs=""
 
 if test "$echo_makemodule" = "yes"; then

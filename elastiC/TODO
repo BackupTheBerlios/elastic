@@ -43,6 +43,10 @@ core
 	* add C pointer registration (with identification, for serialization
 	  and package save/reload). Pointer info should include versioning
 	  information for runtime linking.
+	* use the G bit in object flags not only for tc_primitive, but for any
+	  type having userdata (EC_OBJECTUSER(), ...) so that we can use the
+	  registerd C pointers table to save/load objects in packageio.c and
+	  in serialization.
 	* add an object serialization (passivation/activation) framework
 	  (with optional filtering). (See previous point on pointer registration).
 	  It should be implemented taking into account registration of new
@@ -105,7 +109,8 @@ core
 	o move tc_undefined, tc_error and tc_bool away from the beginning of
 	  type codes (so to have tc_inum == 1, tc_symbol == 2).
 	. cache hash values in objects [DANGEROUS ?]
-
+	o write more exception classes (and use them). Complete class
+	  hierarchies for existing exceptions (like IOError, ...)
 	. implement Polymorphic Inline Caches [DIFFICULT]
 
 	DONE: * eliminate SetLineOP moving the line number information to
@@ -233,6 +238,10 @@ modules
 	o a date/time module
 	o a digest module (MD5, SHA1, ...)
 	o a cryptographic module (DES, RSA, Blowfish, ...)
+	o a MySQL module
+	o a Postgres module
+	o an ODBC module
+	o a db asbtraction module
 
 	DONE: * add `math' module.
 	DONE: * update SWIG module and gtk module for copy construction.
@@ -279,7 +288,9 @@ packaging
 
 build
 {
-	* rename makemodule to ec_makemodule, ...
+	* rename makemodule to ec-makemodule, ...
+	* rename mingw32-makedll, cygwin-makedll to ec-makedll-mingw32, ec-makedll-cygwin
+	* add a ec-makedll wrapper around ec-makedll-mingw32 and ec-makedll-cygwin
 
 	DONE: * switch to 'configure' dependent basic types.
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.1 2002/05/23 21:16:42 panta Exp $
+ *   $Id: builtin.c,v 1.2 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -216,14 +216,16 @@ static EcCMethodDef EcIOErrorClass_ClassMethods[] =				/* Class Methods      */
 
 static EcCMethodDef EcIOErrorClass_Methods[] =					/* Instance Methods   */
 {
-	{ "getIOObject",	EcLibIOError_GetIOObject },
-	{ NULL,				NULL                     }
+	{ "getIOObject",	EcLibIOError_GetIOObject   },
+	{ "getPosixError",	EcLibIOError_GetPosixError },
+	{ NULL,				NULL                       }
 };
 
 static EcVariableDef EcIOErrorClass_Variables[] =				/* Instance Variables */
 {
-	{ "ioObject" },
-	{ NULL       }
+	{ "ioObject"   },											/* I/O object (file, ...) that caused or was interested by the error */
+	{ "posixError" },											/* symbol of the posix error (#EEXIST, #ENOMEM, ...)                 */
+	{ NULL         }
 };
 
 /* ------------------------------------------------------------------------

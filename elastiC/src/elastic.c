@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.2 2002/05/24 17:34:42 panta Exp $
+ *   $Id: elastic.c,v 1.3 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -663,9 +663,9 @@ EC_API EC_OBJ EcMathError( const char *msg )
 	return EcMakeExceptionWithArgs( EcMathErrorClass, msg, 0 );
 }
 
-EC_API EC_OBJ EcIOError( EC_OBJ ioObject, const char *msg )
+EC_API EC_OBJ EcIOError( EC_OBJ ioObject, EcUInt posixErrorSymbol, const char *msg )
 {
-	return EcMakeExceptionWithArgs( EcIOErrorClass, msg, 1, ioObject );
+	return EcMakeExceptionWithArgs( EcIOErrorClass, msg, 2, ioObject, EcMakeSymbolFromId( posixErrorSymbol ) );
 }
 
 EC_API EC_OBJ EcMemoryError( void )

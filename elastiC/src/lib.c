@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.c,v 1.5 2002/06/01 21:22:12 panta Exp $
+ *   $Id: lib.c,v 1.6 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -886,12 +886,13 @@ EC_API EC_OBJ EcLibMathErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stac
 EC_API EC_OBJ EcLibIOErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack )
 {
 	EC_OBJ obj;
-	EC_OBJ msg, ioObject;
+	EC_OBJ msg, ioObject, posixError;
 
 	EC_CHECKNARGS_CM( self, "new", 2 );
 
-	ioObject = EC_STACKPOP( stack );
-	msg      = EC_STACKPOP( stack );
+	posixError = EC_STACKPOP( stack );
+	ioObject   = EC_STACKPOP( stack );
+	msg        = EC_STACKPOP( stack );
 
 	/*
 	 * This is a class method, so self is the class
@@ -903,6 +904,9 @@ EC_API EC_OBJ EcLibIOErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack 
 	EcSetInstanceVariable( obj, EcIOErrorClass,
 						   "ioObject",
 						   ioObject );
+	EcSetInstanceVariable( obj, EcIOErrorClass,
+						   "posixError",
+						   posixError );
 	return obj;
 }
 
@@ -916,6 +920,19 @@ EC_API EC_OBJ EcLibIOError_GetIOObject( EC_OBJ self, EC_OBJ in_class, EC_OBJ sta
 	res = EcGetInstanceVariable( self,
 								 EcIOErrorClass,
 								 "ioObject" );
+	return res;
+}
+
+EC_API EC_OBJ EcLibIOError_GetPosixError( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack )
+{
+	EC_OBJ res;
+
+	EC_CHECKNARGS_M( self, "getPosixError", 0 );
+
+	ASSERT( in_class == EcIOErrorClass );
+	res = EcGetInstanceVariable( self,
+								 EcIOErrorClass,
+								 "posixError" );
 	return res;
 }
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jul 26 17:04:46 MEST 1998
  *
- *   $Id: lib.h,v 1.3 2002/06/01 21:22:12 panta Exp $
+ *   $Id: lib.h,v 1.4 2002/06/04 20:08:27 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -101,6 +101,7 @@ EC_API EC_OBJ EcLibMathErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stac
 
 EC_API EC_OBJ EcLibIOErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack );
 EC_API EC_OBJ EcLibIOError_GetIOObject( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack );
+EC_API EC_OBJ EcLibIOError_GetPosixError( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack );
 
 EC_API EC_OBJ EcLibMemoryErrorClass_New( EC_OBJ self, EC_OBJ in_class, EC_OBJ stack );
 

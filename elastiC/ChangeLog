@@ -1,3 +1,20 @@
+2002-06-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* switched to library versioning in autoconf/automake...
+	  Now libraries are of the form libelastic-X.Y.so.u.v.w
+
+	* src/elastic.c src/builtin.c src/lib.c: added a new instance
+	variable to IOError class, containing the posix error (as a
+	symbol, like #ENOENT). This is *NOT* a substitute for a hierarchy
+	of exceptions derived from IOError! It is only a way to keep track
+	of the underlying posix error, when available. We still need to
+	write IOError-derived exceptions.
+
+	* src/oop.c: added function to get/set instance and class
+	variables using symbols instead of strings:
+	EcGetInstanceVariableSym(), EcSetInstanceVariableSym(),
+	EcGetClassVariableSym(), EcSetClassVariableSym().
+
 2002-06-01  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* Version 0.0.37

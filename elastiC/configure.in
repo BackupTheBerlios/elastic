@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.5 2002/06/01 17:10:07 panta Exp $
+dnl   $Id: configure.in,v 1.6 2002/06/04 20:08:27 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -46,38 +46,106 @@ cflags_set=${CFLAGS+set}
 dnl ========================================================================
 dnl V E R S I O N I N G
 dnl ------------------------------------------------------------------------
+dnl
+dnl Library versioning is needed in order to allow programs and libraries
+dnl to link with different versions of the elastiC library as long as this
+dnl presents a compatible range of API implementations.
+dnl The elastiC library will contain information saying that it implements
+dnl APIs in a range, such as [X1:X2].
+dnl libraries with different major and minor numbers will *always* be
+dnl considered incompatible.
+dnl
+dnl We currently use libtool (at least on unix) to specify implemented
+dnl API versions.
+dnl There are many components in the elastiC versioning scheme:
+dnl
+dnl elastiC package version specification
+dnl -------------------------------------
+dnl
+dnl    X.Y.Z
+dnl
+dnl where:
+dnl    X   EC_MAJOR_VERSION
+dnl    Y   EC_MINOR_VERSION
+dnl    Z   EC_MICRO_VERSION
+dnl
+dnl libtool library version specification
+dnl -------------------------------------
+dnl
+dnl    C.R.A
+dnl
+dnl where C.R.A constitutes the libtool --version-info specification as
+dnl described in the libtool manual:
+dnl
+dnl    C   LT_CURRENT    The most recent interface number implemented by this
+dnl                      library.
+dnl    R   LT_REVISION   The implementation number of the CURRENT interface.
+dnl    A   LT_AGE        The difference between the newest and oldest interfaces
+dnl                      that this library implements. In other words, this
+dnl                      library implements all interface numbers in range
+dnl                      LT_CURRENT - AGE to LT_CURRENT  or [C-A:C]
+dnl
+dnl elastiC library version specification
+dnl -------------------------------------
+dnl
+dnl our library version specification will be built using the aforementioned
+dnl X, Y and Z numbers and the following API version numbers:
+dnl
+dnl    I   EC_INTERFACE_AGE  The implementation number of the current interface.
+dnl    B   EC_BINARY_AGE     The number of releases since last making a binary
+dnl                          incompatible change.
+dnl
+dnl The public interface, modified when making a public release, is the tuple
+dnl (X Y Z I B)
+dnl
 dnl When making a new release:
-dnl   EC_MICRO_VERSION += 1
+dnl   Z += 1         (EC_MICRO_VERSION += 1)
 dnl
-dnl If the source code of the library has changed since previous release:
-dnl   EC_API_REVISION  += 1
-dnl   EC_BINARY_AGE    += 1
+dnl If the source code of the library has changed in any way since the previous
+dnl release:
 dnl
-dnl If the library API has changed since previous release, then:
+dnl   I += 1         (EC_INTERFACE_AGE += 1)
+dnl   B += 1         (EC_BINARY_AGE    += 1)
 dnl
-dnl   EC_API_VERSION   += 1
-dnl   EC_API_REVISION   = 0
+dnl If functions have been added since the previous release:
 dnl
-dnl If backwards compatibility has been broken:
-dnl   EC_BINARY_AGE     = 0
-dnl   EC_API_REVISION   = 0
+dnl   I = 0          (EC_INTERFACE_AGE  = 0)
 dnl
+dnl If backwards compatibility has been broken since the previous release:
+dnl
+dnl   I = 0          (EC_INTERFACE_AGE  = 0)
+dnl   B = 0          (EC_BINARY_AGE     = 0)
+dnl
+dnl Given these guidelines, we use the following equations for libtool
+dnl versioning:
+dnl
+dnl   C = (100 * Y + Z - I)
+dnl   R = I
+dnl   A = B - I
+dnl
+dnl and the elastiC library will be named:
+dnl
+dnl    libelastic-X.Y.so.(C-A).A.R  ==  libelastic-X.Y.so.(100Y+Z-B).(B-I).I
 
 EC_MAJOR_VERSION=0
 EC_MINOR_VERSION=0
-EC_MICRO_VERSION=37
-EC_API_VERSION=10
-EC_API_REVISION=0
-EC_BINARY_AGE=1
+EC_MICRO_VERSION=38
+EC_SUBMICRO_VERSION=-testing
+EC_INTERFACE_AGE=0
+EC_BINARY_AGE=0
 
-EC_VERSION=$EC_MAJOR_VERSION.$EC_MINOR_VERSION.$EC_MICRO_VERSION
+EC_VERSION=${EC_MAJOR_VERSION}.${EC_MINOR_VERSION}.${EC_MICRO_VERSION}$EC_SUBMICRO_VERSION
+dnl The following is the X.Y used in -lelastic-X.Y and -lelastic-MODULE-X.Y
+EC_API_VERSION=$EC_MAJOR_VERSION.$EC_MINOR_VERSION
+
 AC_SUBST(EC_MAJOR_VERSION)
 AC_SUBST(EC_MINOR_VERSION)
 AC_SUBST(EC_MICRO_VERSION)
-AC_SUBST(EC_API_VERSION)
-AC_SUBST(EC_API_REVISION)
+AC_SUBST(EC_SUBMICRO_VERSION)
+AC_SUBST(EC_INTERFACE_AGE)
 AC_SUBST(EC_BINARY_AGE)
 AC_SUBST(EC_VERSION)
+AC_SUBST(EC_API_VERSION)
 
 dnl libtool versioning
 dnl
@@ -91,18 +159,26 @@ dnl LT_AGE
 dnl      The difference between the newest and oldest interfaces that this
 dnl      library implements.  In other words, the library implements all the
 dnl      interface numbers in the range from number `CURRENT - AGE' to
-dnl      `CURRENT'.
+dnl      `CURRENT': [LT_CURRENT - LT_AGE : LT_CURRENT]
 dnl
 LT_RELEASE=$EC_MAJOR_VERSION.$EC_MINOR_VERSION.$EC_MICRO_VERSION
-LT_CURRENT=$EC_API_VERSION
-LT_REVISION=$EC_API_REVISION
-LT_AGE=`expr $EC_BINARY_AGE - $EC_API_REVISION`
+LT_CURRENT=`expr 100 '*' $EC_MINOR_VERSION + $EC_MICRO_VERSION - $EC_INTERFACE_AGE`
+LT_REVISION=$EC_INTERFACE_AGE
+LT_AGE=`expr $EC_BINARY_AGE - $EC_INTERFACE_AGE`
+LT_CURRENT_MINUS_AGE=`expr $LT_CURRENT - $LT_AGE`
 LT_VERSION_INFO=$LT_CURRENT:$LT_REVISION:$LT_AGE
 AC_SUBST(LT_RELEASE)
 AC_SUBST(LT_CURRENT)
 AC_SUBST(LT_REVISION)
 AC_SUBST(LT_AGE)
+AC_SUBST(LT_CURRENT_MINUS_AGE)
 AC_SUBST(LT_VERSION_INFO)
+
+dnl Lowest and highest interface versions provided
+EC_INTERFACE_LO=$LT_CURRENT_MINUS_AGE
+EC_INTERFACE_HI=$LT_CURRENT
+AC_SUBST(EC_INTERFACE_LO)
+AC_SUBST(EC_INTERFACE_HI)
 
 dnl Set VERSION so we only need to edit in here
 AC_SUBST(PACKAGE)
@@ -508,7 +584,7 @@ AC_SUBST(MKMODULELIBS)
 MKMODULE='${top_srcdir}/makemodule'
 dnl MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/libelastic.la'
 dnl MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/libelastic.a'
-MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/.libs/libelastic.a'
+MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/.libs/libelastic-$EC_API_VERSION.a'
 MKMODULELIBS=''
 
 dnl Get platform alignment restrictions

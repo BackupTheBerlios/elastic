@@ -1,3 +1,17 @@
+2002-06-04  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* elastic.c builtin.c lib.c: added a new instance variable to
+	IOError class, containing the posix error (as a symbol, like
+	#ENOENT). This is *NOT* a substitute for a hierarchy of exceptions
+	derived from IOError! It is only a way to keep track of the
+	underlying posix error, when available. We still need to write
+	IOError-derived exceptions.
+
+	* oop.c: added functions to get/set instance and class variables
+	using symbols instead of strings: EcGetInstanceVariableSym(),
+	EcSetInstanceVariableSym(), EcGetClassVariableSym(),
+	EcSetClassVariableSym().
+
 2002-06-01  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* Version 0.0.37

@@ -7,9 +7,9 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.2 2002/05/25 19:37:44 panta Exp $
+#   $Id: Makefile.am,v 1.3 2002/06/04 20:08:27 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -40,7 +40,7 @@ else
 SUBDIRS = libltdl arithmetic dl modules types unix . modules-dynamic
 endif
 
-CLEANFILES = elastic.def elastic.dll libelastic.a libelasticrt.a
+CLEANFILES = elastic-$(EC_API_VERSION).def elastic-$(EC_API_VERSION).dll libelastic-$(EC_API_VERSION).a libelasticrt-$(EC_API_VERSION).a
 
 # Directory where sources are, from where we are.
 srcdir = @srcdir@
@@ -55,22 +55,22 @@ YACC = @YACC@ -d
 elasticincludedir = $(includedir)/elastic
 
 bin_PROGRAMS = ec ecc ecrt ecdump
-lib_LTLIBRARIES = libelastic.la libelasticrt.la
+lib_LTLIBRARIES = libelastic-0.0.la libelasticrt-0.0.la
 
 if WIN32_SDK
 
 # - Win32 DLL -
-DLL_NAME    = elastic$(SO)
-DLL_EXP_LIB = libelastic.a
-DLL_EXP_DEF = elastic.def
+DLL_NAME    = elastic-$(EC_API_VERSION)$(SO)
+DLL_EXP_LIB = libelastic-$(EC_API_VERSION).a
+DLL_EXP_DEF = elastic-$(EC_API_VERSION).def
 ELASTIC_LIB = $(DLL_NAME)
 ELASTIC_LIB_LINK = $(DLL_EXP_LIB)
 elasticdlldir = $(libdir)
 elasticdll_DATA = $(DLL_NAME) $(DLL_EXP_LIB) $(DLL_EXP_DEF)
 
-RTDLL_NAME    = elasticrt$(SO)
-RTDLL_EXP_LIB = libelasticrt.a
-RTDLL_EXP_DEF = elasticrt.def
+RTDLL_NAME    = elasticrt-$(EC_API_VERSION)$(SO)
+RTDLL_EXP_LIB = libelasticrt-$(EC_API_VERSION).a
+RTDLL_EXP_DEF = elasticrt-$(EC_API_VERSION).def
 ELASTICRT_LIB = $(RTDLL_NAME)
 ELASTICRT_LIB_LINK = $(RTDLL_EXP_LIB)
 elasticrtdlldir = $(libdir)
@@ -79,10 +79,10 @@ elasticrtdll_DATA = $(RTDLL_NAME) $(RTDLL_EXP_LIB) $(RTDLL_EXP_DEF)
 else
 
 # - UNIX -
-ELASTIC_LIB = libelastic.la
+ELASTIC_LIB = libelastic-$(EC_API_VERSION).la
 ELASTIC_LIB_LINK = $(ELASTIC_LIB)
 
-ELASTICRT_LIB = libelasticrt.la
+ELASTICRT_LIB = libelasticrt-$(EC_API_VERSION).la
 ELASTICRT_LIB_LINK = $(ELASTICRT_LIB)
 
 endif
@@ -229,10 +229,12 @@ types_objects = \
 dl_objects = \
 	dl/libdl.la
 
-libelastic_la_SOURCES = \
+# we are forced to put directly X_Y instead of @EC_API_VERSION@
+# or $(EC_API_VERSION) in targets.
+libelastic_0_0_la_SOURCES = \
 	$(static_sources) \
 	$(source_headers)
-libelastic_la_LIBADD = \
+libelastic_0_0_la_LIBADD = \
 	$(os_objects)		\
 	$(arithmetic_objects)	\
 	$(modules_objects)	\
@@ -243,49 +245,49 @@ libelastic_la_LIBADD = \
 # We should use -version-info, but we've not yet
 # settled on the correct numbering scheme. So
 # for the moment we use -release.
-libelastic_la_LDFLAGS = \
-	-release $(LT_RELEASE)			\
+libelastic_0_0_la_LDFLAGS = \
+	-version-info $(LT_VERSION_INFO)	\
 	-export-dynamic				\
 	-rpath @prefix@/lib			\
 	@LIBTOOL_EXPORT_OPTIONS@		\
 	-lm					\
 	$(LIBLTDL)
 #
-#	-version-info $(LT_VERSION_INFO)	\
+#	-release $(LT_RELEASE)			\
 #
 
-#libelastic_la_LDFLAGS = \
+#libelastic_0_0_la_LDFLAGS = \
 #	-release $(LT_RELEASE)	\
 #	-lm			\
 #	$(LIBLTDL)
-##libelastic_la_LDFLAGS = \
+##libelastic_0_0_la_LDFLAGS = \
 ##	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\
 ##	-release $(LT_RELEASE)					\
 ##	-lm
 
-libelasticrt_la_SOURCES = \
+libelasticrt_0_0_la_SOURCES = \
 	$(static_rt_sources) \
 	$(source_headers)
-libelasticrt_la_CFLAGS = -DEC_WITHOUT_COMPILER $(AM_CFLAGS)
-libelasticrt_la_LIBADD = \
+libelasticrt_0_0_la_CFLAGS = -DEC_WITHOUT_COMPILER $(AM_CFLAGS)
+libelasticrt_0_0_la_LIBADD = \
 	$(os_objects)		\
 	$(arithmetic_objects)	\
 	$(modules_objects)	\
 	$(types_objects)	\
 	$(dl_objects)		\
 	@ALLOCA@
-libelasticrt_la_LDFLAGS = \
-	-release $(LT_RELEASE)			\
+libelasticrt_0_0_la_LDFLAGS = \
+	-version-info $(LT_VERSION_INFO)	\
 	-export-dynamic				\
 	-rpath @prefix@/lib			\
 	@LIBTOOL_EXPORT_OPTIONS@		\
 	-lm					\
 	$(LIBLTDL)
 #
-#	-version-info $(LT_VERSION_INFO)	\
+#	-release $(LT_RELEASE)			\
 #
 
-# libelasticrt_la_CFLAGS = -DEC_WITHOUT_COMPILER $(AM_CFLAGS)
+# libelasticrt_0_0_la_CFLAGS = -DEC_WITHOUT_COMPILER $(AM_CFLAGS)
 
 #ec_SOURCES = \
 #	$(static_sources) \
@@ -298,7 +300,7 @@ ec_LDFLAGS =
 else
 ec_LDFLAGS = -rdynamic
 endif
-#ec_DEPENDENCIES = libelastic.la $(ELASTIC_LIB)
+#ec_DEPENDENCIES = libelastic-$(EC_API_VERSION).la $(ELASTIC_LIB)
 
 #ecc_SOURCES = \
 #	$(static_sources) \
@@ -311,7 +313,7 @@ ecc_LDFLAGS =
 else
 ecc_LDFLAGS = -rdynamic
 endif
-#ecc_DEPENDENCIES = libelastic.la $(ELASTIC_LIB)
+#ecc_DEPENDENCIES = libelastic-$(EC_API_VERSION).la $(ELASTIC_LIB)
 
 #ecrt_SOURCES = \
 #	$(static_rt_sources) \
@@ -324,7 +326,7 @@ ecrt_LDFLAGS =
 else
 ecrt_LDFLAGS = -rdynamic
 endif
-#ecrt_DEPENDENCIES = libelastic.la $(ELASTICRT_LIB)
+#ecrt_DEPENDENCIES = libelastic-$(EC_API_VERSION).la $(ELASTICRT_LIB)
 # ecrt_CFLAGS = -DEC_WITHOUT_COMPILER $(AM_CFLAGS)
 
 #ecdump_SOURCES = \
@@ -338,7 +340,7 @@ ecdump_LDFLAGS =
 else
 ecdump_LDFLAGS = -rdynamic
 endif
-#ecdump_DEPENDENCIES = libelastic.la $(ELASTIC_LIB)
+#ecdump_DEPENDENCIES = libelastic-$(EC_API_VERSION).la $(ELASTIC_LIB)
 
 ##BUILT_SOURCES =
 
@@ -347,11 +349,11 @@ $(static_sources): $(BUILT_SOURCES)
 
 if WIN32
 # Build Win32 DLLs and export libraries
-$(DLL_NAME) $(DLL_EXP_LIB): libelastic.la
-	$(MAKEDLL) $@ "" "" .libs/libelastic.a
+$(DLL_NAME) $(DLL_EXP_LIB): libelastic-$(EC_API_VERSION).la
+	$(MAKEDLL) $@ "" "" .libs/libelastic-$(EC_API_VERSION).a
 
-$(RTDLL_NAME) $(RTDLL_EXP_LIB): libelasticrt.la
-	$(MAKEDLL) $@ "" "" .libs/libelasticrt.a
+$(RTDLL_NAME) $(RTDLL_EXP_LIB): libelasticrt-$(EC_API_VERSION).la
+	$(MAKEDLL) $@ "" "" .libs/libelasticrt-$(EC_API_VERSION).a
 endif
 
 ec.o: ec.c
