@@ -7,9 +7,9 @@
 #
 #   Created: 23 Jan 2000
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:20:24 panta Exp $
+#   $Id: Makefile.am,v 1.2 2002/05/25 18:58:14 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 2000-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 2000-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -38,7 +38,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 #EXTRA_DIST = cnf.h config.h tsize.h
-EXTRA_DIST =
+#EXTRA_DIST =
 
 noinst_LTLIBRARIES = libos.la
 
