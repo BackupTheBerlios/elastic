@@ -1,0 +1,11 @@
+2000-02-20  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Adapted source to WIN32
+
+	* Makefile.am configure.in: adapted to new loadable module
+	creation protocol :)
+
+1999-12-31  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* Created. 
+

@@ -1,0 +1,126 @@
+		      'inet' module for elastiC
+		      =========================
+
+INTRODUCTION
+------------
+
+elastiC is a portable high-level object-oriented interpreted language
+with a C like syntax.
+'inet' is a Internet networking module for elastiC, providing the basic
+functionality to write networking applications.
+Along with inet come two ancillary, but useful, modules: netfile and geturl.
+The former allows to use the standard file module to access network
+services.
+The latter downloads a resource specified with an URL through HTTP.
+For a quick introduction to these modules see QUICKSTART below.
+
+USAGE
+-----
+
+'inet' makes use of automake & autoconf.
+elastiC 0.0.9 is required in order to compile the module.
+To compile it, simply issue the commands:
+
+  % configure
+  % make
+  % make install
+
+There are a bunch of simple test programs: 'testinet.ec', 'server.ec',
+'client.ec', 'testnetfile.ec', 'stockticker.ec'
+
+QUICKSTART
+----------
+
+Waiting for a man page, look at the following examples for inet
+module:
+
+   testinet.ec             - very simple example
+   server.ec / client.ec   - complete but simple client/server example 
+
+The netfile module is very useful and exceptionally simple to use:
+it hooks into the file module providing transparent network file-like
+access. Interacting with a TCP service is simply a matter of:
+
+  * importing the netfile module (and the file module):
+
+      import netfile;
+      import file;
+
+  * opening a pseudo-file, with:
+
+      fh = file.open( NETNAME );
+
+    where NETNAME has one of the following formats:
+       "tcp://address"
+       "tcp://address:port"
+       "tcp://address:service"
+    (service could be smtp, http, ...)
+    Then the returned file handle can be used as a regular file.
+
+For an example, see 'testnetfile.ec'
+This module was inspired by an analogous facility described by
+oleg@pobox.com (but I don't use his method, too OS dependent).
+See:
+    http://pobox.com/~oleg/ftp/syscall-interpose.html
+
+Module geturl stacks onto netfile, providing an interface to HTTP GET
+command:
+
+    import geturl;
+
+    local response;
+    response = geturl.geturl( "http://www.elasticworld.org/index.html" );
+
+The geturl module is explained by the 'stockticker.ec' example, that
+prints the current trade price for a stock specified on the command
+line. The price is obtained by connecting to a free WEB based service
+and filtering the response trough a regular expression. Executing it
+is simple:
+
+  % ec stockticker.ec CSCO
+
+will print the current price of Cisco stocks.
+Again, this program has been inspired by a Scheme example from
+oleg@pobox.com (I don't know its real name), which was in turn based
+on a Tcl snippet published on December 1999 issue of USENIX ;login:
+
+ELASTIC WEB SITE
+----------------
+
+elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other valuable information.
+
+INSTALLATION
+------------
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+31 December 1999 / 01 January 2000
