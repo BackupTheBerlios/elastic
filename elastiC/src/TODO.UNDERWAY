@@ -1,0 +1,30 @@
+/* things to do right now due to the modifications under way */
+
+{
+	* package loading and saving to stream. Things to look:
+
+	      ec_compiler_options
+              EcPackageLoad()
+              EcPackageSave()
+	      EcCompile()
+
+	  in private.h:
+
+	      stream_compile_[in|out]
+	      fileSource (for error msgs)
+	      fileOutput (to remove)
+
+	* finish WITH_STDIO feature
+
+	* add stream.std[in|out|err]_set(stream) function to module stream
+
+	* handle the optional compilation of obsolete `file' module (if not
+	  already done)
+
+	o adopt the convention:
+	     ec_module_MODULENAME_[init|cleanup]    - for dynamically loadable modules
+	     _ec_module_MODULENAME_[init|cleanup]    - for static modules
+	  add macros to build the name, declare the author, version, ...
+
+	o change header file protections to __EC_name_H
+}

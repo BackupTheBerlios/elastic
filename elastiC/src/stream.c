@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jun  9 20:16:02 CEST 2002
  *
- *   $Id: stream.c,v 1.6 2002/06/13 11:06:21 panta Exp $
+ *   $Id: stream.c,v 1.7 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -706,6 +706,38 @@ EC_API EcUInt ec_stream_hash( ec_stream *stream, EcInt recursion_level )
 
 	/* Equivalent object MUST have the same hash */
 	return 1;													/* this is all we can do ... */
+}
+
+EC_API EcInt ec_stream_printf( ec_stream *stream, const char *format, ... )
+{
+	va_list args;
+	EcInt i;
+
+	ASSERT( stream );
+
+	va_start( args, format );
+	i = ec_stream_vprintf( stream, format, args );
+	va_end( args );
+	return i;
+}
+
+EC_API EcInt ec_stream_vprintf( ec_stream *stream, const char *format, va_list ap )
+{
+	EcInt res;
+	ec_string ds;
+
+	ASSERT( stream );
+
+	ec_string_init( &ds, NULL );
+	res = ec_vsprintf( &ds, format, ap );
+	ASSERT( res == ec_strlen(&ds) );
+	if (ec_stream_writen( stream, ec_strdata( &ds ), res ) < res)
+	{
+		ec_string_cleanup( &ds );
+		return -1;
+	}
+	ec_string_cleanup( &ds );
+	return res;
 }
 
 EC_API ec_stream *ec_stream_stdin( void )

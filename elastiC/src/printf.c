@@ -7,9 +7,9 @@
  *
  *   Created: Sat Dec 12 11:25:51 MET 1998
  *
- *   $Id: printf.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: printf.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -34,11 +34,6 @@
  * ==========================================================================
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <ctype.h>
-
 #include "basic.h"
 #include "debug.h"
 #include "compat.h"
@@ -47,6 +42,20 @@
 #include "memory.h"
 
 #include "private.h"
+
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#if HAVE_STDIO_H
+#include <stdio.h>
+#endif
+#if HAVE_STDARG_H
+#include <stdarg.h>
+#endif
+#if HAVE_CTYPE_H
+#include <ctype.h>
+#endif
+
 
 EC_API EcInt EcPrintObject( ec_string *str, EC_OBJ obj, EcBool detailed )
 {
@@ -111,6 +120,7 @@ EC_API EcInt EcPrintObject( ec_string *str, EC_OBJ obj, EcBool detailed )
 	return res;
 }
 
+#if defined(WITH_STDIO)
 EC_API EcInt ec_fprintf( FILE *fh, const char *format, ... )
 {
 	va_list args;
@@ -132,11 +142,12 @@ EC_API EcInt ec_vfprintf( FILE *fh, const char *format, va_list ap )
 	if (fwrite( ec_strdata( &ds ), 1, res, fh ) < res)
 	{
 		ec_string_cleanup( &ds );
-		return EOF;
+		return -1;
 	}
 	ec_string_cleanup( &ds );
 	return res;
 }
+#endif /* end of defined(WITH_STDIO) */
 
 EC_API EcInt ec_asprintf(  char **sres, const char *format, ... )
 {
@@ -160,7 +171,7 @@ EC_API EcInt ec_vasprintf( char **sres, const char *format, va_list ap )
 	if (! *sres)
 	{
 		ec_string_cleanup( &ds );
-		return EOF;
+		return -1;
 	}
 	memcpy( *sres, ec_strdata( &ds ), ec_strlen( &ds ) );
 	ec_string_cleanup( &ds );
@@ -189,5 +200,73 @@ EC_API EC_OBJ ec_voprintf( const char *format, va_list ap )
 	res = EcMakeString( ec_strdata( &ds ), ec_strlen( &ds ) );
 	ec_string_cleanup( &ds );
 
+	return res;
+}
+
+EC_API EcInt ec_msg_printf ( const char *format, ... )
+{
+	/* for error msgs: use streams if available, otherwise stdio (if avail.) */
+
+	va_list args;
+	EcInt i;
+
+	va_start( args, format );
+	i = ec_msg_vprintf( format, args );
+	va_end( args );
+	return i;
+}
+
+#if HAVE_FFLUSH
+#define FFLUSHERR()		do { fflush(stderr); } while(0)
+#else
+#define FFLUSHERR()		do { } while(0)
+#endif
+
+EC_API EcInt ec_msg_vprintf( const char *format, va_list ap )
+{
+	/* for error msgs: use streams if available, otherwise stdio (if avail.) */
+
+	EcInt res;
+	ec_string ds;
+
+	ec_string_init( &ds, NULL );
+	res = ec_vsprintf( &ds, format, ap );
+	ASSERT( res == ec_strlen(&ds) );
+
+	if (PRIVATE(stream_stderr))
+	{
+		ec_stream_writen( PRIVATE(stream_stderr), ec_strdata( &ds ), ec_strlen( &ds ) );
+	} else
+	{
+#if defined(WITH_STDIO)
+		if (fwrite( ec_strdata( &ds ), 1, res, stderr ) < res)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+		FFLUSHERR();
+#else /* start of ! defined(WITH_STDIO) */
+#if HAVE_FWRITE
+		if (fwrite( ec_strdata( &ds ), 1, res, stderr ) < res)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+		FFLUSHERR();
+#elif HAVE_FPUTS
+		if (fputs( ec_strdata( &ds ), stderr ) < 0)
+		{
+			ec_string_cleanup( &ds );
+			return -1;
+		}
+		FFLUSHERR();
+#elif HAVE_FPRINTF
+		fprintf( stderr, "%s", ec_strdata( &ds ) );
+		FFLUSHERR();
+#endif /* end of HAVE_FPRINTF */
+#endif /* end of ! defined(WITH_STDIO) */
+	}
+
+	ec_string_cleanup( &ds );
 	return res;
 }

@@ -7,7 +7,7 @@
  *
  *   Created: 
  *
- *   $Id: packageio.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: packageio.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -35,8 +35,6 @@
  */
 
 #define EC_STACK_RECYCLE_OPS 1
-#include <stdlib.h>
-#include <limits.h>
 
 #include "basic.h"
 #include "debug.h"
@@ -49,10 +47,20 @@
 #include "hashdefs.h"
 #include "stackrecycle.h"
 
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#if HAVE_LIMITS_H
+#include <limits.h>
+#endif
 
 #define SHOW_MAP 0
+#if !defined(WITH_STDIO)
+#undef SHOW_MAP
+#define SHOW_MAP 0
+#endif
 
-#if SHOW_MAP
+#if defined(WITH_STDIO) && SHOW_MAP
 static int s_lev = 0;
 static void indent(void) { int i; for (i = 0; i < s_lev; i++) fprintf(stderr, "  "); }
 #define S_IN	do { s_lev++; } while (0)
@@ -137,32 +145,32 @@ struct objectmap_struct
  * ------------------------------------------------------------------------ */
 
 static EcBool package_save_helper( EC_OBJ package, const char *pathname );
-static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, EcBool executeImported );
-static EcBool find_package( const char *name, const char *pathname, FILE **fh, EC_OBJ *obj );
+static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool execute, EcBool executeImported );
+static EcBool find_package( const char *name, const char *pathname, ec_stream **stream_p, EC_OBJ *obj );
 static EC_OBJ load_shared_package( const char *pkgname, const char *filename, EcBool msg );
 
 /* Package saving & loading */
-static void    write_package( objectmap map, FILE *fh, EC_OBJ obj );
-static EC_OBJ  read_package( objectmap map, FILE *fh, EcBool executeImported );
+static void    write_package( objectmap map, ec_stream *stream, EC_OBJ obj );
+static EC_OBJ  read_package( objectmap map, ec_stream *stream, EcBool executeImported );
 
 /* Bytecode back-patching */
 static void       patch_bytecode( objectmap map, EC_OBJ obj, EcInt npkgs, EcInt *pkg_now_at );
 
 /* Low-level object I/O */
-static void       write_object( objectmap map, FILE *fh, EC_OBJ obj );
-static EC_OBJ     read_object(  objectmap map, FILE *fh, EcBool execute );
+static void       write_object( objectmap map, ec_stream *stream, EC_OBJ obj );
+static EC_OBJ     read_object(  objectmap map, ec_stream *stream, EcBool execute );
 
 /* Low-level file I/O */
-static void       write_byte( FILE *fh, EcByte datum );
-static void       write_word( FILE *fh, EcWord datum );
-static void       write_dword( FILE *fh, EcDWord datum );
-static void       write_float( FILE *fh, EcFloat datum );
-static void       write_string( FILE *fh, const char *string );
-static EcByte     read_byte( FILE *fh );
-static EcWord     read_word( FILE *fh );
-static EcDWord    read_dword( FILE *fh );
-static EcFloat    read_float( FILE *fh );
-static char      *read_string( FILE *fh );
+static void       write_byte( ec_stream *stream, EcByte datum );
+static void       write_word( ec_stream *stream, EcWord datum );
+static void       write_dword( ec_stream *stream, EcDWord datum );
+static void       write_float( ec_stream *stream, EcFloat datum );
+static void       write_string( ec_stream *stream, const char *string );
+static EcByte     read_byte( ec_stream *stream );
+static EcWord     read_word( ec_stream *stream );
+static EcDWord    read_dword( ec_stream *stream );
+static EcFloat    read_float( ec_stream *stream );
+static char      *read_string( ec_stream *stream );
 
 /* Object map: to avoid object processing recursion */
 static objectmap  objectmap_create( void );
@@ -179,7 +187,7 @@ EC_API EcBool EcPackageSave( EC_OBJ package, const char *pathname )
 {
 	ec_string realpathname;										/* final pathname used */
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "EcPackageSave  PATH: '%s'\n",
 			 pathname ? pathname : "--" );
 #endif
@@ -225,15 +233,77 @@ onError:
 	return FALSE;
 }
 
+EC_API EC_OBJ EcPackageLoadStream( ec_stream  *stream,			/* input stream      */
+								   const char *name,			/* name can be null  */
+								   EcBool execute,
+								   EcBool executeImported )
+{
+	/* This function can be used *only* for compiled bytecode packages! */
+
+	EC_OBJ  obj;
+
+	ASSERT( stream );
+
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
+	fprintf( stderr, "LOADING PACKAGE  NAME: %s  (from stream) (exec: %s, %s)\n",
+			 name ? name : "--",
+			 execute ? "YES" : "NO",
+			 executeImported ? "YES" : "NO" );
+#endif
+
+	if (name)
+	{
+		/* Package already present ? */
+		obj = _ec_package_loaded( name );
+		if (EC_PACKAGEP(obj))
+		{
+			EC_CHECK( obj );
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
+			fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY IN)\n\n", name ? name : "(no name)" );
+#endif
+			return obj;
+		}
+	}
+
+	ASSERT( PRIVATE(patchmap) );
+
+	obj = package_load_helper( stream, name, execute, executeImported );
+	if (! EC_PACKAGEP(obj))
+	{
+		if (name)
+			ec_msg_printf( "Can't load package \"%s\"\n", name );
+		else
+			ec_msg_printf( "Can't load package\n" );
+		goto onError;
+	}
+
+	EC_CHECK( obj );
+
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
+	ec_msg_printf( "PACKAGE '%w' LOADED.\n\n", EC_PACKAGEP(obj) ? EC_PACKAGENAME(obj) : EC_NIL );
+#endif
+
+	EC_CHECKALL();
+	EC_CHECK( obj );
+	return obj;
+
+onError:
+	if (name)
+		ec_msg_printf( "PACKAGE '%s' NOT LOADED. *ERROR*\n\n", name );
+	else
+		ec_msg_printf( "PACKAGE NOT LOADED. *ERROR*\n\n" );
+	return Ec_ERROR;
+}
+
 EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 							 EcBool execute, EcBool executeImported )
 {
-	EC_OBJ  obj;
-	FILE   *fh = NULL;
+	EC_OBJ     obj;
+	ec_stream *stream = NULL;
 
 	ASSERT( name || pathname );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "LOADING PACKAGE  NAME: %s  PATH: %s  (exec: %s, %s)\n",
 			 name ? name : "--",
 			 pathname ? pathname : "--",
@@ -248,18 +318,18 @@ EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 		if (EC_PACKAGEP(obj))
 		{
 			EC_CHECK( obj );
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 			fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY IN)\n\n", name ? name : pathname );
 #endif
 			return obj;
 		}
 	}
 
-	fh  = NULL;
+	stream = NULL;
 	obj = EC_NIL;
-	if (! find_package( name, pathname, &fh, &obj ))
+	if (! find_package( name, pathname, &stream, &obj ))
 	{
-		fprintf( stderr, "Can't find package \"%s\"\n", name );
+		ec_msg_printf( "Can't find package \"%s\"\n", name );
 		goto onError;
 	}
 
@@ -267,24 +337,24 @@ EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 	{
 		/* Got a native C package */
 
-	} else if (fh)
+	} else if (stream)
 	{
 		/* Got a compiled bytecode package */
 
 		ASSERT( PRIVATE(patchmap) );
 
-		obj = package_load_helper( fh, name, execute, executeImported );
+		obj = package_load_helper( stream, name, execute, executeImported );
 		if (! EC_PACKAGEP(obj))
 		{
-			fprintf( stderr, "Can't load package \"%s\"\n", name );
+			ec_msg_printf( "Can't load package \"%s\"\n", name );
 			goto onError;
 		}
 
 		EC_CHECK( obj );
 
-		fclose( fh );
+		ec_stream_close( stream );
 	}
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "PACKAGE '%s' LOADED.\n\n", name ? name : pathname );
 #endif
 
@@ -293,8 +363,8 @@ EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 	return obj;
 
 onError:
-	if (fh) fclose( fh );
-	fprintf( stderr, "PACKAGE '%s' NOT LOADED. *ERROR*\n\n", name ? name : pathname );
+	if (stream) ec_stream_close( stream );
+	ec_msg_printf( "PACKAGE '%s' NOT LOADED. *ERROR*\n\n", name ? name : pathname );
 	return Ec_ERROR;
 }
 
@@ -309,21 +379,21 @@ onError:
 
 static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 {
-	FILE  *fh;
+	ec_stream *stream;
 	EcInt  i;
 	EcInt  ncurpkg;
 	objectmap map = NULL;
+	EC_OBJ exc;
 
-
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "SAVING PACKAGE TO FILE: '%s'\n",
 			 pathname ? pathname : "--" );
 #endif
 
 	EC_CHECK( package );
 
-	fh = fopen( pathname, "wb" );
-	if (! fh)
+	stream = ec_filestream_fopen( pathname, "wb", &exc );
+	if ((! stream) || EC_ERRORP(exc))
 		return FALSE;
 
 	/*
@@ -347,14 +417,14 @@ static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 	 */
 
 	/* MAGIC */
-	write_dword( fh, ECCMAGIC1 );
-	write_dword( fh, ECCMAGIC2 );
+	write_dword( stream, ECCMAGIC1 );
+	write_dword( stream, ECCMAGIC2 );
 
 	/* package name */
-	write_string( fh, EC_STRDATA(EC_PACKAGENAME(package)) );
+	write_string( stream, EC_STRDATA(EC_PACKAGENAME(package)) );
 
 	/* # of (core) globals */
-	write_dword( fh, PRIVATE(ncoreglobals) );
+	write_dword( stream, PRIVATE(ncoreglobals) );
 
 	/* Find our position in loaded packages */
 	ncurpkg = -1;
@@ -368,20 +438,20 @@ static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 	ASSERT( ncurpkg >= 0 );
 
 	/* Import list */
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf(stderr, "SAVE HELPER:\n");
 	fprintf(stderr, "   name     : %s\n",  EC_STRDATA(EC_PACKAGENAME(package)));
 	fprintf(stderr, "   npackages: %ld\n", (long)PRIVATE(npackages));
 	fprintf(stderr, "   ncurpkg  : %ld\n", (long)ncurpkg);
 #endif
-	write_dword( fh, PRIVATE(npackages) );
-	write_dword( fh, ncurpkg );									/* ourselves */
+	write_dword( stream, PRIVATE(npackages) );
+	write_dword( stream, ncurpkg );								/* ourselves */
 	for (i = 0; i < PRIVATE(npackages); i++)
 	{
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, ec_strdata( PRIVATE(package)[i].name ));
 #endif
-		write_string( fh, ec_strdata( PRIVATE(package)[i].name ) );
+		write_string( stream, ec_strdata( PRIVATE(package)[i].name ) );
 	}
 
 
@@ -398,25 +468,25 @@ static EcBool package_save_helper( EC_OBJ package, const char *pathname )
 		remember_object( map, PRIVATE(global[i]) );
 
 	/* write this package */
-	write_package( map, fh, package );
+	write_package( map, stream, package );
 
 	objectmap_destroy( map );
 	map = NULL;
 
-	fclose( fh );
+	ec_stream_close( stream );
 	return TRUE;
 
 onError:
 	if (map) objectmap_destroy( map );
-	fclose( fh );
+	ec_stream_close( stream );
 	return FALSE;
 }
 
-static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, EcBool executeImported )
+static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool execute, EcBool executeImported )
 {
 	EC_OBJ             obj;
 	char              *lname = NULL;							/* package (local) name  */
-	char              *packagename;								/* saved package name    */
+	char              *packagename = NULL;						/* saved package name    */
 
 	EcInt              saved_ncoreglobals;						/* number of core globals at save time  */
 	EcInt              saved_npackages;							/* number of packages at save time      */
@@ -433,20 +503,20 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	EcInt           n;
 	EcBool          started = FALSE;
 
-	ASSERT( fh );
+	ASSERT( stream );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "READING PACKAGE '%s'  (exec: %s, %s)\n",
 			 name ? name : "UNSPECIFIED", execute ? "YES" : "NO", executeImported ? "YES" : "NO" );
 #endif
 
 	/* MAGIC */
-	if ((read_dword( fh ) != ECCMAGIC1) ||
-		(read_dword( fh ) != ECCMAGIC2))
+	if ((read_dword( stream ) != ECCMAGIC1) ||
+		(read_dword( stream ) != ECCMAGIC2))
 		goto onError;
 
 	/* package name */
-	packagename = read_string( fh );
+	packagename = read_string( stream );
 
 	if (name)
 		lname = ec_stringdup( name );
@@ -468,7 +538,7 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	if (strcmp( packagename, lname ) != 0)
 	{
 /*		fprintf( stderr, "REQUESTED: '%s'\n", lname );
-		fprintf( stderr, "FOUND    : '%s'\n", packagename );*/
+		fprintf( stderr, "FOUND    : '%s'\n", packagename ); */
 		EcAlert( EcError, "loaded a package with a different name from requested" );
 		goto onError;
 	}
@@ -477,7 +547,7 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	packagename = NULL;
 
 	/* # of globals */
-	saved_ncoreglobals = read_dword( fh );
+	saved_ncoreglobals = read_dword( stream );
 	if (saved_ncoreglobals != PRIVATE(ncoreglobals))
 	{
 		EcAlert( EcError, "loaded a package saved with a different version of the interpreter" );
@@ -485,10 +555,10 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	}
 
 	/* Import list */
-	saved_npackages = read_dword( fh );
-	saved_ncurpkg   = read_dword( fh );
+	saved_npackages = read_dword( stream );
+	saved_ncurpkg   = read_dword( stream );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf(stderr, "LOAD HELPER:\n");
 	fprintf(stderr, "   saved_name     : %s\n",  lname);
 	fprintf(stderr, "   saved_npackages: %ld\n", (long)saved_npackages);
@@ -521,10 +591,10 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 
 	for (i = 0; i < saved_npackages; i++)
 	{
-		pkgname = read_string( fh );
+		pkgname = read_string( stream );
 		if (! pkgname) goto onError;
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, pkgname);
 		fprintf( stderr, "IMP %s\n", pkgname );
 #endif
@@ -557,7 +627,7 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 		} else
 			pkg_now_at[i] = n-1;								/* last position */
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf( stderr, "Package %ld  now at  %ld (name: %s)\n", (long)i, (long)pkg_now_at[i], pkgname );
 #endif
 
@@ -574,7 +644,7 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	for (i = 0; i < PRIVATE(ncoreglobals); i++)
 		remember_object( map, PRIVATE(global[i]) );
 
-	obj = read_package( map, fh, executeImported );
+	obj = read_package( map, stream, executeImported );
 	if (! EC_PACKAGEP(obj))
 		goto onError;
 	PRIVATE(package)[n-1].obj = obj;
@@ -593,7 +663,7 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	{
 		ASSERT( saved_ncoreglobals == PRIVATE(ncoreglobals) );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		ec_fprintf(stderr, "@@ PATCH BYTECODE from PACKAGE_LOAD_HELPER(%s): %w\n", lname, obj);
 #endif
 		ASSERT( PRIVATE(patchmap) );
@@ -606,13 +676,13 @@ static EC_OBJ package_load_helper( FILE *fh, const char *name, EcBool execute, E
 	/* Ok, now execute the package code, if we have to */
 	if (execute)
 	{
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf( stderr, "Going to execute package '%s'.\n", lname );
 #endif
 		EC_CHECK( obj );
 		EcMainExecute( obj );
 		EC_CHECK( obj );
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf( stderr, "DONE.\n" );
 #endif
 	}
@@ -637,7 +707,7 @@ onError:
 	return Ec_ERROR;
 }
 
-static EcBool find_package( const char *name, const char *pathname, FILE **fhp, EC_OBJ *objp )
+static EcBool find_package( const char *name, const char *pathname, ec_stream **stream_p, EC_OBJ *objp )
 {
 	ec_string         pkgname, pathname_tail, realpathname;
 	char             *b;
@@ -646,7 +716,7 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 	char             *tok;
 	const char       *tok_s, *tokp;
 	EcInt             tokl;
-	FILE             *fh;
+	ec_stream        *stream;
 	EC_OBJ            obj;
 	const char       *suffix,
 		             *suffixes[] = { SO_SUFFIX, EC_COMPILEDSUFFIX, NULL };
@@ -654,17 +724,20 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 	int               i;
 	EcBool            found = FALSE;
 
-	if (fhp)  *fhp  = NULL;
-	if (objp) *objp = EC_NIL;
+	EC_OBJ            exc = EC_NIL;
+
+	if (stream_p) *stream_p  = NULL;
+	if (objp)     *objp = EC_NIL;
 
 	/* Pathname given ? */
 	if (pathname)
 	{
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 		fprintf( stderr, "pathname given: '%s'\n", pathname );
 #endif
-		fh = fopen( pathname, "rb" );
-		if (! fh) return FALSE;
+		stream = ec_filestream_fopen( pathname, "rb", &exc );
+		if ((! stream) || EC_ERRORP(exc))
+			return FALSE;
 
 		/* Try as a shared library */
 		obj = load_shared_package( name, pathname, FALSE );
@@ -676,19 +749,19 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 				ASSERT( EC_PACKAGEP(obj) );
 				return FALSE;
 			}
-			fclose( fh );
-			fh = NULL;
+			ec_stream_close( stream );
+			stream = NULL;
 		}
 
-		if (fhp)  *fhp  = fh;
-		if (objp) *objp = obj;
+		if (stream_p) *stream_p = stream;
+		if (objp)     *objp = obj;
 
 		return TRUE;
 	}
 
 	ASSERT( name );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "pkg name: '%s'\n", name );
 #endif
 
@@ -735,7 +808,7 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 		ASSERT( tok );
 
 		tokp = libpath;
-		fh  = NULL; obj = EC_NIL;
+		stream = NULL; obj = EC_NIL;
 		while (TRUE)
 		{
 			tok_s = ec_string_tokenize( &tokp, &tokl, EC_ENVSEPARATOR[0] );
@@ -752,11 +825,12 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 				ec_strcat( &realpathname, EC_PATHSEPARATOR, 0 );
 			ec_strcatd( &realpathname, &pathname_tail );
 
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 			fprintf( stderr, "Trying file '%s'\n", ec_strdata( &realpathname ) );
 #endif
-			fh = fopen( ec_strdata( &realpathname ), "rb" );
-			if (! fh) continue;
+			stream = ec_filestream_fopen( ec_strdata( &realpathname ), "rb", &exc );
+			if ((! stream) || EC_ERRORP(exc))
+				continue;
 
 			/* GOT ! */
 			found = TRUE;
@@ -769,8 +843,8 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 
 			if (i == 0)											/* native C package */
 			{
-				fclose( fh );
-				fh = NULL;
+				ec_stream_close( stream );
+				stream = NULL;
 				obj = load_shared_package( name, ec_strdata( &realpathname ), TRUE );
 				if (EC_NULLP(obj)) found = FALSE;
 			}
@@ -779,8 +853,8 @@ static EcBool find_package( const char *name, const char *pathname, FILE **fhp, 
 		}
 	}
 
-	if (fhp)  *fhp  = fh;
-	if (objp) *objp = obj;
+	if (stream_p) *stream_p = stream;
+	if (objp)     *objp     = obj;
 
 	ec_string_cleanup( &pathname_tail );
 	ec_string_cleanup( &realpathname );
@@ -811,7 +885,7 @@ static EC_OBJ load_shared_package( const char *pkgname, const char *filename, Ec
 	if (! dlhandle)
 	{
 		if (msg)
-			fprintf( stderr, "dlopen: %s\n", EcDLError() );
+			ec_msg_printf( "dlopen: %s\n", EcDLError() );
 		return EC_NIL;
 	}
 
@@ -833,7 +907,7 @@ static EC_OBJ load_shared_package( const char *pkgname, const char *filename, Ec
 	{
 		/* Out of memory */
 		if (msg)
-			fprintf( stderr, "load_shared_package: out of memory\n" );
+			ec_msg_printf( "load_shared_package: out of memory\n" );
 		return EcMemoryError();
 	}
 	p = pkgname_normalized;
@@ -889,8 +963,8 @@ static EC_OBJ load_shared_package( const char *pkgname, const char *filename, Ec
  * PACKAGE SAVING & LOADING
  * ------------------------------------------------------------------------ */
 
-static void write_package( objectmap map, FILE *fh, EC_OBJ obj )
-{	
+static void write_package( objectmap map, ec_stream *stream, EC_OBJ obj )
+{
 	EcInt i, l;
 	EcUInt id;
 
@@ -905,12 +979,12 @@ static void write_package( objectmap map, FILE *fh, EC_OBJ obj )
 	id = object2id( map, obj );
 	if (id)
 	{
-		write_word( fh, tc_id );
-		write_dword( fh, id );
+		write_word( stream, tc_id );
+		write_dword( stream, id );
 		if (EC_NNULLP(obj))
-			write_word( fh, EC_TYPE(obj) );
+			write_word( stream, EC_TYPE(obj) );
 		else
-			write_word( fh, tc_none );
+			write_word( stream, tc_none );
 
 		SHOW_WRITE(id, EC_NNULLP(obj) ? EC_TYPE(obj) : tc_none, obj, TRUE);
 		S_OUT;
@@ -922,27 +996,27 @@ static void write_package( objectmap map, FILE *fh, EC_OBJ obj )
 
 	SHOW_WRITE(id, EC_NNULLP(obj) ? EC_TYPE(obj) : tc_none, obj, FALSE);
 
-	write_word( fh, EC_TYPE(obj) );
+	write_word( stream, EC_TYPE(obj) );
 
-	write_dword( fh, (EcDWord)EcVersionNumber() );
+	write_dword( stream, (EcDWord)EcVersionNumber() );
 
-	write_object( map, fh, EC_PACKAGENAME(obj) );
-	write_object( map, fh, EC_PACKAGECODE(obj) );
-	write_object( map, fh, EC_PACKAGEFRAME(obj) );
-	write_object( map, fh, EC_PACKAGESOURCE(obj) );
-	write_object( map, fh, EC_PACKAGEIMPORT(obj) );
+	write_object( map, stream, EC_PACKAGENAME(obj) );
+	write_object( map, stream, EC_PACKAGECODE(obj) );
+	write_object( map, stream, EC_PACKAGEFRAME(obj) );
+	write_object( map, stream, EC_PACKAGESOURCE(obj) );
+	write_object( map, stream, EC_PACKAGEIMPORT(obj) );
 	l = EC_PACKAGENEXPORT(obj);
-	write_dword( fh, l );
+	write_dword( stream, l );
 	for (i = 0; i < l; i++)
 	{
-		write_string( fh, EcSymbolAt( EC_PACKAGEEXPORT(obj)[i].sym ) );
-		write_byte( fh, EC_PACKAGEEXPORT(obj)[i].isconst );
-		write_dword( fh, EC_PACKAGEEXPORT(obj)[i].pos );
+		write_string( stream, EcSymbolAt( EC_PACKAGEEXPORT(obj)[i].sym ) );
+		write_byte( stream, EC_PACKAGEEXPORT(obj)[i].isconst );
+		write_dword( stream, EC_PACKAGEEXPORT(obj)[i].pos );
 	}
 	S_OUT;
 }
 
-static EC_OBJ read_package( objectmap map, FILE *fh, EcBool executeImported )
+static EC_OBJ read_package( objectmap map, ec_stream *stream, EcBool executeImported )
 {
 	EcWord type;
 	EcUInt id;
@@ -958,15 +1032,15 @@ static EC_OBJ read_package( objectmap map, FILE *fh, EcBool executeImported )
 
 	ASSERT( map );
 
-	type = read_word( fh );
+	type = read_word( stream );
 
 	ASSERT( type != tc_none );
 
 	if (type == tc_id)
 	{
 		/* Object already in map ? */
-		id   = read_dword( fh );
-		type = read_word( fh );
+		id   = read_dword( stream );
+		type = read_word( stream );
 		obj  = id2object( map, id );
 		ASSERT( obj != INVALID_OBJECT );
 
@@ -985,7 +1059,7 @@ static EC_OBJ read_package( objectmap map, FILE *fh, EcBool executeImported )
 		return Ec_ERROR;
 	}
 
-	ec_ver = read_dword( fh );
+	ec_ver = read_dword( stream );
 	if (ec_ver != EcVersionNumber() )
 	{
 		EcAlert( EcWarning, "loading a package saved with a different version on the interpreter" );
@@ -1010,11 +1084,11 @@ static EC_OBJ read_package( objectmap map, FILE *fh, EcBool executeImported )
 	EC_PACKAGE(obj) = ec_malloc( sizeof(EcPackage) );
 	ASSERT( EC_PACKAGE(obj) );
 
-	name   = read_object( map, fh, executeImported );
-	code   = read_object( map, fh, executeImported );
-	frame  = read_object( map, fh, executeImported );
-	source = read_object( map, fh, executeImported );
-	import = read_object( map, fh, executeImported );
+	name   = read_object( map, stream, executeImported );
+	code   = read_object( map, stream, executeImported );
+	frame  = read_object( map, stream, executeImported );
+	source = read_object( map, stream, executeImported );
+	import = read_object( map, stream, executeImported );
 
 	EC_PACKAGENAME(obj)   = name;
 	EC_PACKAGECODE(obj)   = code;
@@ -1024,12 +1098,12 @@ static EC_OBJ read_package( objectmap map, FILE *fh, EcBool executeImported )
 
 	EC_PACKAGEEXPORT(obj)  = NULL;
 	EC_PACKAGENEXPORT(obj) = 0;
-	l = read_dword( fh );
+	l = read_dword( stream );
 	for (i = 0; i < l; i++)
 	{
-		buf     = read_string( fh );
-		isconst = read_byte( fh );
-		pos     = read_dword( fh );
+		buf     = read_string( stream );
+		isconst = read_byte( stream );
+		pos     = read_dword( stream );
 		_ec_package_add_public( obj, EcInternSymbol( buf ), pos, isconst );
 		ec_free( buf );
 	}
@@ -1107,7 +1181,7 @@ static void patch_bytecode( objectmap map, EC_OBJ obj, EcInt npkgs, EcInt *pkg_n
 						pos = EC_COMPILEDCODE(obj)[i + 2];
 
 						ASSERT( pkg < npkgs );
-#if EC_DEBUG_PACKAGEIO
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 					    fprintf( stderr, "Patching %ld -> %ld (npkgs: %ld)\n", (long)pkg, (long)pkg_now_at[pkg], (long)npkgs );
 #endif
 						pkg = pkg_now_at[pkg];
@@ -1228,7 +1302,7 @@ static void patch_bytecode( objectmap map, EC_OBJ obj, EcInt npkgs, EcInt *pkg_n
  * LOW LEVEL OBJECT I/O
  * ------------------------------------------------------------------------ */
 
-static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
+static void write_object( objectmap map, ec_stream *stream, EC_OBJ obj )
 {
 	EcUInt id;
 
@@ -1242,12 +1316,12 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 	id = object2id( map, obj );
 	if (id)
 	{
-		write_word( fh, tc_id );
-		write_dword( fh, id );
+		write_word( stream, tc_id );
+		write_dword( stream, id );
 		if (EC_NNULLP(obj))
-			write_word( fh, EC_TYPE(obj) );
+			write_word( stream, EC_TYPE(obj) );
 		else
-			write_word( fh, tc_none );
+			write_word( stream, tc_none );
 
 		SHOW_WRITE(id, EC_NNULLP(obj) ? EC_TYPE(obj) : tc_none, obj, TRUE);
 		S_OUT;
@@ -1266,14 +1340,14 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 
 /*	if (EC_NULLP(obj))
 	{
-		write_word( fh, tc_none );
+		write_word( stream, tc_none );
 		fprintf( stderr, "%ld OBJECT   TYPE: %2d  (%s)\n", id, tc_none, EcTypeName( tc_none ) );
 		return;
 	}*/
 
 /*	fprintf( stderr, "%ld OBJECT   TYPE: %2d  (%s)\n", (long)id, EC_TYPE(obj), EcTypeName( EC_TYPE(obj) ) );*/
 
-	write_word( fh, EC_TYPE(obj) );
+	write_word( stream, EC_TYPE(obj) );
 	switch (EC_TYPE(obj))
 	{
 	case tc_none:
@@ -1286,16 +1360,16 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 		break;
 
 	case tc_bool:
-		write_byte( fh, EC_BOOLVAL(obj) );
+		write_byte( stream, EC_BOOLVAL(obj) );
 		break;
 
 	case tc_inum:
 		ASSERT( sizeof(EC_INUM(obj)) <= sizeof(EcDWord) );
-		write_dword( fh, (EcDWord) EC_INUM(obj) );
+		write_dword( stream, (EcDWord) EC_INUM(obj) );
 		break;
 
 	case tc_fnum:
-		write_float( fh, EC_FNUM(obj) );
+		write_float( stream, EC_FNUM(obj) );
 		break;
 
 	case tc_symbol:
@@ -1305,9 +1379,9 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 		const char *sym;
 		sym = EcSymbolAt( EC_SYMBOL(obj) );
 		l = strlen( sym );
-		write_dword( fh, l );
+		write_dword( stream, l );
 		for (i = 0; i < l; i++)
-			write_byte( fh, sym[i] );
+			write_byte( stream, sym[i] );
 	}
 	break;
 
@@ -1316,21 +1390,21 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 		/* XXXX: handle userdata */
 /*		ASSERT( FALSE );*/
 		/* write the C pointer index */
-		write_dword( fh, ec_cpointer2index( (EcCPointer) EC_PRIMITIVE(obj) ) );
+		write_dword( stream, ec_cpointer2index( (EcCPointer) EC_PRIMITIVE(obj) ) );
 		break;
 
 	case tc_cmethod:
 		/* XXXX: WRONG ! */
 /*		ASSERT( FALSE );*/
 		/* write the C pointer index */
-		write_dword( fh, ec_cpointer2index( (EcCPointer) EC_CMETHOD(obj) ) );
+		write_dword( stream, ec_cpointer2index( (EcCPointer) EC_CMETHOD(obj) ) );
 		break;
 
 	default:
 		if (EC_PACKAGEP(obj))
 		{
 			ASSERT( EC_STRINGP(EC_PACKAGENAME(obj)) );
-			write_string( fh, EC_STRDATA(EC_PACKAGENAME(obj)) );
+			write_string( stream, EC_STRDATA(EC_PACKAGENAME(obj)) );
 			break;
 		}
 
@@ -1343,46 +1417,46 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcUInt nargs;
 
 			l = EC_COMPILEDNCODE(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++)
 			{
 				bc   = EC_COMPILEDCODE(obj)[i];
 				npar = EcBytecodeParams( bc );
-				write_dword( fh, bc );
+				write_dword( stream, bc );
 				if (bc == CallMethodOP)
 				{
 					symid = EC_COMPILEDCODE(obj)[i + 1];
 					nargs = EC_COMPILEDCODE(obj)[i + 2];
-					write_string( fh, EcSymbolAt( symid ) );
-					write_dword( fh, nargs );
+					write_string( stream, EcSymbolAt( symid ) );
+					write_dword( stream, nargs );
 				} else if (bc == CallSuperMethodOP)
 				{
 					symid = EC_COMPILEDCODE(obj)[i + 1];
 					nargs = EC_COMPILEDCODE(obj)[i + 2];
-					write_string( fh, EcSymbolAt( symid ) );
-					write_dword( fh, nargs );
+					write_string( stream, EcSymbolAt( symid ) );
+					write_dword( stream, nargs );
 				} else
 				{
 					for (j = 1; j <= npar; j++)
-						write_dword( fh, EC_COMPILEDCODE(obj)[i + j] );
+						write_dword( stream, EC_COMPILEDCODE(obj)[i + j] );
 				}
 				i += npar;
 			}
 /*		    for (i = 0; i < l; i++)
-		        write_dword( fh, EC_COMPILEDCODE(obj)[i] );*/
-			write_dword( fh, EC_COMPILEDNARG(obj) );
-			write_dword( fh, EC_COMPILEDNARG_DEF(obj) );
-			write_byte( fh, EC_COMPILEDVARG(obj) );
-			write_dword( fh, EC_COMPILEDNLOC(obj) );
-			write_dword( fh, EC_COMPILEDMAXTEMPS(obj) );
-			write_object( map, fh, EC_COMPILEDLEXICAL(obj) );
-			write_object( map, fh, EC_COMPILEDLFRAME(obj) );
-			write_object( map, fh, EC_COMPILEDHANDLER(obj) );
+		        write_dword( stream, EC_COMPILEDCODE(obj)[i] );*/
+			write_dword( stream, EC_COMPILEDNARG(obj) );
+			write_dword( stream, EC_COMPILEDNARG_DEF(obj) );
+			write_byte( stream, EC_COMPILEDVARG(obj) );
+			write_dword( stream, EC_COMPILEDNLOC(obj) );
+			write_dword( stream, EC_COMPILEDMAXTEMPS(obj) );
+			write_object( map, stream, EC_COMPILEDLEXICAL(obj) );
+			write_object( map, stream, EC_COMPILEDLFRAME(obj) );
+			write_object( map, stream, EC_COMPILEDHANDLER(obj) );
 			ASSERT( EC_PACKAGEP(EC_COMPILEDPACKAGE(obj)) );
-			write_object( map, fh, EC_COMPILEDPACKAGE(obj) );
-			write_object( map, fh, EC_COMPILEDNAME(obj) );
-			write_byte( fh, (EcByte)EC_COMPILEDISMETHOD(obj) );
-			write_object( map, fh, EC_COMPILEDINFO(obj) );
+			write_object( map, stream, EC_COMPILEDPACKAGE(obj) );
+			write_object( map, stream, EC_COMPILEDNAME(obj) );
+			write_byte( stream, (EcByte)EC_COMPILEDISMETHOD(obj) );
+			write_object( map, stream, EC_COMPILEDINFO(obj) );
 			break;
 		}
 
@@ -1391,10 +1465,10 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcInt i, l;
 
 			l = EC_ARRAYLEN(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++)
-/*				write_object( map, fh, EC_ARRAYMEM(obj)[i] );*/
-				write_object( map, fh, EC_ARRAYGET(obj, i) );
+/*				write_object( map, stream, EC_ARRAYMEM(obj)[i] );*/
+				write_object( map, stream, EC_ARRAYGET(obj, i) );
 			break;
 		}
 
@@ -1405,7 +1479,7 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcInt nentries;
 
 			nentries = ec_hash_size( EC_HASH(obj) );
-			write_dword( fh, (EcDWord) nentries );
+			write_dword( stream, (EcDWord) nentries );
 
 			iter = ec_hash_iterator_create( EC_HASH(obj) );
 			ASSERT( iter );
@@ -1413,8 +1487,8 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			while (ec_hash_iterator_next( iter, &key ))
 			{
 				ec_hash_get( EC_HASH(obj), key, &value );
-				write_object( map, fh, (EC_OBJ) key );
-				write_object( map, fh, (EC_OBJ) value );
+				write_object( map, stream, (EC_OBJ) key );
+				write_object( map, stream, (EC_OBJ) value );
 			}
 
 			ec_hash_iterator_destroy( iter );
@@ -1425,11 +1499,11 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 		{
 			ASSERT( sizeof(EcChar) <= sizeof(EcDWord) );
 			if (sizeof(EcChar) <= sizeof(EcByte))
-				write_byte( fh, EC_CHAR(obj) );
+				write_byte( stream, EC_CHAR(obj) );
 			else if (sizeof(EcChar) <= sizeof(EcWord))
-				write_word( fh, EC_CHAR(obj) );
+				write_word( stream, EC_CHAR(obj) );
 			else
-				write_dword( fh, EC_CHAR(obj) );
+				write_dword( stream, EC_CHAR(obj) );
 			break;
 		}
 
@@ -1438,9 +1512,9 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcInt i, l;
 
 			l = EC_STRLEN(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++)
-				write_byte( fh, EC_STRDATA(obj)[i] );
+				write_byte( stream, EC_STRDATA(obj)[i] );
 
 			break;
 		}
@@ -1450,27 +1524,27 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcUInt i;
 
 			/* ASSERT( FALSE ); */
-			write_dword( fh, EC_STACKDIM(obj) );
+			write_dword( stream, EC_STACKDIM(obj) );
 			for (i = 0; i < EC_STACKDIM(obj); i++)
-				write_object( map, fh, EC_STACKBASE(obj)[i] );
-			write_dword( fh, (EcDWord) (EC_STACKPOINTER(obj) - EC_STACKBASE(obj)) );
-			write_dword( fh, (EcDWord) (EC_STACKBP(obj) - EC_STACKBASE(obj)) );
-			write_object( map, fh, EC_STACKUP(obj) );
-			write_object( map, fh, EC_STACKLEXICAL(obj) );
-			write_dword( fh, (EcDWord) EC_STACKPC(obj) );
-			write_dword( fh, (EcDWord) EC_STACKNARGS_REAL(obj) );
-			write_dword( fh, (EcDWord) EC_STACKNARGS_LOGICAL(obj) );
-			write_object( map, fh, EC_STACKIMMUP(obj) );
-			write_object( map, fh, EC_STACKIMMCALLER(obj) );
-			write_dword( fh, (EcDWord) EC_STACKIMMPC(obj) );
-			write_object( map, fh, EC_STACKCALLED(obj) );
+				write_object( map, stream, EC_STACKBASE(obj)[i] );
+			write_dword( stream, (EcDWord) (EC_STACKPOINTER(obj) - EC_STACKBASE(obj)) );
+			write_dword( stream, (EcDWord) (EC_STACKBP(obj) - EC_STACKBASE(obj)) );
+			write_object( map, stream, EC_STACKUP(obj) );
+			write_object( map, stream, EC_STACKLEXICAL(obj) );
+			write_dword( stream, (EcDWord) EC_STACKPC(obj) );
+			write_dword( stream, (EcDWord) EC_STACKNARGS_REAL(obj) );
+			write_dword( stream, (EcDWord) EC_STACKNARGS_LOGICAL(obj) );
+			write_object( map, stream, EC_STACKIMMUP(obj) );
+			write_object( map, stream, EC_STACKIMMCALLER(obj) );
+			write_dword( stream, (EcDWord) EC_STACKIMMPC(obj) );
+			write_object( map, stream, EC_STACKCALLED(obj) );
 			break;
 		}
 
 		if (EC_HANDLERP(obj))
 		{
-			write_object( map, fh, EC_HANDLERTYPE(obj) );
-			write_object( map, fh, EC_HANDLERCODE(obj) );
+			write_object( map, stream, EC_HANDLERTYPE(obj) );
+			write_object( map, stream, EC_HANDLERCODE(obj) );
 			break;
 		}
 
@@ -1480,41 +1554,41 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcInt specific;
 			EC_OBJ impl;
 
-			write_object( map, fh, EC_CLASSSUPER(obj) );
-			write_object( map, fh, EC_CLASSPACKAGE(obj) );
-			write_object( map, fh, EC_CLASSNAME(obj) );
-			write_object( map, fh, EC_CLASSSHORTNAME(obj) );
-			write_object( map, fh, EC_CLASSCODE(obj) );
+			write_object( map, stream, EC_CLASSSUPER(obj) );
+			write_object( map, stream, EC_CLASSPACKAGE(obj) );
+			write_object( map, stream, EC_CLASSNAME(obj) );
+			write_object( map, stream, EC_CLASSSHORTNAME(obj) );
+			write_object( map, stream, EC_CLASSCODE(obj) );
 
 			l = EC_CLASSNMETHODS(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++) {
 				impl = EC_CLASSMTABLE(obj)[i].impl;
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
-				write_string( fh, EcSymbolAt( EC_CLASSMTABLE(obj)[i].symid ) );
-				write_object( map, fh, impl );
+				write_string( stream, EcSymbolAt( EC_CLASSMTABLE(obj)[i].symid ) );
+				write_object( map, stream, impl );
 			}
 			l = EC_CLASSNCMETHODS(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++) {
 				impl = EC_CLASSCMTABLE(obj)[i].impl;
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
-				write_string( fh, EcSymbolAt( EC_CLASSCMTABLE(obj)[i].symid ) );
-				write_object( map, fh, impl );
+				write_string( stream, EcSymbolAt( EC_CLASSCMTABLE(obj)[i].symid ) );
+				write_object( map, stream, impl );
 			}
-			write_dword( fh, EC_CLASSIOFFSET(obj) );
+			write_dword( stream, EC_CLASSIOFFSET(obj) );
 			l = EC_CLASSNIVARS(obj);
-			write_dword( fh, l );									/* nivars */
+			write_dword( stream, l );									/* nivars */
 			specific = EC_CLASSNIVARS(obj) - EC_CLASSIOFFSET(obj);
 			for (i = 0; i < specific; i++) {						/* write only specific vars */
-				write_string( fh, EcSymbolAt( EC_CLASSIVTABLE(obj)[i].symid ) );
-				write_dword( fh, EC_CLASSIVTABLE(obj)[i].offset );
+				write_string( stream, EcSymbolAt( EC_CLASSIVTABLE(obj)[i].symid ) );
+				write_dword( stream, EC_CLASSIVTABLE(obj)[i].offset );
 			}
 			l = EC_CLASSNCVARS(obj);
-			write_dword( fh, l );
+			write_dword( stream, l );
 			for (i = 0; i < l; i++) {
-				write_string( fh, EcSymbolAt( EC_CLASSCVTABLE(obj)[i].symid ) );
-				write_dword( fh, EC_CLASSCVTABLE(obj)[i].offset );
+				write_string( stream, EcSymbolAt( EC_CLASSCVTABLE(obj)[i].symid ) );
+				write_dword( stream, EC_CLASSCVTABLE(obj)[i].offset );
 			}
 			break;
 		}
@@ -1524,15 +1598,15 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 			EcInt i;
 
 			ASSERT( EC_NNULLP(EC_OBJECTCLASS(obj)) );
-			write_object( map, fh, EC_OBJECTCLASS(obj) );
+			write_object( map, stream, EC_OBJECTCLASS(obj) );
 			for (i = 0; i < EC_CLASSNIVARS(EC_OBJECTCLASS(obj)); i++)
-				write_object( map, fh, EC_OBJECTIVARS(obj)[i] );
+				write_object( map, stream, EC_OBJECTIVARS(obj)[i] );
 			/* TODO XXX: C user data */
 #if EC_SIZEOF_ECPOINTERINTEGER <= 4
-			write_dword( fh, (EcDWord) EC_OBJECTUSER(obj) );
+			write_dword( stream, (EcDWord) EC_OBJECTUSER(obj) );
 #else
 			/* TODO XXX: FIXME */
-			fwrite( EC_OBJECTUSER(obj), sizeof(void *), 1, fh );
+			fwrite( EC_OBJECTUSER(obj), sizeof(void *), 1, stream );
 #endif
 			break;
 		}
@@ -1543,7 +1617,7 @@ static void write_object( objectmap map, FILE *fh, EC_OBJ obj )
 	S_OUT;
 }
 
-static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
+static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImported )
 {
 	EcWord type;
 	EcUInt id;
@@ -1554,7 +1628,7 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 	ASSERT( map );
 
 	id = 0;
-	type = read_word( fh );
+	type = read_word( stream );
 
 	if (type == tc_none)
 	{
@@ -1566,8 +1640,8 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 	if (type == tc_id)
 	{
 		/* Object already in map ? */
-		id   = read_dword( fh );
-		type = read_word( fh );
+		id   = read_dword( stream );
+		type = read_word( stream );
 		obj  = id2object( map, id );
 		ASSERT( obj != INVALID_OBJECT );
 
@@ -1590,7 +1664,7 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 
 	if (type == tc_undefined)
 	{
-		ec_fprintf(stderr, "\n\n\n\n\n\n**** Uhm, reading a tc_undefined object !\n\n\n\n\n\n");
+		ec_msg_printf("\n\n\n\n\n\n**** Uhm, reading a tc_undefined object !\n\n\n\n\n\n");
 	}
 
 	if (type == tc_array)
@@ -1641,20 +1715,20 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		break;
 
 	case tc_bool:
-		EC_BOOLVAL(obj) = read_byte( fh );
+		EC_BOOLVAL(obj) = read_byte( stream );
 		break;
 
 	case tc_inum:
 #if EC_INLINED_TYPES
-		obj = EC_MAKE_INT( (EcInt) read_dword( fh ) );
+		obj = EC_MAKE_INT( (EcInt) read_dword( stream ) );
 #else
 		ASSERT( sizeof(EC_INUM(obj)) <= sizeof(EcDWord) );
-		EC_INUM(obj) = (EcInt) read_dword( fh );
+		EC_INUM(obj) = (EcInt) read_dword( stream );
 #endif
 		break;
 
 	case tc_fnum:
-		EC_FNUM(obj) = read_float( fh );
+		EC_FNUM(obj) = read_float( stream );
 		break;
 
 	case tc_symbol:
@@ -1662,10 +1736,10 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		EcInt i, l;
 		char *buf;
 
-		l = read_dword( fh );
+		l = read_dword( stream );
 		buf = alloca( l + 1 );
 		for (i = 0; i < l; i++)
-			buf[i] = read_byte( fh );
+			buf[i] = read_byte( stream );
 		buf[i] = '\0';
 #if EC_INLINED_TYPES
 		obj = EcMakeSymbol( buf );
@@ -1679,13 +1753,13 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		/* XXXX: WRONG ! */
 		/* XXXX: handle userdata */
 /*		ASSERT( FALSE );*/
-		EC_PRIMITIVE(obj) = (EcCPrimitive) ec_index2cpointer( read_dword( fh ) );
+		EC_PRIMITIVE(obj) = (EcCPrimitive) ec_index2cpointer( read_dword( stream ) );
 	break;
 
 	case tc_cmethod:
 		/* XXXX: WRONG ! */
 /*		ASSERT( FALSE );*/
-		EC_CMETHOD(obj) = (EcCMethod) ec_index2cpointer( read_dword( fh ) );
+		EC_CMETHOD(obj) = (EcCMethod) ec_index2cpointer( read_dword( stream ) );
 	break;
 
 	default:
@@ -1693,7 +1767,7 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		{
 			char *pkgname;
 
-			pkgname = read_string( fh );
+			pkgname = read_string( stream );
 			obj = EcPackageLoad( pkgname, NULL, executeImported, executeImported );
 			ASSERT( EC_PACKAGEP(obj) );
 			ASSERT( EC_STRINGP(EC_PACKAGENAME(obj)) );
@@ -1722,49 +1796,49 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EC_COMPILEDCODE(obj)  = NULL;
 			EC_COMPILEDNCODE(obj) = 0;
 
-			l = read_dword( fh );
+			l = read_dword( stream );
 			for (i = 0; i < l; i++)
 			{
-				bc   = read_dword( fh );
+				bc   = read_dword( stream );
 				npar = EcBytecodeParams( bc );
 				EcCompiledPush( obj, bc );
 				if (bc == CallMethodOP)
 				{
-					buf   = read_string( fh );
-					nargs = read_dword( fh );
+					buf   = read_string( stream );
+					nargs = read_dword( stream );
 					EcCompiledPush( obj, EcInternSymbol( buf ) );
 					EcCompiledPush( obj, nargs );
 					ec_free( buf );
 				} else if (bc == CallSuperMethodOP)
 				{
-					buf   = read_string( fh );
-					nargs = read_dword( fh );
+					buf   = read_string( stream );
+					nargs = read_dword( stream );
 					EcCompiledPush( obj, EcInternSymbol( buf ) );
 					EcCompiledPush( obj, nargs );
 					ec_free( buf );
 				} else
 				{
 					for (j = 1; j <= npar; j++)
-						EcCompiledPush( obj, read_dword( fh ) );
+						EcCompiledPush( obj, read_dword( stream ) );
 				}
 				i += npar;
 			}
 			ASSERT( EC_COMPILEDNCODE(obj) == l );
 			EC_COMPILEDNCODE(obj) = l;
-			EC_COMPILEDNARG(obj)     = read_dword( fh );
-			EC_COMPILEDNARG_DEF(obj) = read_dword( fh );
-			EC_COMPILEDVARG(obj)     = read_byte( fh );
-			EC_COMPILEDNLOC(obj)     = read_dword( fh );
-			EC_COMPILEDMAXTEMPS(obj) = read_dword( fh );
+			EC_COMPILEDNARG(obj)     = read_dword( stream );
+			EC_COMPILEDNARG_DEF(obj) = read_dword( stream );
+			EC_COMPILEDVARG(obj)     = read_byte( stream );
+			EC_COMPILEDNLOC(obj)     = read_dword( stream );
+			EC_COMPILEDMAXTEMPS(obj) = read_dword( stream );
 
-			lexical  = read_object( map, fh, executeImported );
-			lframe   = read_object( map, fh, executeImported );
-			handler  = read_object( map, fh, executeImported );
-			package  = read_object( map, fh, executeImported );
+			lexical  = read_object( map, stream, executeImported );
+			lframe   = read_object( map, stream, executeImported );
+			handler  = read_object( map, stream, executeImported );
+			package  = read_object( map, stream, executeImported );
 			ASSERT( EC_PACKAGEP(package) );
-			name     = read_object( map, fh, executeImported );
-			ismethod = read_byte( fh );
-			info     = read_object( map, fh, executeImported );
+			name     = read_object( map, stream, executeImported );
+			ismethod = read_byte( stream );
+			info     = read_object( map, stream, executeImported );
 
 			EC_COMPILEDLEXICAL(obj)  = lexical;
 #if EC_STACK_RECYCLE
@@ -1785,10 +1859,10 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EcInt i, l;
 			EC_OBJ el;
 
-			l = read_dword( fh );
+			l = read_dword( stream );
 			for (i = 0; i < l; i++)
 			{
-				el = read_object( map, fh, executeImported );
+				el = read_object( map, stream, executeImported );
 				EcArraySet( obj, i, el );
 			}
 			ASSERT( EC_ARRAYLEN(obj) == l );
@@ -1807,11 +1881,11 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 
 			EC_USER(obj) = (void *) hash;
 
-			nentries = (EcInt) read_dword( fh );
+			nentries = (EcInt) read_dword( stream );
 			for (i = 0; i < nentries; i++)
 			{
-				key   = read_object( map, fh, executeImported );
-				value = read_object( map, fh, executeImported );
+				key   = read_object( map, stream, executeImported );
+				value = read_object( map, stream, executeImported );
 				rv = ec_hash_set( EC_HASH(obj), (EcAny)key, (EcAny)value );
 				ASSERT( rv );
 			}
@@ -1823,11 +1897,11 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		{
 			ASSERT( sizeof(EcChar) <= sizeof(EcDWord) );
 			if (sizeof(EcChar) <= sizeof(EcByte))
-				EC_CHAR(obj) = read_byte( fh );
+				EC_CHAR(obj) = read_byte( stream );
 			else if (sizeof(EcChar) <= sizeof(EcWord))
-				EC_CHAR(obj) = read_word( fh );
+				EC_CHAR(obj) = read_word( stream );
 			else
-				EC_CHAR(obj) = read_dword( fh );
+				EC_CHAR(obj) = read_dword( stream );
 			break;
 		}
 
@@ -1836,10 +1910,10 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EcInt i, l;
 			char *buf;
 
-			l = read_dword( fh );
+			l = read_dword( stream );
 			buf = alloca( l + 1 );
 			for (i = 0; i < l; i++)
-				buf[i] = read_byte( fh );
+				buf[i] = read_byte( stream );
 			buf[i] = '\0';
 			EC_STRDATA(obj) = ec_malloc( l + 1 );
 			ASSERT( EC_STRDATA(obj) );
@@ -1857,7 +1931,7 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EC_STACK(obj) = ec_malloc( sizeof(EcStack) );
 			ASSERT( EC_STACK(obj) );
 
-			dim = read_dword( fh );
+			dim = read_dword( stream );
 			EC_STACKDIM(obj) = dim;
 #if EC_STACK_USES_STATIC
 			if (dim <= EC_STACK_STATIC_SIZE)
@@ -1870,28 +1944,28 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			ASSERT( EC_STACKBASE(obj) );
 			for (i = 0; i < dim; i++)
 			{
-				stackel = read_object( map, fh, executeImported );
+				stackel = read_object( map, stream, executeImported );
 				EC_STACKBASE(obj)[i] = stackel;
 			}
-			EC_STACKPOINTER(obj) = EC_STACKBASE(obj) + read_dword( fh );
-			EC_STACKBP(obj)      = EC_STACKBASE(obj) + read_dword( fh );
-			stackup      = read_object( map, fh, executeImported );
-			stacklexical = read_object( map, fh, executeImported );
+			EC_STACKPOINTER(obj) = EC_STACKBASE(obj) + read_dword( stream );
+			EC_STACKBP(obj)      = EC_STACKBASE(obj) + read_dword( stream );
+			stackup      = read_object( map, stream, executeImported );
+			stacklexical = read_object( map, stream, executeImported );
 			EC_STACKUP(obj)            = stackup;
 			EC_STACKLEXICAL(obj)       = stacklexical;
 #if EC_STACK_RECYCLE
 			if (EC_STACKP(EC_STACKLEXICAL(obj)))
 				EC_STACKREF_INC(EC_STACKLEXICAL(obj));
 #endif
-			EC_STACKPC(obj)            = read_dword( fh );
-			EC_STACKNARGS_REAL(obj)    = read_dword( fh );
-			EC_STACKNARGS_LOGICAL(obj) = read_dword( fh );
-			stackimmup     = read_object( map, fh, executeImported );
-			stackimmcaller = read_object( map, fh, executeImported );
+			EC_STACKPC(obj)            = read_dword( stream );
+			EC_STACKNARGS_REAL(obj)    = read_dword( stream );
+			EC_STACKNARGS_LOGICAL(obj) = read_dword( stream );
+			stackimmup     = read_object( map, stream, executeImported );
+			stackimmcaller = read_object( map, stream, executeImported );
 			EC_STACKIMMUP(obj)         = stackimmup;
 			EC_STACKIMMCALLER(obj)     = stackimmcaller;
-			EC_STACKIMMPC(obj)         = read_dword( fh );
-			stackcalled = read_object( map, fh, executeImported );
+			EC_STACKIMMPC(obj)         = read_dword( stream );
+			stackcalled = read_object( map, stream, executeImported );
 			EC_STACKCALLED(obj) = stackcalled;
 #if EC_STACK_RECYCLE
 			/* EC_STACKREF_SET(obj, 0); */
@@ -1908,8 +1982,8 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 		{
 			EC_OBJ type, code;
 
-			type = read_object( map, fh, executeImported );
-			code = read_object( map, fh, executeImported );
+			type = read_object( map, stream, executeImported );
+			code = read_object( map, stream, executeImported );
 			EC_HANDLERTYPE(obj) = type;
 			EC_HANDLERCODE(obj) = code;
 			break;
@@ -1922,11 +1996,11 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EcInt specific;
 			char *buf;
 
-			super     = read_object( map, fh, executeImported );
-			package   = read_object( map, fh, executeImported );
-			name      = read_object( map, fh, executeImported );
-			shortname = read_object( map, fh, executeImported );
-			code      = read_object( map, fh, executeImported );
+			super     = read_object( map, stream, executeImported );
+			package   = read_object( map, stream, executeImported );
+			name      = read_object( map, stream, executeImported );
+			shortname = read_object( map, stream, executeImported );
+			code      = read_object( map, stream, executeImported );
 			ASSERT( EC_NULLP(super) || EC_CLASSP(super) );
 			ASSERT( EC_NULLP(code) || EC_COMPILEDP(code) );
 
@@ -1959,26 +2033,26 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 				EC_CLASSNIVARS(obj)  = 0;
 			}
 
-			l = read_dword( fh );
+			l = read_dword( stream );
 			EC_CLASSNMETHODS(obj) = 0;								/* set by EcAddMethod */
 			for (i = 0; i < l; i++) {
-				buf  = read_string( fh );
-				impl = read_object( map, fh, executeImported );
+				buf  = read_string( stream );
+				impl = read_object( map, stream, executeImported );
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
 				EcAddMethod( obj, buf, impl );
 			}
 			ASSERT( EC_CLASSNMETHODS(obj) == l );
-			l = read_dword( fh );
+			l = read_dword( stream );
 			EC_CLASSNCMETHODS(obj) = 0;								/* set by EcAddClassMethod */
 			for (i = 0; i < l; i++) {
-				buf  = read_string( fh );
-				impl = read_object( map, fh, executeImported );
+				buf  = read_string( stream );
+				impl = read_object( map, stream, executeImported );
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
 				EcAddClassMethod( obj, buf, impl );
 			}
 			ASSERT( EC_CLASSNCMETHODS(obj) == l );
-			EC_CLASSIOFFSET(obj) = read_dword( fh );
-			l = read_dword( fh );									/* nivars */
+			EC_CLASSIOFFSET(obj) = read_dword( stream );
+			l = read_dword( stream );									/* nivars */
 			EC_CLASSNIVARS(obj) = l;
 			specific = EC_CLASSNIVARS(obj) - EC_CLASSIOFFSET(obj);	/* specific instance variables */
 			if (specific > 0)
@@ -1986,8 +2060,8 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 				EC_CLASSIVTABLE(obj) = ec_malloc( specific * sizeof(EcVariableEntry) );
 				ASSERT( EC_CLASSIVTABLE(obj) );
 				for (i = 0; i < specific; i++) {					/* read only specific vars */
-					buf  = read_string( fh );
-					pos  = read_dword( fh );
+					buf  = read_string( stream );
+					pos  = read_dword( stream );
 					EC_CLASSIVTABLE(obj)[i].symid  = EcInternSymbol( buf );
 					EC_CLASSIVTABLE(obj)[i].offset = pos;
 				}
@@ -1996,15 +2070,15 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 				EC_CLASSIVTABLE(obj) = NULL;
 			}
 			ASSERT( EC_CLASSNIVARS(obj) == l );
-			l = read_dword( fh );
+			l = read_dword( stream );
 			if (l > 0)
 			{
 				EC_CLASSCVTABLE(obj) = ec_malloc( l * sizeof(EcVariableEntry) );
 				ASSERT( EC_CLASSCVTABLE(obj) );
 				EC_CLASSNCVARS(obj) = l;
 				for (i = 0; i < l; i++) {
-					buf  = read_string( fh );
-					pos  = read_dword( fh );
+					buf  = read_string( stream );
+					pos  = read_dword( stream );
 					EC_CLASSCVTABLE(obj)[i].symid  = EcInternSymbol( buf );
 					EC_CLASSCVTABLE(obj)[i].offset = pos;
 				}
@@ -2022,7 +2096,7 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EcInt i;
 			EcInt nvars;
 
-			objclass = read_object( map, fh, executeImported );
+			objclass = read_object( map, stream, executeImported );
 			EC_OBJECT(obj) = ec_malloc( sizeof(EcObject) );
 			ASSERT( EC_OBJECT(obj) );
 			EC_OBJECTCLASS(obj) = objclass;
@@ -2034,13 +2108,13 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
 			EC_OBJECTUSER(obj) = NULL;
 
 			for (i = 0; i < EC_CLASSNIVARS(EC_OBJECTCLASS(obj)); i++)
-				EC_OBJECTIVARS(obj)[i] = read_object( map, fh, executeImported );
+				EC_OBJECTIVARS(obj)[i] = read_object( map, stream, executeImported );
 			/* TODO XXX: C user data */
 #if EC_SIZEOF_ECPOINTERINTEGER <= 4
-			EC_OBJECTUSER(obj) = (void *) read_dword( fh );
+			EC_OBJECTUSER(obj) = (void *) read_dword( stream );
 #else
 			/* TODO XXX: FIXME */
-			fread( EC_OBJECTUSER(obj), sizeof(void *), 1, fh );
+			fread( EC_OBJECTUSER(obj), sizeof(void *), 1, stream );
 #endif
 			break;
 		}
@@ -2061,99 +2135,108 @@ static EC_OBJ read_object( objectmap map, FILE *fh, EcBool executeImported )
  * LOW LEVEL FILE I/O
  * ------------------------------------------------------------------------ */
 
-static void write_byte( FILE *fh, EcByte datum )
+static void write_byte( ec_stream *stream, EcByte datum )
 {
-	fwrite( &datum, sizeof(EcByte), 1, fh );
+	ec_stream_writen( stream, &datum, sizeof(EcByte) );
 }
 
-static void write_word( FILE *fh, EcWord datum )
+static void write_word( ec_stream *stream, EcWord datum )
 {
 	EcWord w;
 
 	w = htons( datum );
-	fwrite( &w, sizeof(EcWord), 1, fh );
+	ec_stream_writen( stream, &w, sizeof(EcWord) );
 }
 
-static void write_dword( FILE *fh, EcDWord datum )
+static void write_dword( ec_stream *stream, EcDWord datum )
 {
 	EcDWord dw;
 
 	dw = htonl( datum );
-	fwrite( &dw, sizeof(EcDWord), 1, fh );
+	ec_stream_writen( stream, &dw, sizeof(EcDWord) );
 }
 
-static void write_float( FILE *fh, EcFloat datum )
+static void write_float( ec_stream *stream, EcFloat datum )
 {
 	char buf[128];
-	EcInt l, i;
+	EcInt l;
 
-	sprintf( buf, "%.16g", (double)datum );
+	sprintf( buf, "%.16g", (double)datum );						/* :TODO: use ec_sprintf */
 	l = strlen( buf );
-	write_byte( fh, l );
+	write_byte( stream, l );
+	/*
 	for (i = 0; i < l; i++)
-		write_byte( fh, buf[i] );
+	write_byte( stream, buf[i] ); */
+	ec_stream_writen( stream, buf, l );
 }
 
-static void write_string( FILE *fh, const char *string )
+static void write_string( ec_stream *stream, const char *string )
 {
-	EcInt l, i;
+	EcInt l;
 
 	l = strlen( string );
-	write_dword( fh, l );
+	write_dword( stream, l );
+	/* 
 	for (i = 0; i < l; i++)
-		write_byte( fh, string[i] );
+	   write_byte( stream, string[i] );
+	*/
+	ec_stream_writen( stream, string, l );
 }
 
-static EcByte read_byte( FILE *fh )
+static EcByte read_byte( ec_stream *stream )
 {
 	EcByte b;
 
-	fread( &b, sizeof(EcByte), 1, fh );
+	ec_stream_readn( stream, &b, sizeof(EcByte) );
 	return b;
 }
 
-static EcWord read_word( FILE *fh )
+static EcWord read_word( ec_stream *stream )
 {
 	EcWord w;
 
-	fread( &w, sizeof(EcWord), 1, fh );
+	ec_stream_readn( stream, &w, sizeof(EcWord) );
 	return ntohs( w );
 }
 
-static EcDWord read_dword( FILE *fh )
+static EcDWord read_dword( ec_stream *stream )
 {
 	EcDWord dw;
 
-	fread( &dw, sizeof(EcDWord), 1, fh );
+	ec_stream_readn( stream, &dw, sizeof(EcDWord) );
 	return ntohl( dw );
 }
 
-static EcFloat read_float( FILE *fh )
+static EcFloat read_float( ec_stream *stream )
 {
 	char buf[128];
-	EcInt l, i;
+	EcInt l;
 	double datum;
 
-	l = read_byte( fh );
-	for (i = 0; i < l; i++)
-		buf[i] = read_byte( fh );
-	buf[i] = '\0';
+	l = read_byte( stream );
+	/* for (i = 0; i < l; i++)
+	   buf[i] = read_byte( stream );
+	   buf[i] = '\0'; */
+	ec_stream_readn( stream, buf, l );
+	buf[l] = '\0';
 
-	sscanf( buf, "%lg", &datum );
+	sscanf( buf, "%lg", &datum );								/* :TODO: use our _ec_strtod() */
 	return (EcFloat)datum;
 }
 
-static char *read_string( FILE *fh )
+static char *read_string( ec_stream *stream )
 {
-	EcInt l, i;
+	EcInt l;
 	char *buf;
 
-	l = read_dword( fh );
-	buf = ec_malloc( l + 1 );
+	l = read_dword( stream );
+	buf = malloc( l + 1 );										/* :TODO: use dynamic strings: ec_string */
 	if (! buf) return NULL;
-	for (i = 0; i < l; i++)
-		buf[i] = read_byte( fh );
-	buf[i] = '\0';
+	/* for (i = 0; i < l; i++)
+	   buf[i] = read_byte( fh );
+	   buf[i] = '\0'; */
+	ec_stream_readn( stream, buf, l );
+	buf[l] = '\0';
 
 	return buf;
 }
@@ -2230,7 +2313,7 @@ static EC_OBJ id2object( objectmap map, EcUInt id )
 
 	if (! ec_hash_get( map->id2obj, (EcAny)(EcPointerInteger)id, (EcAny *)&obj ))
 	{
-#if SHOW_MAP
+#if defined(WITH_STDIO) && SHOW_MAP
 		fprintf( stderr, "INVALID_OBJECT at id = %ld\n", (long)id );
 #endif
 		return INVALID_OBJECT;

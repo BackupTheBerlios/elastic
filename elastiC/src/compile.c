@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 18:12:33 MEST 1998
  *
- *   $Id: compile.c,v 1.4 2002/06/07 10:17:48 panta Exp $
+ *   $Id: compile.c,v 1.5 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -34,8 +34,6 @@
  * ==========================================================================
  */
 
-#include <stdlib.h>
-
 #include "ast.h"
 #include "compile.h"
 #include "elastic.h"
@@ -43,6 +41,11 @@
 #include "private.h"
 #include "compat.h"
 #include "debug.h"
+
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+
 
 /*
 #undef EC_VERBOSE_COMPILATION
@@ -62,7 +65,9 @@
 #define EC_DEBUG_SCOPE 0
 
 #if 0
+#if defined(WITH_STDIO)
 static void print_labels( void );
+#endif
 #endif
 
 /*
@@ -139,7 +144,7 @@ static Scope       getMasterScope( ec_compiler_ctxt ctxt, Scope scope );
 
 static Scope       buildScopeForPackage( ec_compiler_ctxt ctxt, EC_OBJ package );
 
-#if EC_DEBUG_SCOPE
+#if defined(WITH_STDIO) && EC_DEBUG_SCOPE
 static void        dumpScope( ec_compiler_ctxt ctxt, Scope scope );
 #endif
 
@@ -379,18 +384,28 @@ EC_API void EcCompilerContextDestroy( ec_compiler_ctxt ctxt )
 	ec_free( ctxt );
 }
 
+#if defined(WITH_STDIO)
+#ifndef FILE
+#undef FILE
+#define FILE	void
+#endif
+#endif
+
 extern struct yy_buffer_state *yy_create_buffer ( FILE *file, int size );
 extern void yy_switch_to_buffer ( struct yy_buffer_state *new_buffer );
 extern int yyparse( void );
 extern void yy_delete_buffer ( struct yy_buffer_state *b );
 
-EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
-						 const char *filename,
-						 EcBool execute, EcBool executeImported,
-						 ec_compiler_options *opts )
+EC_API EC_OBJ EcCompileStream( ec_compiler_ctxt ctxt,
+							   ec_stream *stream_in,			/* input stream  */
+							   ec_stream *stream_out,			/* output stream */
+							   const char *source_name,			/* source name   */
+							   EcBool execute, EcBool executeImported,
+							   ec_compiler_options *opts )
 {
-    FILE *fh = NULL;
     struct yy_buffer_state *bufState = NULL;
+
+	ASSERT( stream_in );
 
 	/* memorize compiler options in context */
 	opts_copy( &ctxt->opts, opts );
@@ -399,11 +414,10 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
 	 * 1.  P A R S E
 	 * ================================================== */
 
-    fh = fopen( filename, "r" );
-    if (! fh) goto error;
-
-	PRIVATE(fileSource) = filename ? ec_stringdup( filename ) : NULL;
+	PRIVATE(fileSource) = source_name ? ec_stringdup( source_name ) : NULL;	/* for error messages */
 	PRIVATE(fileOutput) = (opts && opts->outputfile) ? ec_stringdup( opts->outputfile ) : NULL;
+	PRIVATE(stream_compile_in)  = stream_in;
+	PRIVATE(stream_compile_out) = stream_out;
 
 	PRIVATE(line) = 1; PRIVATE(column) = 0; PRIVATE(charnum) = 0;
 	PRIVATE(parse_result) = NULL;
@@ -412,7 +426,8 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
 #define YY_BUF_SIZE 16384
 #endif
 
-    bufState = yy_create_buffer( fh, YY_BUF_SIZE );
+	PRIVATE(yyin) = stream_in;
+    bufState = yy_create_buffer( /* FILE *fh */ NULL, YY_BUF_SIZE );
     if (! bufState) goto error;
     yy_switch_to_buffer( bufState );
 
@@ -421,7 +436,7 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
         goto error;
 
     yy_delete_buffer( bufState );
-    fclose( fh );
+	PRIVATE(yyin) = NULL;
 
 	/* ==================================================
 	 * 2.  C O M P I L E
@@ -437,7 +452,7 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
 	PRIVATE(executeImported) = FALSE;
 
     /* Print the AST */
-#if EC_VERBOSE_COMPILATION
+#if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
 	printf( "\nAbstract Syntax Tree:\n" );
     ASTPrint( 0, PRIVATE(parse_result) );
 	printf( "\n\n" );
@@ -452,7 +467,87 @@ EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
 
 error:
     if (bufState) yy_delete_buffer( bufState );
-    if (fh)       fclose( fh );
+	PRIVATE(yyin) = NULL;
+    return Ec_ERROR;
+}
+
+EC_API EC_OBJ EcCompile( ec_compiler_ctxt ctxt,
+						 const char *filename,
+						 EcBool execute, EcBool executeImported,
+						 ec_compiler_options *opts )
+{
+    ec_stream *stream                = NULL;
+    struct yy_buffer_state *bufState = NULL;
+	EC_OBJ exc = EC_NIL;
+
+	/* memorize compiler options in context */
+	opts_copy( &ctxt->opts, opts );
+
+	/* ==================================================
+	 * 1.  P A R S E
+	 * ================================================== */
+
+    stream = ec_filestream_fopen( filename, "r", &exc );
+	if (EC_ERRORP(exc)) return exc;
+    if (! stream) goto error;
+
+	PRIVATE(fileSource) = filename ? ec_stringdup( filename ) : NULL;
+	PRIVATE(fileOutput) = (opts && opts->outputfile) ? ec_stringdup( opts->outputfile ) : NULL;
+	PRIVATE(stream_compile_in)  = stream;
+	PRIVATE(stream_compile_out) = NULL;
+
+	PRIVATE(line) = 1; PRIVATE(column) = 0; PRIVATE(charnum) = 0;
+	PRIVATE(parse_result) = NULL;
+
+#ifndef YY_BUF_SIZE
+#define YY_BUF_SIZE 16384
+#endif
+
+	PRIVATE(yyin) = stream;
+    bufState = yy_create_buffer( /* FILE *fh */ NULL, YY_BUF_SIZE );
+    if (! bufState) goto error;
+    yy_switch_to_buffer( bufState );
+
+    /* Parse, building the AST */
+    if (yyparse() != 0)
+        goto error;
+
+    yy_delete_buffer( bufState );
+    ec_stream_close( stream );
+	stream = NULL;
+	PRIVATE(yyin) = NULL;
+
+	/* ==================================================
+	 * 2.  C O M P I L E
+	 * ================================================== */
+
+	PRIVATE(execute)         = execute;
+	PRIVATE(executeImported) = executeImported;
+
+    /* Compile the AST */
+    compileRoot( ctxt, PRIVATE(parse_result) );
+
+	PRIVATE(execute)         = FALSE;
+	PRIVATE(executeImported) = FALSE;
+
+    /* Print the AST */
+#if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
+	printf( "\nAbstract Syntax Tree:\n" );
+    ASTPrint( 0, PRIVATE(parse_result) );
+	printf( "\n\n" );
+#endif
+
+    /* Close the global scope */
+/*    closeScope( PRIVATE(globalScope) );*/
+    PRIVATE(globalScope)  = NULL;
+    PRIVATE(currentScope) = NULL;
+
+    return PRIVATE(mainTarget);
+
+error:
+    if (bufState) yy_delete_buffer( bufState );
+    if (stream)   ec_stream_close( stream );
+	PRIVATE(yyin) = NULL;
     return Ec_ERROR;
 }
 
@@ -528,7 +623,7 @@ EC_API EC_OBJ EcCompileString( ec_compiler_ctxt ctxt,
 	PRIVATE(executeImported) = FALSE;
 
     /* Print the AST */
-#if EC_VERBOSE_COMPILATION
+#if defined(WITH_STDIO) && EC_VERBOSE_COMPILATION && EC_AST_DEBUG
 	printf( "\nAbstract Syntax Tree:\n" );
     ASTPrint( 0, PRIVATE(parse_result) );
 	printf( "\n\n" );
@@ -607,7 +702,11 @@ static void compileRoot( ec_compiler_ctxt ctxt, ASTNode node )
 			package = (EC_OBJ) ec_list_data( pnode );
 
 			ASSERT( EC_PACKAGEP(package) );
-			EcPackageSave( package, PRIVATE(fileOutput) );
+			/* :TODO: use EcPackageSaveStream()
+			   if (PRIVATE(stream_compile_out))
+			       EcPackageSaveStream( PRIVATE(stream_compile_out), package );
+			*/
+			EcPackageSave( package, PRIVATE(fileOutput) );		/* :TODO: switch to EcPackageSaveStream() */
 			EC_CHECK(package);
 			EC_CHECKALL();
 		}
@@ -1731,7 +1830,7 @@ static void compileDecl( ec_compiler_ctxt ctxt, ASTNode node )
 
 		/* Add symbol */
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		fprintf( stderr, "compileDecl: `%s' (%ld)\n", EcSymbolAt( symid ), symid );
 #endif
 		if (! addSymbol( ctxt, targetScope, symid, node->vDecl.symclass, FALSE ))
@@ -1880,7 +1979,7 @@ static void backpatch_break( ec_compiler_ctxt ctxt, Scope scope, EcInt finish )
 	EcUInt *pos, *pos_s, *pos_e;
 	EcUInt *lev;
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "BACKPATCH BREAK   finish: %ld\n", finish );
 #endif
 
@@ -1897,7 +1996,7 @@ static void backpatch_break( ec_compiler_ctxt ctxt, Scope scope, EcInt finish )
 		if (*lev == level)										/* Patch this */
 		{
 			ASSERT( *lev != (EcUInt) -1);
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 			fprintf( stderr, "    PATCHING %ld  to %ld\n", *pos, finish );
 #endif
 			patch( ctxt, *pos, finish );
@@ -1916,7 +2015,7 @@ static void backpatch_continue( ec_compiler_ctxt ctxt, Scope scope, EcInt finish
 	EcUInt *pos, *pos_s, *pos_e;
 	EcUInt *lev;
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "BACKPATCH CONTINUE   finish: %ld\n", finish );
 #endif
 
@@ -1933,7 +2032,7 @@ static void backpatch_continue( ec_compiler_ctxt ctxt, Scope scope, EcInt finish
 		if (*lev == level)										/* Patch this */
 		{
 			ASSERT( *lev != (EcUInt) -1);
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 			fprintf( stderr, "    PATCHING %ld  to %ld\n", *pos, finish );
 #endif
 			patch( ctxt, *pos, finish );
@@ -2132,7 +2231,7 @@ static void compileTry( ec_compiler_ctxt ctxt, ASTNode node )
 		ASSERT( EC_HANDLERP(handler) );
 
 		/* Add handler to code block handler chain */
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		ec_fprintf( stderr, "Compiled CATCH (type: %w): %w\n", EC_HANDLERTYPE(handler), handler );
 		EcDumpCompiled( EC_HANDLERCODE(handler), 0 );
 		ec_fprintf( stderr, "*********************************\n\n" );
@@ -2171,7 +2270,7 @@ static void compileBreak( ec_compiler_ctxt ctxt, ASTNode node )
 		lev = node->vContinueStmt.lev->vConstExpr.vInt;
 	else
 		lev = 1;
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "BREAK at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
 #endif
 	PUSH_BREAK( CCTXT(currentScope), pos, lev );
@@ -2189,7 +2288,7 @@ static void compileContinue( ec_compiler_ctxt ctxt, ASTNode node )
 		lev = node->vContinueStmt.lev->vConstExpr.vInt;
 	else
 		lev = 1;
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "CONTINUE at %ld (pos: %ld, lev %ld)\n", pos-1, pos, lev );
 #endif
 	PUSH_CONTINUE( CCTXT(currentScope), pos, lev );
@@ -2589,7 +2688,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		CCTXT(asLValue) = FALSE;
 
 		/* Now we have lhs position in lValue */
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		printVInfo( &CCTXT(lValue) );
 #endif
 		saveVInfo( ctxt, &vinfo, &CCTXT(lValue) );
@@ -2762,7 +2861,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		/* (this also leaves a copy on the stack, so we'll save that copy) */
 		emit0( ctxt, SaveLexicalOP );
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		if (anonymous) fprintf( stderr, "ANONYMOUS at pos: %ld\n", pos );
 #endif
 		if (! anonymous)
@@ -2775,7 +2874,7 @@ static void compileFunction( ec_compiler_ctxt ctxt, ASTNode node )
 		}
 	}
 
-#if (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
+#if defined(WITH_STDIO) && (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
 	EcDumpCompiled( func, 0 );
 #endif
 }
@@ -2819,7 +2918,7 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 	{
 		char *classname, *basename;
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		printVInfo( &baseinfo );
 #endif
 		classname = EcQualifiedString( &qsname );
@@ -2863,7 +2962,7 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 	{
 		/* No, so declare it ! */
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 		printf( "Declaring: " );
 		ASTPrint( 0, decl );
 		printf( "\n" );
@@ -2902,7 +3001,7 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 	CCTXT(asLValue) = FALSE;
 
 	/* Now we have lhs position in lValue */
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	printVInfo( &CCTXT(lValue) );
 #endif
 	saveVInfo( ctxt, &vinfo, &CCTXT(lValue) );
@@ -2929,7 +3028,7 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 	ASSERT( EC_COMPILEDMAXTEMPS(CCTXT(currentBytecode)) >= 0 );
 
 	/* Close class scope */
-#if EC_DEBUG_SCOPE
+#if defined(WITH_STDIO) && EC_DEBUG_SCOPE
 	dumpScope( classScope );
 #endif
 	closeScope( ctxt, classScope );
@@ -2968,7 +3067,7 @@ static void compileClass( ec_compiler_ctxt ctxt, ASTNode node )
 	/* Discard the result */
 	emit0( ctxt, DiscardOP );
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	EcDumpCompiled( EC_CLASSCODE(classobj), 0 );
 #if 1
 	_ec_dbg_dump_literal( EC_CLASSLFRAME(classobj) );
@@ -3023,7 +3122,7 @@ static void compileMethod( ec_compiler_ctxt ctxt, ASTNode node )
 		nargs       = 0;
 		nparams_def = 0;
 	}
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "Method number of args: %ld (+ 2 implicit)\n", nargs );
 #endif
 
@@ -3196,7 +3295,7 @@ static void compileMethod( ec_compiler_ctxt ctxt, ASTNode node )
 		}
 	}
 
-#if (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
+#if defined(WITH_STDIO) && (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
 	EcDumpCompiled( method, 0 );
 #endif
 }
@@ -3338,7 +3437,7 @@ static void compilePackage_post( ec_compiler_ctxt ctxt )
 	/* Close package scope */
 	closeScope( ctxt, CCTXT(package_packageScope) );
 
-#if (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
+#if defined(WITH_STDIO) && (EC_DEBUG_COMPILATION || EC_VERBOSE_COMPILATION)
 	printf( "\nPACKAGE:\n" );
 	EcDumpCompiled( EC_PACKAGECODE(CCTXT(package_package)), 0 );
 #if 1
@@ -3410,7 +3509,7 @@ static EC_OBJ compileInlineCodeBlock( ec_compiler_ctxt ctxt, ASTNode node )
 		varargs = FALSE;
 		nargs   = 0;
 	}
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 /*	fprintf( stderr, "Number of args: %ld\n", nargs );*/
 #endif
 
@@ -3499,7 +3598,7 @@ static EC_OBJ compileInlineCodeBlock( ec_compiler_ctxt ctxt, ASTNode node )
 	emit0( ctxt, SaveLexicalOP );
 	emit0( ctxt, DiscardOP );									/* discard the object */
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	EcDumpCompiled( func, 0 );
 #endif
 	return func;
@@ -3515,7 +3614,7 @@ static ASTNode getServiceVariable( ec_compiler_ctxt ctxt, Scope scope )
 	ASTNode varnode;
 
 	nextv = scope->next_srv_var++;
-	sprintf( varname, "$var_%ld", (long)nextv );
+	sprintf( varname, "$var_%ld", (long)nextv );				/* :TODO: change to ec_sprintf() */
 	symid = EcInternSymbol( varname );
 
 	varnode = makeVariable( makeQualifiedSymbol( NULL, makeSymbol( symid ) ) );
@@ -3601,7 +3700,7 @@ static EcInt emit0( ec_compiler_ctxt ctxt, EcBytecode bc )
 	stackgrow( ctxt, EcBytecodeStackgrow( bc ) );
 
     pos = EcCompiledPush( CCTXT(currentBytecode), bc );
-#if EC_DEBUG_DUMP_EMIT
+#if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
 	fprintf(stderr, "%5ld %18s\n", (long)pos, EcBytecodeName( bc ));
 #endif
     return pos;
@@ -3618,7 +3717,7 @@ static EcInt emit1( ec_compiler_ctxt ctxt, EcBytecode bc, EcInt op1 )
 
     pos = EcCompiledPush( CCTXT(currentBytecode), bc );
     EcCompiledPush( CCTXT(currentBytecode), op1 );
-#if EC_DEBUG_DUMP_EMIT
+#if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
 	fprintf(stderr, "%5ld %18s %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1);
 #endif
 
@@ -3637,7 +3736,7 @@ static EcInt emit2( ec_compiler_ctxt ctxt, EcBytecode bc, EcInt op1, EcInt op2 )
     pos = EcCompiledPush( CCTXT(currentBytecode), bc );
     EcCompiledPush( CCTXT(currentBytecode), op1 );
     EcCompiledPush( CCTXT(currentBytecode), op2 );
-#if EC_DEBUG_DUMP_EMIT
+#if defined(WITH_STDIO) && EC_DEBUG_DUMP_EMIT
 	fprintf(stderr, "%5ld %18s %12ld %12ld\n", (long)pos, EcBytecodeName( bc ), (long)op1, (long)op2);
 #endif
 
@@ -4380,7 +4479,7 @@ static EcBool getSymbolHere( ec_compiler_ctxt ctxt, Scope scope, EcUInt symid, E
 
 	ASSERT( scope );
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "getSymbolHere: id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
 	fprintf( stderr, "        scope: 0x%08lX\n", (unsigned long)scope );
 #endif
@@ -4395,7 +4494,7 @@ static EcBool getSymbolHere( ec_compiler_ctxt ctxt, Scope scope, EcUInt symid, E
 		while (entry)
 		{
 			p++;
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 /*			fprintf( stderr, "symid: %ld  name:`%s'\n", entry->symid, EcSymbolAt( entry->symid ) );*/
 #endif
 			if (entry->symid == symid)
@@ -4453,7 +4552,7 @@ static EcBool getForeignSymbol( ec_compiler_ctxt ctxt, EcUInt symid, EcVarRef re
 	EcInt  i, j;
 
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "getForeignSymbol:   id:%ld  name:`%s'\n", symid, EcSymbolAt( symid ) );
 #endif
 
@@ -4593,7 +4692,7 @@ static EcBool getQualifiedSymbol( ec_compiler_ctxt ctxt, Scope scope, EcQualifie
 
 	EcNamePrefix( &pkgname, &fullsymbol );
 
-#if EC_DEBUG_COMPILATION
+#if defined(WITH_STDIO) && EC_DEBUG_COMPILATION
 	fprintf( stderr, "getQualifiedSymbol:   fullsymbol:`%s'  pkgname: '%s'\n", ec_strdata( &fullsymbol ), ec_strdata( &pkgname ) );
 #endif
 
@@ -4720,7 +4819,7 @@ static void saveVInfo( ec_compiler_ctxt ctxt, EcVarRef dst, EcVarRef src )
 	memcpy( dst, src, sizeof(EcVarRefStruct) );
 }
 
-#if EC_DEBUG_SCOPE
+#if defined(WITH_STDIO) && EC_DEBUG_SCOPE
 static void dumpScope( ec_compiler_ctxt ctxt, Scope scope )
 {
 	const char *stype;
@@ -4800,7 +4899,7 @@ static void dumpScope( ec_compiler_ctxt ctxt, Scope scope )
 }
 #endif
 
-#if PRINTVINFO
+#if defined(WITH_STDIO) && PRINTVINFO
 static const char *classname( SymbolClass symclass )
 {
 	switch (symclass)
@@ -4870,8 +4969,10 @@ static ec_hash_def hash_objp2list =
 };
 
 #if 0
+#if defined(WITH_STDIO)
 static void print_linfo_list( ec_list linfo_list );
 static void print_linfo( labelinfo *linfo );
+#endif /* end of defined(WITH_STDIO) */
 #endif
 
 static labelinfo *labelinfo_create( ec_compiler_ctxt ctxt, EcUInt labelid );
@@ -5109,6 +5210,7 @@ static void labels_cleanup( ec_compiler_ctxt ctxt )
 }
 
 #if 0
+#if defined(WITH_STDIO)
 static void print_labels( ec_compiler_ctxt ctxt )
 {
 	ec_fprintf( stderr, "labels: %%{\n" );
@@ -5171,4 +5273,5 @@ static void print_linfo( labelinfo *linfo )
 	}
 	ec_fprintf( stderr, ")\n" );
 }
+#endif /* end of defined(WITH_STDIO) */
 #endif

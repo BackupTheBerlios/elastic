@@ -7,9 +7,9 @@
  *
  *   Created: Sat Dec  4 10:01:34 MET 1999
  *
- *   $Id: list.c,v 1.1 2002/05/23 21:17:23 panta Exp $
+ *   $Id: list.c,v 1.2 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1999-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -33,9 +33,6 @@
  *  limitations under the elastiC License.
  * ==========================================================================
  */
-
-#include <stdio.h>
-#include <stdlib.h>
 
 #include "basic.h"
 #include "debug.h"
@@ -98,7 +95,7 @@ static inline EcBool check_list(ec_list p)
 {
 	if (MAGIC(p) != LIST_MAGIC)
 	{
-		fprintf( stderr, "CORRUPTED/NOT A LIST: 0x%08lX\n", (unsigned long)p );
+		EcAlert( EcFatal, "CORRUPTED/NOT A LIST: 0x%08lX\n", (unsigned long)p );
 		return FALSE;
 	}
 	return TRUE;
@@ -108,7 +105,7 @@ static inline EcBool check_node(ec_list_node p)
 {
 	if (MAGIC(p) != NODE_MAGIC)
 	{
-		fprintf( stderr, "CORRUPTED/NOT A NODE: 0x%08lX\n", (unsigned long)p );
+		EcAlert( EcFatal, "CORRUPTED/NOT A NODE: 0x%08lX\n", (unsigned long)p );
 		return FALSE;
 	}
 	return TRUE;
@@ -118,7 +115,7 @@ static inline EcBool check_iter(ec_list_iterator p)
 {
 	if (MAGIC(p) != ITER_MAGIC)
 	{
-		fprintf( stderr, "CORRUPTED/NOT AN ITERATOR: 0x%08lX\n", (unsigned long)p );
+		EcAlert( EcFatal, "CORRUPTED/NOT AN ITERATOR: 0x%08lX\n", (unsigned long)p );
 		return FALSE;
 	}
 	return TRUE;

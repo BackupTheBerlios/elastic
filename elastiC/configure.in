@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.17 2002/06/12 17:42:53 panta Exp $
+dnl   $Id: configure.in,v 1.18 2002/06/13 17:44:18 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -557,7 +557,7 @@ AC_CHECK_LIB_EFENCE
 
 dnl Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(fcntl.h limits.h values.h malloc.h string.h strings.h stdarg.h varargs.h sys/file.h sys/types.h sys/stat.h sys/wait.h sys/ioctl.h sys/time.h sys/times.h syslog.h unistd.h signal.h dirent.h errno.h netinet/in.h)
+AC_CHECK_HEADERS(stdio.h stdlib.h ctype.h math.h fcntl.h limits.h values.h malloc.h string.h strings.h stdarg.h varargs.h sys/file.h sys/types.h sys/stat.h sys/wait.h sys/ioctl.h sys/time.h sys/times.h syslog.h unistd.h signal.h dirent.h errno.h netinet/in.h)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 if test "x$MINGW32" = "xyes" -o "x$CYGWIN" = "xyes" ; then
@@ -602,6 +602,8 @@ AC_CHECK_FUNCS(getcwd select socket strerror)
 AC_CHECK_FUNCS(isinf isnan)
 AC_CHECK_FUNCS(getopt)
 AC_CHECK_FUNCS(fseek ftell rewind fgetpos fsetpos fseeko ftello fgetpos64 fsetpos64 fseeko64 ftello64)
+AC_CHECK_FUNCS(fread fwrite fputs fgets fflush)
+AC_CHECK_FUNCS(printf fprintf sprintf snprintf vprintf vfprintf vsprintf vsnprintf)
 dnl POSIX functions
 AC_CHECK_FUNCS(getcwd mkdir rmdir chdir link unlink rename stat fstat lstat)
 AC_CHECK_FUNCS(chmod chown utime)

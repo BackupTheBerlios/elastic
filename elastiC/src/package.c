@@ -7,9 +7,9 @@
  *
  *   Created: Sat Dec  5 15:08:45 MET 1998
  *
- *   $Id: package.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: package.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance

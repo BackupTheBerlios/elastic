@@ -7,9 +7,9 @@
  *
  *   Created: Sat Dec 12 22:01:08 MET 1998
  *
- *   $Id: oop.c,v 1.3 2002/06/04 20:08:27 panta Exp $
+ *   $Id: oop.c,v 1.4 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance

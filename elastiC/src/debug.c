@@ -7,9 +7,9 @@
  *
  *   Created: Tue Jan 19 09:18:54 MET 1999
  *
- *   $Id: debug.c,v 1.1 2002/05/23 21:16:53 panta Exp $
+ *   $Id: debug.c,v 1.2 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -253,11 +253,14 @@ EC_API EcBool EcCheckAll( void )
 
 EC_API void EcDump( EC_OBJ obj )
 {
+#if defined(WITH_STDIO)
 	ec_fprintf( stderr, "OBJECT DUMP: (obj: 0x%08lX)\n%r\n\n", (unsigned long)obj, obj );
+#endif /* end of defined(WITH_STDIO) */
 }
 
 EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 {
+#if defined(WITH_STDIO)
 	EcInt       i, j;
 	EcBytecode  bc, op[2];
 	const char *name;
@@ -326,4 +329,5 @@ EC_API void EcDumpCompiled( EC_OBJ compiled, EcInt at )
 		i += npar;
 		printf( "\n" );
 	}
+#endif /* end of defined(WITH_STDIO) */
 }

@@ -7,9 +7,9 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_s.l,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: elastic_s.l,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -40,7 +40,6 @@
 #include "elastic_p.h"
 #include "private.h"
 #include "compat.h"
-#include <math.h>
 
 static void start( void );
 static void count( void );
@@ -51,6 +50,20 @@ static long strl = 0;
 
 /* Textual position of tokens */
 extern YYLTYPE yylloc;
+
+#define YY_INPUT(buf, result, maxsize)	\
+do {										\
+	ssize_t nread;								\
+	ec_stream_exception_clear(PRIVATE(yyin));				\
+	nread = ec_stream_read(PRIVATE(yyin), (buf), (ssize_t)(maxsize));	\
+	if (EC_ERRORP(PRIVATE(yyin)->exc)) {					\
+		result = -1;							\
+		YY_FATAL_ERROR( "input in flex scanner failed" );		\
+	} else {								\
+		result = (nread > 0) ? nread : YY_NULL;				\
+	}									\
+} while(0)
+
 %}
 
 LBRACE  	"{"

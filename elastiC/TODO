@@ -35,6 +35,19 @@ core
 	  ec_char, ec_schar, ec_uchar, ec_short, ec_ushort, ec_int, ec_uint, ...
           ec_bool, ec_off64. Change EcInt, EcWord, EcBool, ... to ec_int,
 	  ec_uint16, ec_bool, ...
+	* redesign/fix package name handling (qualified package names for nested
+	  packages, saving package name in bytecode, qualified symbols, ...).
+	  We have to be able to specify absolute and relative package names
+	  (for example "import .pkgname" could be relative to current level,
+	   while "import pkgname" could be absolute). We should have a
+           function to find a package by name (returning a stream), receiving
+           current package level or object, and the name of the package to
+           load. The function should obey to a plugin architecture: so we
+           could pass a function to perform the actual filename space search
+           (avoiding so actual filesystem related calls in generic code, and
+            making possible bundling of modules in particular streams (i.e.
+            string structured streams, using XML/tar/cpio/whatever) or
+            similar things).
 	* throw an error on wrong argcount to method `new'
 	* check order of EC_STACKPOP calls in lib.c
 	o fix exception handling in compiler (for basic.compile())
@@ -337,6 +350,23 @@ documentation
 {
 	o evaluate switching from SDF to DocBook/XML with XSL or DocBook/SGML.
 	o write more introductory (and less dummy) examples
+}
+
+ideas
+{
+	o abstract filesystem interface (VFS) -- *ROUGH* idea
+	  We could provide a module implementing a new stream type and a
+          set of open(), readdir(), mkdir(), ... functions. The whole
+          thing should be an abstract interface, so that actual implementations
+          could be plugged. The abstract interface would use a URL-like naming
+          scheme to dispatch operationg to the proper implementation.
+          We could then add: normal fs, in-memory filesystem, tar, cpio, XML, ...
+	  (and the stream could be attached to a regular file stream or to a
+           string stream, network stream, ...).
+          Using this thing we could bundle many bytecode modules in a single
+          "virtual filesystem" residing in a string for example.
+          (add a primitive filesystem type (similar in spirit to stream split
+           implementation)?)
 }
 
 /* ========================================================================

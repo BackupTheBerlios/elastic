@@ -1,3 +1,17 @@
+2002-06-13  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* the scanner uses only streams now (see compile.c, EcCompile() &
+	co.). Need to finish the package saving bits to save to streams
+	instead of files.
+
+	* made the compiler use streams and filestream. Still need to
+	add the stream-only interface.
+
+	* lot of changes to many files, removed from almost anyware
+	direct usage of libc stdio (or conditionalized with WITH_STDIO).
+	Everything uses streams. Still to conditionalize usage of
+	`filestream' module (which could not be available statically).
+
 2002-06-12  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* lot of changes to many files, adapting almost everything to

@@ -7,9 +7,9 @@
  *
  *   Created: Wed Dec  9 10:24:32 MET 1998
  *
- *   $Id: gc.c,v 1.3 2002/05/25 19:37:44 panta Exp $
+ *   $Id: gc.c,v 1.4 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -197,7 +197,8 @@ EC_API void EcGC( void )
 		return;
 
 #if EC_NOTIFY_GC
-	fprintf( stderr, "[GC started...]\n" );
+	/* fprintf( stderr, "[GC started...]\n" ); */
+	ec_msg_printf( "[GC started...]\n" );
 #endif
 
 	/* ==================================================
@@ -207,7 +208,8 @@ EC_API void EcGC( void )
 	 * ================================================== */
 
 #if EC_NOTIFY_GC
-	fprintf( stderr, "[MARKING]\n" );
+	/* fprintf( stderr, "[MARKING]\n" ); */
+	ec_msg_printf( "[MARKING]\n" );
 #endif
 
 	/* Scan the active stack(s) */
@@ -242,7 +244,8 @@ EC_API void EcGC( void )
 	 * ================================================== */
 
 #if EC_NOTIFY_GC
-	fprintf( stderr, "[COLLECTING]\n" );
+	/* fprintf( stderr, "[COLLECTING]\n" ); */
+	ec_msg_printf( "[COLLECTING]\n" );
 #endif
 
 	/* Scan the object table */
@@ -265,9 +268,11 @@ EC_API void EcGC( void )
 
 
 #if EC_NOTIFY_GC
-	fprintf( stderr,
+	/* fprintf( stderr,
 			 "[GC finished. Allocated since last GC %ld, marked %ld (%ld through stack), collected %ld, freed %ld.]\n",
-			 (long)allocated, (long)marked, (long)stackmarked, (long)collected, (long)freed );
+			 (long)allocated, (long)marked, (long)stackmarked, (long)collected, (long)freed ); */
+	ec_msg_printf( "[GC finished. Allocated since last GC %ld, marked %ld (%ld through stack), collected %ld, freed %ld.]\n",
+				   (long)allocated, (long)marked, (long)stackmarked, (long)collected, (long)freed );
 #endif
 	allocated   = 0;
 	marked      = 0;

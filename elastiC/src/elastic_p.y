@@ -8,9 +8,9 @@
  *
  *   Created: 1997
  *
- *   $Id: elastic_p.y,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: elastic_p.y,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1997-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -35,14 +35,17 @@
  * ==========================================================================
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #include "elastic.h"
 #include "ast.h"
 #include "private.h"
 #include "compat.h"
+
+#if HAVE_STDIO_H
+#include <stdio.h>
+#endif
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 
 
 int yyparse( void );
@@ -552,7 +555,7 @@ translation.unit
 
 int yyerror( char *s )  /* Called by yyparse on error */
 {
-	fprintf( stderr, "ERROR: (LINE: %ld, COLUMN: %ld): %s\n", (long)PRIVATE(line), (long)PRIVATE(column), s );
+	ec_msg_printf( "ERROR: (LINE: %ld, COLUMN: %ld): %s\n", (long)PRIVATE(line), (long)PRIVATE(column), s );
 	return 0;
 }
 

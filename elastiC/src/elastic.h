@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.7 2002/06/12 17:42:53 panta Exp $
+ *   $Id: elastic.h,v 1.8 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -96,7 +96,8 @@ typedef struct ec_compiler_options_struct
 	EC_OBJ in_package;											/* compile the code in the given package, if not specified differently */
 
 	EcBool  save;												/* TRUE if compiled packages must be saved to disk */
-	char   *outputfile;											/* output filename or NULL                         */
+	char      *outputfile;										/* output filename or NULL                         */
+	ec_stream *outputstream;									/* output stream (or NULL)                         */
 } ec_compiler_options;
 
 /* Qualified Symbol */
@@ -377,7 +378,12 @@ EC_API EcInt  EcPackageVariable( EC_OBJ package, const char *symbol,
 EC_API EcBool EcPackageImport( EC_OBJ inPackage,
 							   const char *name, EC_OBJ array_of_syms,
 							   EcBool execute );						                   /* name qualified, array_of_syms can be EC_NIL/#t  */
+EC_API EcBool EcPackageSaveStream( ec_stream *stream, EC_OBJ package );
 EC_API EcBool EcPackageSave( EC_OBJ package, const char *pathname );	                   /* pathname can be NULL                            */
+EC_API EC_OBJ EcPackageLoadStream( ec_stream *stream,
+								   const char *name,
+								   EcBool execute,
+								   EcBool executeImported );							   /* name is qualified                           */
 EC_API EC_OBJ EcPackageLoad( const char *name,
 							 const char *pathname,
 							 EcBool execute,
@@ -405,6 +411,12 @@ EC_API const char *EcBuiltinName( EC_OBJ builtin );
 
 EC_API ec_compiler_ctxt EcCompilerContextCreate( void );
 EC_API void             EcCompilerContextDestroy( ec_compiler_ctxt ctxt );
+EC_API EC_OBJ           EcCompileStream( ec_compiler_ctxt ctxt,
+										 ec_stream *stream_in,
+										 ec_stream *stream_out,
+										 const char *source_name,
+										 EcBool execute, EcBool executeImported,
+										 ec_compiler_options *opts );
 EC_API EC_OBJ           EcCompile( ec_compiler_ctxt ctxt, const char *filename,
 								   EcBool execute, EcBool executeImported,
 								   ec_compiler_options *opts );
@@ -428,13 +440,18 @@ EC_API EcInt EcPrintObject( ec_string *str, EC_OBJ obj, EcBool detailed );
 	/* basic printing functions */
 EC_API EcInt  ec_sprintf(    ec_string *ds, const char *format, ... );
 EC_API EcInt  ec_vsprintf(   ec_string *ds, const char *format, va_list ap );
+#if defined(WITH_STDIO)
 EC_API EcInt  ec_fprintf(    FILE *fh, const char *format, ... );
 EC_API EcInt  ec_vfprintf(   FILE *fh, const char *format, va_list ap );
+#endif
 EC_API EcInt  ec_asprintf(   char **res, const char *format, ... );
 EC_API EcInt  ec_vasprintf(  char **res, const char *format, va_list ap );
 EC_API EC_OBJ ec_oprintf(    const char *format, ... );
 EC_API EC_OBJ ec_voprintf(   const char *format, va_list ap );
 EC_API EC_OBJ ec_printf_obj( const char *format, EC_OBJ *args, EcInt nargs, EcInt parstart, EC_OBJ named_sequence );
+
+EC_API EcInt  ec_msg_printf ( const char *format, ... );		/* for error msgs: use streams if available, otherwise stdio (if avail.) */
+EC_API EcInt  ec_msg_vprintf( const char *format, va_list ap );	/* for error msgs: use streams if available, otherwise stdio (if avail.) */
 
 /* Object fundamental operations */
 
@@ -559,12 +576,12 @@ do {                                                                            
 #define EC_ARRAYSET(array, i, obj)		do { EC_ARRAYMEM(array)[i] = (obj); } while (0)
 #endif /* EC_ARRAYCHECK_ENABLED */
 
-#if EC_DEBUG || EC_DEBUG_MINIMUM
+#if defined(WITH_STDIO) && (EC_DEBUG || EC_DEBUG_MINIMUM)
 void _ec_dbg_dump_stack( EC_OBJ stack );
 void _ec_dbg_dump_literal( EC_OBJ lframe );
 void _ec_dbg_dump_package_frame( EC_OBJ pframe );
 void _ec_dbg_print_instruction( EC_OBJ compiled, EcUInt PC );
-#endif
+#endif /* end of defined(WITH_STDIO) && (EC_DEBUG || EC_DEBUG_MINIMUM) */
 
 /* Define EC_VA_COPY() to do the right thing for copying va_list variables.
  * EC_VA_COPY may have already been defined in config.h (as va_copy or __va_copy).

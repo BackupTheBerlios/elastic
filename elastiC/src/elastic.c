@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.10 2002/06/13 11:06:21 panta Exp $
+ *   $Id: elastic.c,v 1.11 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -38,10 +38,6 @@
 #include "basic.h"
 #include "debug.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-
 #include "elastic.h"
 #include "ast.h"
 #include "bitstring.h"
@@ -49,6 +45,24 @@
 #include "private.h"
 
 #include "stackrecycle.h"
+
+#if HAVE_STDIO_H
+#include <stdio.h>
+#endif
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#if HAVE_MATH_H
+#include <math.h>
+#endif
+
+#if defined(WITH_STDIO) && defined(WITHOUT_STDIO)
+#error "only one of WITH_STDIO and WITHOUT_STDIO must be defined."
+#endif
+
+#if ! (defined(WITH_STDIO) || defined(WITHOUT_STDIO))
+#error "one (and only one) of WITH_STDIO and WITHOUT_STDIO must be defined."
+#endif
 
 #define GC_FINAL_PASSES 2
 
@@ -108,7 +122,9 @@ EC_API EcBool EcInit( void )
 
 	if (! EcDLInit())
 	{
+#if defined(WITH_STDIO)
 		fprintf( stderr, "DL error: %s\n", EcDLError() );
+#endif
 		return FALSE;
 	}
 
@@ -134,6 +150,8 @@ EC_API EcBool EcInit( void )
 	PRIVATE(endColumn)    = 0;
 
 	PRIVATE(parse_result) = NULL;
+
+	PRIVATE(yyin)         = NULL;
 
 	PRIVATE(symTable)     = ec_strtable_create( STRTABLESLOTS );
 	if (! PRIVATE(symTable))
@@ -338,7 +356,7 @@ EC_API void EcCleanup( void )
 
 	PRIVATE(in_cleanup) = TRUE;
 
-#if MEM_STATS
+#if defined(WITH_STDIO) && MEM_STATS
 	fprintf( stderr, "\nTYPE                   ALLOCATED    MARKINGS\n" );
 	fprintf( stderr, "============================================\n" );
 	for (i = 0; i <= PRIVATE(usertypes); i++)
@@ -374,7 +392,7 @@ EC_API void EcCleanup( void )
 	{
 		EcInt j;
 
-#if EC_STACK_RECYCLE_STATS
+#if defined(WITH_STDIO) && EC_STACK_RECYCLE_STATS
 		fprintf( stderr, "\n== Stack statistics =================\n" );
 		fprintf( stderr, "Calls to EcMakeStack()   : %ld\n", (long)PRIVATE(n_makestack) );
 		fprintf( stderr, "# stores in recycle bin  : %ld\n", (long)PRIVATE(n_recycle_put) );
@@ -478,6 +496,10 @@ EC_API void EcCleanup( void )
 	if (PRIVATE(symTable)) ec_strtable_destroy( PRIVATE(symTable) );
 	PRIVATE(symTable) = NULL;
 	PRIVATE(currentId) = 0;
+
+	if (PRIVATE(yyin))
+		ec_stream_close( PRIVATE(yyin) );
+	PRIVATE(yyin) = NULL;
 
 	ec_free( PRIVATE(fileOutput) );
 	ec_free( PRIVATE(fileSource) );
@@ -597,21 +619,30 @@ EC_API void EcAlert( EcErrorSeverity severity, const char *fmt, ... )
 	{
 	case EcFatal:
 		ec_sprintf( &msgfmt, "FATAL: %s\n", fmt );
+#if defined(WITH_STDIO)
 		ec_vfprintf( stderr, ec_strdata( &msgfmt), ap );
+#else
+		ec_msg_vprintf( ec_strdata( &msgfmt), ap );
+#endif
 		va_end( ap );
 		exit( EXIT_FAILURE );
 		break;
 
 	case EcError:
 		ec_sprintf( &msgfmt, "ERROR: %s\n", fmt );
+#if defined(WITH_STDIO)
 		ec_vfprintf( stderr, ec_strdata( &msgfmt), ap );
+#else
+		ec_msg_vprintf( ec_strdata( &msgfmt), ap );
+#endif
 		va_end( ap );
 		exit( EXIT_FAILURE );
 		break;
 
 	case EcWarning:
 		ec_sprintf( &msgfmt, "WARNING: %s\n", fmt );
-		ec_vfprintf( stderr, ec_strdata( &msgfmt), ap );
+		/* ec_vfprintf( stderr, ec_strdata( &msgfmt), ap ); */
+		ec_msg_vprintf( ec_strdata( &msgfmt), ap );
 		break;
 	}
 
@@ -1444,7 +1475,7 @@ EC_OBJ _ec_errno2exception( int posix_errnum, EC_OBJ ioObject, const char *msg )
 
 /* Debugging */
 
-#if EC_DEBUG || EC_DEBUG_MINIMUM
+#if defined(WITH_STDIO) && (EC_DEBUG || EC_DEBUG_MINIMUM)
 
 void _ec_dbg_dump_stack( EC_OBJ stack )
 {
@@ -1528,4 +1559,4 @@ void _ec_dbg_print_instruction( EC_OBJ compiled, EcUInt PC )
 	printf( "\n" );
 }
 
-#endif /* EC_DEBUG || EC_DEBUG_MINIMUM */
+#endif /* end of defined(WITH_STDIO) && (EC_DEBUG || EC_DEBUG_MINIMUM) */

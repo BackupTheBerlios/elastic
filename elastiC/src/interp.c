@@ -7,9 +7,9 @@
  *
  *   Created: Thu Jul 16 18:28:50 MEST 1998
  *
- *   $Id: interp.c,v 1.1 2002/05/23 21:17:13 panta Exp $
+ *   $Id: interp.c,v 1.2 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -316,10 +316,9 @@ do {                                                                        \
 	{                                                                       \
 		double ratio = (mcache_misses != 0) ?                               \
 			(double)mcache_hits / (double)mcache_misses * 100.0 : 0.0;      \
-		fprintf( stderr, "MCache hits: %ld   misses: %ld  (ratio: %g%%)\n", \
-				 (long)mcache_hits, (long)mcache_misses,                    \
-				 ratio );                                                   \
-		fflush( stderr );                                                   \
+		ec_msg_printf( "MCache hits: %ld   misses: %ld  (ratio: %g%%)\n",   \
+				       (long)mcache_hits, (long)mcache_misses,              \
+				       ratio );                                             \
 	}                                                                       \
 } while (0)
 #endif
@@ -398,7 +397,7 @@ EC_API EC_OBJ EcMainExecute( EC_OBJ package )
 	PRIVATE(globalFrame) = stack;
 
 #ifdef EC_DEBUG
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 	_ec_dbg_dump_package_frame( EC_PACKAGEFRAME(package) );
 #endif
 #endif
@@ -423,8 +422,8 @@ EC_API EC_OBJ EcMainExecute( EC_OBJ package )
 #if 0
 static void dmp( const char *msg, EC_OBJ stack, EC_OBJ compiled )
 {
-	ec_fprintf( stderr, "-> %-15s    STACK   : %r   0x%08lX       COMPILED: %r   0x%08lX\n",
-				msg, stack, (unsigned long)stack, compiled, (unsigned long)compiled );
+	ec_msg_printf( "-> %-15s    STACK   : %r   0x%08lX       COMPILED: %r   0x%08lX\n",
+				   msg, stack, (unsigned long)stack, compiled, (unsigned long)compiled );
 }
 
 #define DMP(msg, sf,comp)		do { dmp( msg, sf, comp ); } while (0)
@@ -554,7 +553,7 @@ EC_API EC_OBJ EcExecute( EC_OBJ self, EC_OBJ at_class, EC_OBJ compiled, EC_OBJ s
 
 /*	fprintf( stderr, "VM LEVEL: %ld\n", LPRIVATE(rt.vm_level) );*/
 
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 	printf("\n");
 	EcDumpCompiled( compiled, codepc - code );
 	printf("\n");
@@ -580,7 +579,7 @@ restart:
 			return EC_NIL;
 		}
 
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 		printf( "\n" );
 		_ec_dbg_dump_stack( stack );
 		_ec_dbg_print_instruction( compiled, codepc - code );
@@ -1032,7 +1031,7 @@ restart:
 				codeend = code + ncode;
 
 				BACKTRACE( stack, compiled );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 				printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
 				printf("\n");
@@ -1306,7 +1305,7 @@ restart:
 				codeend = code + ncode;
 
 				BACKTRACE( stack, compiled );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 				printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
 				printf("\n");
@@ -1529,7 +1528,7 @@ restart:
 				codeend = code + ncode;
 
 				BACKTRACE( stack, compiled );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 				printf("\n");
 				EcDumpCompiled( compiled, codepc - code );
 				printf("\n");
@@ -1659,7 +1658,7 @@ restart:
 			codeend = code + ncode;
 
 			BACKTRACE( stack, compiled );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 			printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
 			printf("\n");
@@ -1712,7 +1711,7 @@ restart:
 			EC_STACKPUSH( stack, ret );
 #endif
 
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 			printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
 			printf("\n");
@@ -1752,7 +1751,7 @@ restart:
 			stack = EC_STACKIMMUP(stack);
 #endif
 			EC_STACKPUSH( stack, ret );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 			printf("\n");
 			EcDumpCompiled( compiled, codepc - code );
 			printf("\n");
@@ -2198,7 +2197,7 @@ restart:
 						codeend = code + ncode;
 
 						BACKTRACE( stack, compiled );
-#if TRACE_EXECUTION
+#if defined(WITH_STDIO) && TRACE_EXECUTION
 						printf("\n");
 						EcDumpCompiled( compiled, codepc - code );
 						printf("\n");
@@ -2298,7 +2297,7 @@ static void backtrace( EC_OBJ stack, EC_OBJ compiled )
 		sf = EC_STACKUP(sf);
 	}
 
-	ec_fprintf( stderr, "\nBACKTRACE (stack depth %ld):\n", (long)stackdepth );
+	ec_msg_printf( "\nBACKTRACE (stack depth %ld):\n", (long)stackdepth );
 
 	depth = stackdepth;
 
@@ -2330,19 +2329,19 @@ static void backtrace( EC_OBJ stack, EC_OBJ compiled )
 			line_num = EcCompiledGetLine( compiled, EC_STACKPC(calledsf) );
 
 		if (line_num > 0)
-			ec_fprintf( stderr, "    %2d (l: %3d) %s(", depth, line_num, compname );
+			ec_msg_printf( "    %2d (l: %3d) %s(", depth, line_num, compname );
 		else
-			ec_fprintf( stderr, "    %2d %8s %s(", depth, " ", compname );
+			ec_msg_printf( "    %2d %8s %s(", depth, " ", compname );
 
 		l = EC_STACKBP(sf) - EC_STACKBASE(sf);
 		for (i = 3; i < l; i++)
 		{
-			ec_fprintf( stderr, "%W", EC_STACKGET(sf, i) );
+			ec_msg_printf( "%W", EC_STACKGET(sf, i) );
 			if (i + 1 < l)
-				ec_fprintf( stderr, ", " );
+				ec_msg_printf( ", " );
 		}
 
-		ec_fprintf( stderr, ")\n" );
+		ec_msg_printf( ")\n" );
 
 		depth--;
 		if (EC_NNULLP(EC_STACKIMMCALLER(sf)))
@@ -2353,7 +2352,7 @@ static void backtrace( EC_OBJ stack, EC_OBJ compiled )
 		sf       = EC_STACKUP(sf);
 	}
 
-	ec_fprintf( stderr, "\n" );
+	ec_msg_printf( "\n" );
 }
 
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 20:34:10 MEST 1998
  *
- *   $Id: ast.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: ast.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -43,6 +43,7 @@
 #include "debug.h"
 
 
+#if defined(WITH_STDIO) && EC_AST_DEBUG
 /* AST Printing */
 
 static Scope  currentScope = NULL;
@@ -94,7 +95,7 @@ static void printReturn( int lev, ASTNode node );
 static void printClass( int lev, ASTNode node );
 static void printMethod( int lev, ASTNode node );
 static void printPackage( int lev, ASTNode node );
-
+#endif /* end of defined(WITH_STDIO) && EC_AST_DEBUG */
 
 /* ========================================================================
  * A P I
@@ -681,6 +682,7 @@ ASTNode makePackage( ASTNode name )
 	return res;
 }
 
+#if defined(WITH_STDIO) && EC_AST_DEBUG
 static void indent( int lev );
 
 static void printChar( char ch )
@@ -1619,3 +1621,4 @@ static void indent( int lev )
 	for(i = 0; i < lev; i++)
 		printf( "   " );
 }
+#endif /* end of defined(WITH_STDIO) && EC_AST_DEBUG */

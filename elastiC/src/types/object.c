@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: object.c,v 1.1 2002/05/23 21:20:20 panta Exp $
+ *   $Id: object.c,v 1.2 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -106,9 +106,9 @@ EC_API EC_OBJ EcMakeObject( EC_OBJ ofclass, void *user )
 #if 0
 	nvars = 0;
 	inclass = ofclass;
-	ec_fprintf(stderr, "of class %w\n", ofclass);
+	ec_msg_printf("of class %w\n", ofclass);
 	while (EC_CLASSP(inclass)) {
-		ec_fprintf(stderr, "  in class %w: ivars = %I\n", inclass, EC_CLASSNIVARS(inclass));
+		ec_msg_printf("  in class %w: ivars = %I\n", inclass, EC_CLASSNIVARS(inclass));
 		nvars += EC_CLASSNIVARS(inclass);
 		inclass = EC_CLASSSUPER(inclass);
 	}

@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: stack.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: stack.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -242,7 +242,7 @@ EC_API EC_OBJ EcMakeStackForMethod2( EC_OBJ target, EC_OBJ method, EcInt nargs )
 		EC_STACKPOINTER(stack) = EC_STACKBP(stack);
 	} else
 	{
-		ec_fprintf( stderr, "method: %w\n", method );
+		ec_msg_printf( "method: %w\n", method );
 		ASSERT( FALSE );
 		stack = EC_NIL;
 	}
@@ -255,7 +255,7 @@ EC_API void EcStackPush( EC_OBJ stack, EC_OBJ obj )
 #if EC_STACKCHECK_ENABLED
 	if ((EC_STACKPOINTER(stack) - EC_STACKBASE(stack)) >= EC_STACKDIM(stack))
 	{
-		printf("Burp\n");
+		ec_msg_printf("Burp\n");
 	}
 	ASSERT( (EC_STACKPOINTER(stack) - EC_STACKBASE(stack)) < EC_STACKDIM(stack) );
 #endif
@@ -781,8 +781,8 @@ static void stack_free( EC_OBJ obj )
 #if EC_STACK_RECYCLE_DEBUG_MSGS
 	if ((! PRIVATE(in_cleanup)) && (EC_STACKREF(obj) > 0))
 	{
-		ec_fprintf(stderr, "stack_free ref: %ld (0x%08lX)\n",
-				   (long)EC_STACKREF(obj), (unsigned long)obj);
+		ec_msg_printf("stack_free ref: %ld (0x%08lX)\n",
+					  (long)EC_STACKREF(obj), (unsigned long)obj);
 	}
 #endif
 

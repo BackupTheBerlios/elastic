@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan 17 11:07:49 MET 1999
  *
- *   $Id: conf.h,v 1.2 2002/05/24 17:28:10 panta Exp $
+ *   $Id: conf.h,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -57,6 +57,7 @@
 #define EC_VERBOSE_COMPILATION	0
 #define EC_DEBUG_COMPILATION	0
 #define EC_DEBUG_PACKAGEIO		0
+#define EC_AST_DEBUG			0
 
 #define EC_MAXSYMBOLNESTING 64
 

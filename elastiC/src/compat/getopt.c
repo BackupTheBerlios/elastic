@@ -8,9 +8,9 @@
  *
  *   Created: Tue Oct 23 11:27:15 CEST 2001
  *
- *   $Id: getopt.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: getopt.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 2001-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -85,8 +85,12 @@
 #include "basic.h"												/* this will include proper cnf.h and config.h */
 /* #include "config.h" */
 
+#if HAVE_STDIO_H
 #include <stdio.h>
+#endif
+#if HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
 #if HAVE_STRING_H
 #include <string.h>
 #endif
@@ -134,8 +138,7 @@ int getopt(int nargc, char * const *nargv, const char *ostr)
 		if (!*place)
 			++optind;
 		if (opterr && *ostr != ':' && optopt != BADCH)
-			(void)fprintf(stderr,
-						  "%s: illegal option -- %c\n", __progname, optopt);
+			(void)ec_msg_printf("%s: illegal option -- %c\n", __progname, optopt);
 		return (BADCH);
 	}
 	if (*++oli != ':') {										/* don't need argument */
@@ -151,9 +154,8 @@ int getopt(int nargc, char * const *nargv, const char *ostr)
 			if (*ostr == ':')
 				return (BADARG);
 			if (opterr)
-				(void)fprintf(stderr,
-				    "%s: option requires an argument -- %c\n",
-				    __progname, optopt);
+				(void)ec_msg_printf("%s: option requires an argument -- %c\n",
+									__progname, optopt);
 			return (BADCH);
 		}
 	 	else													/* white space */

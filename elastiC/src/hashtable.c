@@ -7,9 +7,9 @@
  *
  *   Created: Thu Jun 24 10:34:09 MEST 1999
  *
- *   $Id: hashtable.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: hashtable.c,v 1.3 2002/06/13 17:44:18 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -983,7 +983,7 @@ static EcBool verify( ec_hash table, EcAny key, EcAny value )
 
 	if (! ec_hash_get( table, key, &realvalue ))
 	{
-		fprintf( stderr, "[1]VERIFY FAILED\n" );
+		ec_msg_printf( "[1]VERIFY FAILED\n" );
 		ASSERT( FALSE );
 		return FALSE;
 	}
@@ -996,7 +996,7 @@ static EcBool verify( ec_hash table, EcAny key, EcAny value )
 		if (realvalue == value) return TRUE;
 	}
 
-	fprintf( stderr, "[2]VERIFY FAILED\n" );
+	ec_msg_printf( "[2]VERIFY FAILED\n" );
 	ASSERT( FALSE );
 	return FALSE;
 }
