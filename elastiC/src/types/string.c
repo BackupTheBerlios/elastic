@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: string.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: string.c,v 1.3 2005/03/17 15:06:16 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -465,6 +465,8 @@ static EC_OBJ string_mod( EC_OBJ obj1, EC_OBJ obj2 )
 
 	if (EC_ARRAYP(obj2))
 		return ec_printf_obj( EC_STRDATA(obj1), EC_ARRAYMEM(obj2), EC_ARRAYLEN(obj2), 0, EC_NIL );
+	else if (EcIsSequence(obj2))
+		return ec_printf_obj( EC_STRDATA(obj1), NULL, 0, 0, obj2 );
 	else if (! EcIsSequence(obj2))
 		return ec_printf_obj( EC_STRDATA(obj1), &obj2, 1, 0, EC_NIL );
 	else

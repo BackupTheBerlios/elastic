@@ -1,0 +1,17 @@
+This directory contains some examples of programs written in elastiC.
+Quite simple ones at this time :-)
+
+Examples:
+
+  Program                   Description
+  ---------------------------------------------------------------------
+  balance.ec                Demonstrates use of anonymous functions
+                            to implement and object-oriented mechanism.
+  balance-lazy.ec           Same as previous one, but without explicit
+                            variable declaration. Requires use of the
+                            "-l" command line flag ("lazy" option).
+
+  wc.ec                     Simple word count.
+  wc-lazy.ec                Simple word count. Lazy version.
+  wc-oldstyle.ec            Simple word count using the obsoleted 'file'
+                            package.

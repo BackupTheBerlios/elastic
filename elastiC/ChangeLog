@@ -1,3 +1,8 @@
+2005-03-17  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* src/types/string.c (string_mod): added named parametes support
+	to '%' string operator.
+
 2005-03-08  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* src/elastic_p.y: removed dependency on fprintf(). Now uses

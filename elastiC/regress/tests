@@ -60,6 +60,7 @@
 ./testinit
 ./testinit2
 ./testnamedprintf
+./testnamedstringop
 ./testre
 ./testsend
 ./teststackref1
