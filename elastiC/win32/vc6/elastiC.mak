@@ -33,21 +33,16 @@ INTDIR=.\Release
 OutDir=.\Release
 # End Custom Macros
 
-ALL : "..\..\elastic\utility.h" "..\..\elastic\user.h" "..\..\elastic\strtable.h" "..\..\elastic\stackrecycle.h" "..\..\elastic\private.h" "..\..\elastic\os.h" "..\..\elastic\oop.h" "..\..\elastic\object.h" "..\..\elastic\modules\string_m.h" "..\..\elastic\modules\array_m.h" "..\..\elastic\memory.h" "..\..\elastic\list.h" "..\..\elastic\lib.h" "..\..\elastic\hashtable.h" "..\..\elastic\hashfunc.h" "..\..\elastic\hashdefs.h" "..\..\elastic\hash.h" "..\..\elastic\floatio.h" "..\..\elastic\file.h" "..\..\elastic\elastic.h" "..\..\elastic\dstring.h" "..\..\elastic\debug.h" "..\..\elastic\conf.h" "..\..\elastic\compile.h" "..\..\elastic\compat.h" "..\..\elastic\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\basic.h" "..\..\elastic\ast.h" "..\..\elastic\arithmetic.h" "$(OUTDIR)\elastiC.dll"
+ALL : "..\..\elastic\modules\string_m.h" "..\..\elastic\modules\array_m.h" "..\..\elastic\memory.h" "..\..\elastic\list.h" "..\..\elastic\floatio.h" "$(OUTDIR)\elastiC.dll"
 
 
 CLEAN :
-	-@erase "$(INTDIR)\arithmetic.obj"
-	-@erase "$(INTDIR)\array.obj"
-	-@erase "$(INTDIR)\array_m.obj"
+	-@erase "$(INTDIR)\arithmetic\vc60.idb"
 	-@erase "$(INTDIR)\ast.obj"
 	-@erase "$(INTDIR)\builtin.obj"
 	-@erase "$(INTDIR)\bytecode.obj"
-	-@erase "$(INTDIR)\char.obj"
-	-@erase "$(INTDIR)\class.obj"
 	-@erase "$(INTDIR)\compat.obj"
 	-@erase "$(INTDIR)\compile.obj"
-	-@erase "$(INTDIR)\compiled.obj"
 	-@erase "$(INTDIR)\debug.obj"
 	-@erase "$(INTDIR)\dl-win32.obj"
 	-@erase "$(INTDIR)\dllmain.obj"
@@ -55,18 +50,15 @@ CLEAN :
 	-@erase "$(INTDIR)\elastic.obj"
 	-@erase "$(INTDIR)\elastic_p.obj"
 	-@erase "$(INTDIR)\elastic_s.obj"
-	-@erase "$(INTDIR)\file.obj"
 	-@erase "$(INTDIR)\gc.obj"
-	-@erase "$(INTDIR)\handler.obj"
-	-@erase "$(INTDIR)\hash.obj"
 	-@erase "$(INTDIR)\hashdefs.obj"
 	-@erase "$(INTDIR)\hashfunc.obj"
 	-@erase "$(INTDIR)\hashtable.obj"
 	-@erase "$(INTDIR)\interp.obj"
 	-@erase "$(INTDIR)\lib.obj"
 	-@erase "$(INTDIR)\list.obj"
-	-@erase "$(INTDIR)\list_m.obj"
 	-@erase "$(INTDIR)\memory.obj"
+	-@erase "$(INTDIR)\modules\vc60.idb"
 	-@erase "$(INTDIR)\numeric.obj"
 	-@erase "$(INTDIR)\object.obj"
 	-@erase "$(INTDIR)\oop.obj"
@@ -76,9 +68,6 @@ CLEAN :
 	-@erase "$(INTDIR)\prime.obj"
 	-@erase "$(INTDIR)\printf.obj"
 	-@erase "$(INTDIR)\sprintf.obj"
-	-@erase "$(INTDIR)\stack.obj"
-	-@erase "$(INTDIR)\string.obj"
-	-@erase "$(INTDIR)\string_m.obj"
 	-@erase "$(INTDIR)\strtable.obj"
 	-@erase "$(INTDIR)\strtod.obj"
 	-@erase "$(INTDIR)\symbol.obj"
@@ -89,38 +78,26 @@ CLEAN :
 	-@erase "$(OUTDIR)\elastiC.dll"
 	-@erase "$(OUTDIR)\elastiC.exp"
 	-@erase "$(OUTDIR)\elastiC.lib"
+	-@erase ".\Release\arithmetic\arithmetic.obj"
+	-@erase ".\Release\modules\array_m.obj"
+	-@erase ".\Release\modules\list_m.obj"
+	-@erase ".\Release\modules\string_m.obj"
+	-@erase ".\Release\types\array.obj"
+	-@erase ".\Release\types\char.obj"
+	-@erase ".\Release\types\class.obj"
+	-@erase ".\Release\types\compiled.obj"
+	-@erase ".\Release\types\file.obj"
+	-@erase ".\Release\types\handler.obj"
+	-@erase ".\Release\types\hash.obj"
 	-@erase ".\Release\types\object.obj"
 	-@erase ".\Release\types\package.obj"
-	-@erase "..\..\elastic\arithmetic.h"
-	-@erase "..\..\elastic\ast.h"
-	-@erase "..\..\elastic\basic.h"
-	-@erase "..\..\elastic\bitstring.h"
-	-@erase "..\..\elastic\bytecode.h"
-	-@erase "..\..\elastic\compat.h"
-	-@erase "..\..\elastic\compile.h"
-	-@erase "..\..\elastic\conf.h"
-	-@erase "..\..\elastic\debug.h"
-	-@erase "..\..\elastic\dstring.h"
-	-@erase "..\..\elastic\elastic.h"
-	-@erase "..\..\elastic\file.h"
+	-@erase ".\Release\types\stack.obj"
+	-@erase ".\Release\types\string.obj"
 	-@erase "..\..\elastic\floatio.h"
-	-@erase "..\..\elastic\hash.h"
-	-@erase "..\..\elastic\hashdefs.h"
-	-@erase "..\..\elastic\hashfunc.h"
-	-@erase "..\..\elastic\hashtable.h"
-	-@erase "..\..\elastic\lib.h"
 	-@erase "..\..\elastic\list.h"
 	-@erase "..\..\elastic\memory.h"
 	-@erase "..\..\elastic\modules\array_m.h"
 	-@erase "..\..\elastic\modules\string_m.h"
-	-@erase "..\..\elastic\object.h"
-	-@erase "..\..\elastic\oop.h"
-	-@erase "..\..\elastic\os.h"
-	-@erase "..\..\elastic\private.h"
-	-@erase "..\..\elastic\stackrecycle.h"
-	-@erase "..\..\elastic\strtable.h"
-	-@erase "..\..\elastic\user.h"
-	-@erase "..\..\elastic\utility.h"
 
 "$(OUTDIR)" :
     if not exist "$(OUTDIR)/$(NULL)" mkdir "$(OUTDIR)"
@@ -168,21 +145,8 @@ BSC32_SBRS= \
 LINK32=link.exe
 LINK32_FLAGS=/nologo /dll /incremental:no /pdb:"$(OUTDIR)\elastiC.pdb" /machine:I386 /out:"$(OUTDIR)\elastiC.dll" /implib:"$(OUTDIR)\elastiC.lib" 
 LINK32_OBJS= \
-	"$(INTDIR)\arithmetic.obj" \
-	"$(INTDIR)\array_m.obj" \
-	"$(INTDIR)\list_m.obj" \
-	"$(INTDIR)\string_m.obj" \
-	"$(INTDIR)\array.obj" \
-	"$(INTDIR)\char.obj" \
-	"$(INTDIR)\class.obj" \
-	"$(INTDIR)\compiled.obj" \
-	"$(INTDIR)\file.obj" \
-	"$(INTDIR)\handler.obj" \
-	"$(INTDIR)\hash.obj" \
 	".\Release\types\object.obj" \
 	".\Release\types\package.obj" \
-	"$(INTDIR)\stack.obj" \
-	"$(INTDIR)\string.obj" \
 	"$(INTDIR)\dl-win32.obj" \
 	"$(INTDIR)\ast.obj" \
 	"$(INTDIR)\builtin.obj" \
@@ -216,7 +180,20 @@ LINK32_OBJS= \
 	"$(INTDIR)\strtod.obj" \
 	"$(INTDIR)\symbol.obj" \
 	"$(INTDIR)\user.obj" \
-	"$(INTDIR)\utility.obj"
+	"$(INTDIR)\utility.obj" \
+	".\Release\modules\array_m.obj" \
+	".\Release\modules\list_m.obj" \
+	".\Release\modules\string_m.obj" \
+	".\Release\types\array.obj" \
+	".\Release\arithmetic\arithmetic.obj" \
+	".\Release\types\char.obj" \
+	".\Release\types\class.obj" \
+	".\Release\types\compiled.obj" \
+	".\Release\types\file.obj" \
+	".\Release\types\handler.obj" \
+	".\Release\types\hash.obj" \
+	".\Release\types\stack.obj" \
+	".\Release\types\string.obj"
 
 "$(OUTDIR)\elastiC.dll" : "$(OUTDIR)" $(DEF_FILE) $(LINK32_OBJS)
     $(LINK32) @<<
@@ -528,9 +505,9 @@ SOURCE=..\..\src\arithmetic\arithmetic.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\arithmetic/" /Fd"Release\arithmetic/" /FD /c 
 
-"$(INTDIR)\arithmetic.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\arithmetic\arithmetic.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\arithmetic.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\private.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -552,16 +529,22 @@ SOURCE=..\..\src\modules\array_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\modules/" /Fd"Release\modules/" /FD /c 
 
-"$(INTDIR)\array_m.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+".\Release\modules\array_m.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\private.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\src\modules\array_m.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
+CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"Debug\modules/" /Fo"Debug\modules/" /Fd"Debug\modules/" /FD /GZ /c 
 
 ".\Debug\modules\array_m.obj"	".\Debug\modules\array_m.sbr" : $(SOURCE)
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ENDIF 
@@ -570,16 +553,22 @@ SOURCE=..\..\src\modules\list_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\modules/" /Fd"Release\modules/" /FD /c 
 
-"$(INTDIR)\list_m.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+".\Release\modules\list_m.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\private.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
+CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"Debug\modules/" /Fo"Debug\modules/" /Fd"Debug\modules/" /FD /GZ /c 
 
 ".\Debug\modules\list_m.obj"	".\Debug\modules\list_m.sbr" : $(SOURCE)
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ENDIF 
@@ -588,16 +577,22 @@ SOURCE=..\..\src\modules\string_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\modules/" /Fd"Release\modules/" /FD /c 
 
-"$(INTDIR)\string_m.obj" : $(SOURCE) "$(INTDIR)"
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+".\Release\modules\string_m.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\modules\string_m.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
+CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"Debug\modules/" /Fo"Debug\modules/" /Fd"Debug\modules/" /FD /GZ /c 
 
 ".\Debug\modules\string_m.obj"	".\Debug\modules\string_m.sbr" : $(SOURCE)
-	$(CPP) $(CPP_PROJ) $(SOURCE)
+	$(CPP) @<<
+  $(CPP_SWITCHES) $(SOURCE)
+<<
 
 
 !ENDIF 
@@ -606,9 +601,9 @@ SOURCE=..\..\src\types\array.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\array.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\array.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\private.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\hashfunc.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -630,9 +625,9 @@ SOURCE=..\..\src\types\char.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\char.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\char.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\hashfunc.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -654,9 +649,9 @@ SOURCE=..\..\src\types\class.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\class.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\class.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\hashfunc.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -678,9 +673,9 @@ SOURCE=..\..\src\types\compiled.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\compiled.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\compiled.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\hashfunc.h" "..\..\elastic\stackrecycle.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -702,9 +697,9 @@ SOURCE=..\..\src\types\file.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\file.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\file.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -726,9 +721,9 @@ SOURCE=..\..\src\types\handler.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\handler.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\handler.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\private.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -750,9 +745,9 @@ SOURCE=..\..\src\types\hash.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\hash.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\hash.obj" : $(SOURCE) "..\..\elastic\object.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -822,9 +817,9 @@ SOURCE=..\..\src\types\stack.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\stack.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\stack.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\hashfunc.h" "..\..\elastic\stackrecycle.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -846,9 +841,9 @@ SOURCE=..\..\src\types\string.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
-CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
+CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"Release\types/" /Fd"Release\types/" /FD /c 
 
-"$(INTDIR)\string.obj" : $(SOURCE) "$(INTDIR)"
+".\Release\types\string.obj" : $(SOURCE) "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\hashfunc.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -871,7 +866,7 @@ SOURCE="..\..\src\dl\dl-win32.c"
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
 
-"$(INTDIR)\dl-win32.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\dl-win32.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\bytecode.h" "..\..\elastic\conf.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\hashtable.h" "..\..\elastic\user.h" "..\..\elastic\hashdefs.h" "..\..\elastic\cnf.h" "..\..\elastic\tsize.h" "..\..\elastic\hash.h" "..\..\elastic\oop.h" "..\..\elastic\debug.h" "..\..\elastic\object.h" "..\..\elastic\dstring.h" "..\..\elastic\basic.h" "..\..\elastic\file.h" "..\..\elastic\config.h"
 	$(CPP) $(CPP_PROJ) $(SOURCE)
 
 
@@ -890,7 +885,7 @@ SOURCE=..\..\src\ast.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\ast.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\ast.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\ast.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -900,7 +895,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\ast.obj"	"$(INTDIR)\ast.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\ast.obj"	"$(INTDIR)\ast.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -914,7 +909,7 @@ SOURCE=..\..\src\builtin.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\builtin.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\builtin.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\object.h" "..\..\src\debug.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\ast.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\tsize.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -924,7 +919,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /I "../../src/" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\builtin.obj"	"$(INTDIR)\builtin.sbr" : $(SOURCE) "$(INTDIR)" "..\..\src\basic.h" "..\..\elastic\hash.h" "..\..\elastic\compile.h" "..\..\src\elastic.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\src\debug.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\src\private.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
+"$(INTDIR)\builtin.obj"	"$(INTDIR)\builtin.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\compile.h" "..\..\elastic\hash.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\elastic\ast.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\config.h" "..\..\src\basic.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -938,7 +933,7 @@ SOURCE=..\..\src\bytecode.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\bytecode.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\bytecode.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\src\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -948,7 +943,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\bytecode.obj"	"$(INTDIR)\bytecode.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\src\bytecode.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\elastic\bytecode.h" "..\..\src\basic.h" "..\..\src\debug.h"
+"$(INTDIR)\bytecode.obj"	"$(INTDIR)\bytecode.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\bytecode.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -962,7 +957,7 @@ SOURCE=..\..\src\compat.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\compat.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\compat.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -972,7 +967,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\compat.obj"	"$(INTDIR)\compat.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\compat.obj"	"$(INTDIR)\compat.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -986,7 +981,7 @@ SOURCE=..\..\src\compile.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\compile.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\compile.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\ast.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -996,7 +991,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\compile.obj"	"$(INTDIR)\compile.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h" "..\..\src\debug.h"
+"$(INTDIR)\compile.obj"	"$(INTDIR)\compile.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\compile.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1010,7 +1005,7 @@ SOURCE=..\..\src\debug.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\debug.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\debug.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\src\debug.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\ast.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\tsize.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1020,7 +1015,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\debug.obj"	"$(INTDIR)\debug.sbr" : $(SOURCE) "$(INTDIR)" "..\..\src\basic.h" "..\..\elastic\hash.h" "..\..\elastic\compile.h" "..\..\src\elastic.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\src\debug.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\src\private.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
+"$(INTDIR)\debug.obj"	"$(INTDIR)\debug.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\compile.h" "..\..\elastic\hash.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\elastic\ast.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1058,7 +1053,7 @@ SOURCE=..\..\src\dstring.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\dstring.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\dstring.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1068,7 +1063,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\dstring.obj"	"$(INTDIR)\dstring.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\dstring.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\elastic\bytecode.h" "..\..\src\basic.h" "..\..\src\debug.h"
+"$(INTDIR)\dstring.obj"	"$(INTDIR)\dstring.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\src\dstring.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1082,7 +1077,7 @@ SOURCE=..\..\src\elastic.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\elastic.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\elastic.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\debug.h" "..\..\src\ast.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\private.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\bitstring.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\src\stackrecycle.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1092,7 +1087,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\elastic.obj"	"$(INTDIR)\elastic.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\src\bitstring.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\stackrecycle.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\private.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\src\private.h" "..\..\elastic\conf.h" "..\..\elastic\bitstring.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\elastic.obj"	"$(INTDIR)\elastic.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\src\bitstring.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\stackrecycle.h" "..\..\elastic\private.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\conf.h" "..\..\elastic\bitstring.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1106,7 +1101,7 @@ SOURCE=..\..\src\elastic_p.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\elastic_p.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\elastic_p.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\ast.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1116,7 +1111,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\elastic_p.obj"	"$(INTDIR)\elastic_p.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\elastic_p.obj"	"$(INTDIR)\elastic_p.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1130,7 +1125,7 @@ SOURCE=..\..\src\elastic_s.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\elastic_s.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\elastic_s.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\src\ast.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1140,7 +1135,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\elastic_s.obj"	"$(INTDIR)\elastic_s.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\elastic_s.obj"	"$(INTDIR)\elastic_s.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\ast.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1154,7 +1149,7 @@ SOURCE=..\..\src\gc.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\gc.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\gc.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\object.h" "..\..\src\strtable.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1164,7 +1159,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\gc.obj"	"$(INTDIR)\gc.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\object.h" "..\..\src\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\gc.obj"	"$(INTDIR)\gc.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\src\object.h" "..\..\elastic\compile.h" "..\..\src\strtable.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1178,7 +1173,7 @@ SOURCE=..\..\src\hashdefs.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\hashdefs.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\hashdefs.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1202,7 +1197,7 @@ SOURCE=..\..\src\hashfunc.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\hashfunc.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\hashfunc.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h" "..\..\src\hashfunc.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1212,7 +1207,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\hashfunc.obj"	"$(INTDIR)\hashfunc.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\hashfunc.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\hashfunc.obj"	"$(INTDIR)\hashfunc.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\hashfunc.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1226,7 +1221,7 @@ SOURCE=..\..\src\hashtable.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\hashtable.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\hashtable.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\hashtable.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h" "..\..\src\hashfunc.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1236,7 +1231,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\hashtable.obj"	"$(INTDIR)\hashtable.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\src\hashfunc.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\src\hashtable.h"
+"$(INTDIR)\hashtable.obj"	"$(INTDIR)\hashtable.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\hashfunc.h" "..\..\src\hashtable.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1250,7 +1245,7 @@ SOURCE=..\..\src\interp.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\interp.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\interp.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\elastic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\src\stackrecycle.h" "..\..\src\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1260,7 +1255,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\interp.obj"	"$(INTDIR)\interp.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\stackrecycle.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\private.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h" "..\..\src\bytecode.h"
+"$(INTDIR)\interp.obj"	"$(INTDIR)\interp.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\bytecode.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\stackrecycle.h" "..\..\elastic\private.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1274,7 +1269,7 @@ SOURCE=..\..\src\lib.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\lib.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\lib.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1284,7 +1279,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\lib.obj"	"$(INTDIR)\lib.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\lib.obj"	"$(INTDIR)\lib.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1298,7 +1293,7 @@ SOURCE=..\..\src\list.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\list.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\list.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\src\utility.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1308,7 +1303,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\list.obj"	"$(INTDIR)\list.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\utility.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\list.obj"	"$(INTDIR)\list.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\utility.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1322,7 +1317,7 @@ SOURCE=..\..\src\memory.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\memory.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\memory.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h" "..\..\src\conf.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1332,7 +1327,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\memory.obj"	"$(INTDIR)\memory.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\conf.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\memory.obj"	"$(INTDIR)\memory.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\src\conf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1346,7 +1341,7 @@ SOURCE=..\..\src\numeric.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\numeric.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\numeric.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\object.h" "..\..\src\debug.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\ast.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\tsize.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1356,7 +1351,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\numeric.obj"	"$(INTDIR)\numeric.sbr" : $(SOURCE) "$(INTDIR)" "..\..\src\basic.h" "..\..\elastic\hash.h" "..\..\elastic\compile.h" "..\..\src\elastic.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\src\debug.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\src\private.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
+"$(INTDIR)\numeric.obj"	"$(INTDIR)\numeric.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\compile.h" "..\..\elastic\hash.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\elastic\ast.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1370,7 +1365,7 @@ SOURCE=..\..\src\object.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\object.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\object.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\object.h" "..\..\src\strtable.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h" "..\..\src\hashfunc.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1380,7 +1375,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\object.obj"	"$(INTDIR)\object.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\object.h" "..\..\src\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\hashfunc.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\object.obj"	"$(INTDIR)\object.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\src\object.h" "..\..\elastic\compile.h" "..\..\src\strtable.h" "..\..\src\hashfunc.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1394,7 +1389,7 @@ SOURCE=..\..\src\oop.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\oop.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\oop.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\src\stackrecycle.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1404,7 +1399,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\oop.obj"	"$(INTDIR)\oop.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\src\stackrecycle.h" "..\..\elastic\compile.h" "..\..\elastic\private.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\oop.obj"	"$(INTDIR)\oop.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\stackrecycle.h" "..\..\elastic\private.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1418,7 +1413,7 @@ SOURCE=..\..\src\win32\os.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\os.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\os.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\compat.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1428,7 +1423,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\os.obj"	"$(INTDIR)\os.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\private.h" "..\..\elastic\hashdefs.h" "..\..\elastic\compat.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\os.obj"	"$(INTDIR)\os.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\compat.h" "..\..\elastic\private.h" "..\..\elastic\basic.h" "..\..\elastic\cnf.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1442,7 +1437,7 @@ SOURCE=..\..\src\package.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\package.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\package.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1452,7 +1447,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\package.obj"	"$(INTDIR)\package.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\package.obj"	"$(INTDIR)\package.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1466,7 +1461,7 @@ SOURCE=..\..\src\packageio.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\packageio.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\packageio.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\compat.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\hashdefs.h" "..\..\elastic\debug.h" "..\..\elastic\private.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\hashtable.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\src\stackrecycle.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1476,7 +1471,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\packageio.obj"	"$(INTDIR)\packageio.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\stackrecycle.h" "..\..\src\hashdefs.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\private.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h" "..\..\src\hashtable.h"
+"$(INTDIR)\packageio.obj"	"$(INTDIR)\packageio.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\debug.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\hashdefs.h" "..\..\src\stackrecycle.h" "..\..\elastic\private.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\src\hashtable.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1490,7 +1485,7 @@ SOURCE=..\..\src\prime.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\prime.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\prime.obj" : $(SOURCE) "$(INTDIR)" "..\..\elastic\object.h" "..\..\elastic\utility.h" "..\..\elastic\conf.h" "..\..\elastic\oop.h" "..\..\elastic\hash.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\user.h" "..\..\elastic\basic.h" "..\..\elastic\hashtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\lib.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\src\private.h" "..\..\elastic\ast.h" "..\..\elastic\file.h" "..\..\elastic\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\tsize.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1500,7 +1495,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\prime.obj"	"$(INTDIR)\prime.sbr" : $(SOURCE) "$(INTDIR)" "..\..\src\basic.h" "..\..\elastic\hash.h" "..\..\elastic\compile.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\src\private.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\ast.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\bitstring.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
+"$(INTDIR)\prime.obj"	"$(INTDIR)\prime.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\compile.h" "..\..\elastic\hash.h" "..\..\src\private.h" "..\..\elastic\elastic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\user.h" "..\..\elastic\utility.h" "..\..\elastic\hashtable.h" "..\..\elastic\tsize.h" "..\..\elastic\lib.h" "..\..\elastic\ast.h" "..\..\elastic\os.h" "..\..\elastic\bytecode.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\elastic\file.h" "..\..\elastic\config.h" "..\..\src\basic.h" "..\..\elastic\object.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\oop.h" "..\..\elastic\conf.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1514,7 +1509,7 @@ SOURCE=..\..\src\printf.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\printf.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\printf.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\strtable.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1524,7 +1519,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\printf.obj"	"$(INTDIR)\printf.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\printf.obj"	"$(INTDIR)\printf.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\src\strtable.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1538,7 +1533,7 @@ SOURCE=..\..\src\sprintf.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\sprintf.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\sprintf.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\dstring.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\src\floatio.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1548,7 +1543,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\sprintf.obj"	"$(INTDIR)\sprintf.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\floatio.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\dstring.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\sprintf.obj"	"$(INTDIR)\sprintf.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\floatio.h" "..\..\elastic\basic.h" "..\..\src\dstring.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1562,7 +1557,7 @@ SOURCE=..\..\src\strtable.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\strtable.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\strtable.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\src\debug.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\src\object.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h" "..\..\src\hashfunc.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1572,7 +1567,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\strtable.obj"	"$(INTDIR)\strtable.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\debug.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\src\object.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\hashfunc.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\strtable.obj"	"$(INTDIR)\strtable.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\src\object.h" "..\..\elastic\compile.h" "..\..\src\hashfunc.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1586,7 +1581,7 @@ SOURCE=..\..\src\strtod.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\strtod.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\strtod.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\basic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1596,7 +1591,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\strtod.obj"	"$(INTDIR)\strtod.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\strtod.obj"	"$(INTDIR)\strtod.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1610,7 +1605,7 @@ SOURCE=..\..\src\symbol.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\symbol.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\symbol.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\src\utility.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1620,7 +1615,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\symbol.obj"	"$(INTDIR)\symbol.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\src\utility.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\debug.h" "..\..\src\compat.h" "..\..\elastic\bytecode.h" "..\..\src\basic.h"
+"$(INTDIR)\symbol.obj"	"$(INTDIR)\symbol.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\utility.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bitstring.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1634,7 +1629,7 @@ SOURCE=..\..\src\user.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\user.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\user.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\elastic.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\src\basic.h" "..\..\src\private.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1644,7 +1639,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\user.obj"	"$(INTDIR)\user.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\debug.h" "..\..\src\compat.h" "..\..\elastic\bytecode.h" "..\..\src\basic.h"
+"$(INTDIR)\user.obj"	"$(INTDIR)\user.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\elastic.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\bitstring.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1658,7 +1653,7 @@ SOURCE=..\..\src\utility.c
 
 CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "__i386__" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /c 
 
-"$(INTDIR)\utility.obj" : $(SOURCE) "$(INTDIR)"
+"$(INTDIR)\utility.obj" : $(SOURCE) "$(INTDIR)" "..\..\src\private.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\strtable.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\utility.h" "..\..\elastic\bitstring.h" "..\..\elastic\object.h" "..\..\elastic\os.h" "..\..\elastic\user.h" "..\..\src\utility.h" "..\..\elastic\dstring.h" "..\..\elastic\conf.h" "..\..\elastic\bytecode.h" "..\..\elastic\oop.h" "..\..\elastic\hashtable.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1668,7 +1663,7 @@ CPP_SWITCHES=/nologo /MD /W3 /GX /O2 /I "..\.." /I "..\..\elastic" /D "WIN32" /D
 
 CPP_SWITCHES=/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\.." /I "..\..\elastic" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_USRDLL" /D "ELASTIC_EXPORTS" /D "DEBUG" /D "__i386__" /FR"$(INTDIR)\\" /Fo"$(INTDIR)\\" /Fd"$(INTDIR)\\" /FD /GZ /c 
 
-"$(INTDIR)\utility.obj"	"$(INTDIR)\utility.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\src\utility.h" "..\..\elastic\object.h" "..\..\elastic\user.h" "..\..\src\private.h" "..\..\elastic\dstring.h" "..\..\elastic\bitstring.h" "..\..\elastic\conf.h" "..\..\src\compat.h" "..\..\src\debug.h" "..\..\src\basic.h" "..\..\elastic\bytecode.h"
+"$(INTDIR)\utility.obj"	"$(INTDIR)\utility.sbr" : $(SOURCE) "$(INTDIR)" "..\..\elastic\hashtable.h" "..\..\elastic\oop.h" "..\..\src\debug.h" "..\..\elastic\hashdefs.h" "..\..\elastic\tsize.h" "..\..\elastic\file.h" "..\..\elastic\hash.h" "..\..\elastic\elastic.h" "..\..\elastic\lib.h" "..\..\src\utility.h" "..\..\elastic\basic.h" "..\..\elastic\config.h" "..\..\elastic\compile.h" "..\..\elastic\ast.h" "..\..\elastic\strtable.h" "..\..\elastic\utility.h" "..\..\elastic\os.h" "..\..\elastic\object.h" "..\..\src\private.h" "..\..\elastic\user.h" "..\..\src\compat.h" "..\..\elastic\dstring.h" "..\..\src\basic.h" "..\..\elastic\conf.h" "..\..\elastic\bitstring.h" "..\..\elastic\bytecode.h"
 	$(CPP) @<<
   $(CPP_SWITCHES) $(SOURCE)
 <<
@@ -1862,6 +1857,15 @@ SOURCE=..\cnf.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+InputPath=..\cnf.h
+
+"..\..\elastic\cnf.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	COPY $(InputPath) ..\..\elastic\cnf.h
+<< 
+	
+
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
 InputPath=..\cnf.h
@@ -1956,6 +1960,15 @@ InputPath=..\..\src\conf.h
 SOURCE=..\config.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
+
+InputPath=..\config.h
+
+"..\..\elastic\config.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	COPY $(InputPath) ..\..\elastic\config.h
+<< 
+	
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
@@ -2441,6 +2454,15 @@ InputPath=..\..\src\strtable.h
 SOURCE=..\tsize.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
+
+InputPath=..\tsize.h
+
+"..\..\elastic\tsize.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	<<tempfile.bat 
+	@echo off 
+	COPY $(InputPath) ..\..\elastic\tsize.h
+<< 
+	
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 

@@ -101,6 +101,8 @@ SOURCE=..\..\src\arithmetic\arithmetic.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\arithmetic"
+
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\arithmetic"
@@ -119,6 +121,8 @@ SOURCE=..\..\src\modules\array_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\modules"
+
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\modules"
@@ -132,6 +136,8 @@ SOURCE=..\..\src\modules\list_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\modules"
+
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\modules"
@@ -144,6 +150,8 @@ SOURCE=..\..\src\modules\list_m.c
 SOURCE=..\..\src\modules\string_m.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
+
+# PROP Intermediate_Dir "Release\modules"
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
@@ -162,6 +170,7 @@ SOURCE=..\..\src\types\array.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -177,6 +186,7 @@ SOURCE=..\..\src\types\char.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -192,6 +202,7 @@ SOURCE=..\..\src\types\class.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -207,6 +218,7 @@ SOURCE=..\..\src\types\compiled.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -222,6 +234,7 @@ SOURCE=..\..\src\types\file.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -237,6 +250,7 @@ SOURCE=..\..\src\types\handler.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -252,6 +266,7 @@ SOURCE=..\..\src\types\hash.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -299,6 +314,7 @@ SOURCE=..\..\src\types\stack.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -314,6 +330,7 @@ SOURCE=..\..\src\types\string.c
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# PROP Intermediate_Dir "Release\types"
 # SUBTRACT CPP /YX /Yc /Yu
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
@@ -966,6 +983,14 @@ SOURCE=..\cnf.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
 
+# Begin Custom Build
+InputPath=..\cnf.h
+
+"..\..\elastic\cnf.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	COPY $(InputPath) ..\..\elastic\cnf.h
+
+# End Custom Build
+
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
 # Begin Custom Build
@@ -1065,6 +1090,14 @@ InputPath=..\..\src\conf.h
 SOURCE=..\config.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
+
+# Begin Custom Build
+InputPath=..\config.h
+
+"..\..\elastic\config.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	COPY $(InputPath) ..\..\elastic\config.h
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
@@ -1582,6 +1615,14 @@ InputPath=..\..\src\strtable.h
 SOURCE=..\tsize.h
 
 !IF  "$(CFG)" == "elastiC - Win32 Release"
+
+# Begin Custom Build
+InputPath=..\tsize.h
+
+"..\..\elastic\tsize.h" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	COPY $(InputPath) ..\..\elastic\tsize.h
+
+# End Custom Build
 
 !ELSEIF  "$(CFG)" == "elastiC - Win32 Debug"
 
