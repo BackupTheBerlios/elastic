@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.1 2002/05/23 21:17:00 panta Exp $
+ *   $Id: elastic.c,v 1.2 2002/05/24 17:34:42 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -135,6 +135,8 @@ EC_API EcBool EcInit( void )
 	PRIVATE(parse_result) = NULL;
 
 	PRIVATE(symTable)     = ec_strtable_create( STRTABLESLOTS );
+	if (! PRIVATE(symTable))
+		return FALSE;
 	PRIVATE(currentId)    = 0;
 	PRIVATE(symName)      = NULL;
 	PRIVATE(symNameSize)  = 0;
