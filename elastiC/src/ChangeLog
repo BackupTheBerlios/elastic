@@ -1,3 +1,8 @@
+2003-04-01  Marco Pantaleoni  <panta@elasticworld.org>
+
+	* interp.c (EcExecute): fixed arithmetic and, or, xor operations
+	(AndOP, OrOP, XorOP). (Bug submitted by Dunhill Hwang).
+
 2002-06-14  Marco Pantaleoni  <panta@elasticworld.org>
 
 	* packageio.c ...: rationalized a bit package loading API
