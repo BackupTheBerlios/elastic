@@ -1,0 +1,19 @@
+Original authors
+================
+
+byacc  : corbett@berkeley.edu
+byacc/j: Bob Jamison
+
+Modification, modernization, and elastiC support by:
+
+  Marco Pantaleoni <panta@elasticworld.org>
+
+These modifications are:
+
+  Copyright (C) 2001 Marco Pantaleoni. All rights reserved.
+
+These modifications are covered by the elastiC license version 1.0
+(the "elastiC license"). You may obtain a copy of the elastiC License
+at http://www.elasticworld.org/LICENSE
+A copy of the elastiC license is distributed in this package as the
+file `LICENSE'.

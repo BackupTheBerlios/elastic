@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# This script tries to find the proper flags for the "aclocal" script:
+# aclocal must be able to find elastiC's aclocal macros.
+#
+# By default aclocal will search only in the same tree where it was
+# installed ("/usr/local/share/aclocal" if installed in "/usr/local/bin", ...).
+#
+# If the "share/local" subdirectory residing in the subtree returned
+# by "elastic-config --prefix" is *different* from the one reported
+# by "aclocal --print-ac-dir", we return the proper -I flag.
+# (We must be careful to not return the same directory multiple times).
+#
+# $Id: aclocal-flags,v 1.1 2002/05/31 12:07:22 panta Exp $
+#
+
+aclocal_dir=`aclocal --print-ac-dir`
+
+elastic_prefix=`elastic-config --prefix`
+
+if [ -z "$elastic_prefix" ];
+then
+    elastic_aclocal_dir=""
+else
+    elastic_aclocal_dir="${elastic_prefix}/share/aclocal"
+fi
+
+output_aclocal_dir=""
+
+if [ ! -z "$aclocal_dir" -a ! -z "$elastic_aclocal_dir" \
+    -a "$aclocal_dir" != "$elastic_aclocal_dir" ];
+then
+    output_aclocal_dir="$elastic_aclocal_dir"
+fi
+
+output=""
+for i in $output_aclocal_dir; do
+    output="$output -I $i";
+done
+echo $output
+exit 0

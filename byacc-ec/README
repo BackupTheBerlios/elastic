@@ -1,0 +1,91 @@
+		      byacc with elastiC support
+		      ==========================
+
+INTRODUCTION
+------------
+
+This is a modified version of Berkeley Yacc, supporting the generation
+of pure elastiC parsers.
+It is derived from Berkeley Yacc 1.8 (+ Cygnus.28) (01/20/91) and from
+byacc/java 1.1 (from Bob Jamison)
+
+Berkeley Yacc is an LALR(1) parser generator.  Berkeley Yacc has been made
+as compatible as possible with AT&T Yacc.  Berkeley Yacc can accept any input
+specification that conforms to the AT&T Yacc documentation.  Specifications
+that take advantage of undocumented features of AT&T Yacc will probably be
+rejected.
+
+USAGE
+-----
+
+This version of byacc has been modified to use autoconf & automake.
+To compile it, simply issue the commands:
+
+  % configure
+  % make
+  % make install
+
+This operation will compile the binary `byacc-ec'.
+byacc-ec supports the same options of the original byacc 1.8, plus a
+set of -E[option] options to produce elastiC code.
+To get command-line usage information, issue the command:
+
+  % byacc-ec -h
+
+See also the example under the `sample-elastic' subdirectory.
+To build the example:
+
+  % cd sample-elastic
+  % make
+
+and to run it:
+
+  % ec cal_driver.ecc
+
+ELASTIC WEB SITE
+----------------
+
+elastiC and gtk-elastiC official web site is:
+
+    http://www.elasticworld.org
+
+You'll find here the most recent release, documentation, support
+and other valuable information.
+
+INSTALLATION
+------------
+
+For a more complete explanation of the compilation process, see
+the file "INSTALL".
+This program requires at least elastiC 0.0.27
+
+DOCUMENTATION
+-------------
+
+Please refer to the original byacc documentation.
+See also the accompanying examples.
+
+BUG REPORTS
+-----------
+
+Bug reports and suggestions are very appreciated. Please send yours
+to me at <panta@elasticworld.org>
+
+AUTHOR
+------
+
+Marco Pantaleoni
+panta@elasticworld.org
+
+LICENSE
+-------
+
+This package is distributed under the elastiC License version 1.0 (the
+"elastiC License"). A copy of the license is available in the file
+LICENSE.
+Original parts are copyrighted by their respective authors.
+
+Enjoy,
+Marco Pantaleoni
+panta@elasticworld.org
+9 October 2001

@@ -1,0 +1,155 @@
+   0  $accept : program $end
+
+   1  program : stm.list
+
+   2  stm.list : stm
+   3           | stm.list stm
+
+   4  stm : expr
+   5      | SYMBOL '=' expr
+
+   6  expr : term '+' term
+   7       | term '-' term
+   8       | term
+
+   9  term : NUMBER
+  10       | SYMBOL
+
+state 0
+	$accept : . program $end  (0)
+
+	NUMBER  shift 1
+	SYMBOL  shift 2
+	.  error
+
+	program  goto 3
+	stm.list  goto 4
+	stm  goto 5
+	expr  goto 6
+	term  goto 7
+
+
+state 1
+	term : NUMBER .  (9)
+
+	.  reduce 9
+
+
+state 2
+	stm : SYMBOL . '=' expr  (5)
+	term : SYMBOL .  (10)
+
+	'='  shift 8
+	$end  reduce 10
+	NUMBER  reduce 10
+	SYMBOL  reduce 10
+	'+'  reduce 10
+	'-'  reduce 10
+
+
+state 3
+	$accept : program . $end  (0)
+
+	$end  accept
+
+
+state 4
+	program : stm.list .  (1)
+	stm.list : stm.list . stm  (3)
+
+	NUMBER  shift 1
+	SYMBOL  shift 2
+	$end  reduce 1
+
+	stm  goto 9
+	expr  goto 6
+	term  goto 7
+
+
+state 5
+	stm.list : stm .  (2)
+
+	.  reduce 2
+
+
+state 6
+	stm : expr .  (4)
+
+	.  reduce 4
+
+
+state 7
+	expr : term . '+' term  (6)
+	expr : term . '-' term  (7)
+	expr : term .  (8)
+
+	'+'  shift 10
+	'-'  shift 11
+	$end  reduce 8
+	NUMBER  reduce 8
+	SYMBOL  reduce 8
+
+
+state 8
+	stm : SYMBOL '=' . expr  (5)
+
+	NUMBER  shift 1
+	SYMBOL  shift 12
+	.  error
+
+	expr  goto 13
+	term  goto 7
+
+
+state 9
+	stm.list : stm.list stm .  (3)
+
+	.  reduce 3
+
+
+state 10
+	expr : term '+' . term  (6)
+
+	NUMBER  shift 1
+	SYMBOL  shift 12
+	.  error
+
+	term  goto 14
+
+
+state 11
+	expr : term '-' . term  (7)
+
+	NUMBER  shift 1
+	SYMBOL  shift 12
+	.  error
+
+	term  goto 15
+
+
+state 12
+	term : SYMBOL .  (10)
+
+	.  reduce 10
+
+
+state 13
+	stm : SYMBOL '=' expr .  (5)
+
+	.  reduce 5
+
+
+state 14
+	expr : term '+' term .  (6)
+
+	.  reduce 6
+
+
+state 15
+	expr : term '-' term .  (7)
+
+	.  reduce 7
+
+
+7 terminals, 6 nonterminals
+11 grammar rules, 16 states
