@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.7 2002/06/07 16:09:56 panta Exp $
+ *   $Id: posix_m.c,v 1.8 2002/06/07 16:30:50 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -41,6 +41,9 @@
 #include "private.h"
 #include "compat.h"
 
+#if HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 #if HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -82,14 +85,10 @@
  *   [process groups and job control]
  *
  *   mknod
- *   truncate
- *   mount
+ *   truncate / ftruncate
+ *   (mount / umount: not portable)
  *
- *   system
  */
-
-#if HAVE_UNISTD_H
-	/* this modules relies on <unistd.h> */
 
 static EcUInt s_R_OK = 0, s_W_OK = 0, s_X_OK = 0, s_F_OK = 0;
 static EcUInt s_O_RDONLY = 0, s_O_WRONLY = 0, s_O_RDWR = 0,
@@ -1465,8 +1464,6 @@ static EC_OBJ EcLibPosix_setgid( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_SETGID */
 }
 
-#endif /* HAVE_UNISTD_H */
-
 /* Private */
 
 #if ECMODULE_POSIX_STATIC
@@ -1483,7 +1480,6 @@ EC_API EC_OBJ ec_posix_init( void )
 	if (EC_ERRORP(pkg))
 		return pkg;
 
-#if HAVE_UNISTD_H
 	EcAddPrimitive( "posix.getcwd",     EcLibPosix_getcwd );
 	EcAddPrimitive( "posix.mkdir",      EcLibPosix_mkdir );
 	EcAddPrimitive( "posix.rmdir",      EcLibPosix_rmdir );
@@ -2030,225 +2026,223 @@ EC_API EC_OBJ ec_posix_init( void )
 		i++;
 	}
 
-#endif /* HAVE_UNISTD_H */
-
 	/* Variables */
 
 	feature = EcMakeHash();
 	if (EC_ERRORP(feature)) return feature;
 
 	EcHashSet( feature, EcMakeSymbol("getcwd"),
-#if HAVE_UNISTD_H && HAVE_GETCWD
+#if HAVE_GETCWD
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("mkdir"),
-#if HAVE_UNISTD_H && HAVE_MKDIR
+#if HAVE_MKDIR
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("rmdir"),
-#if HAVE_UNISTD_H && HAVE_RMDIR
+#if HAVE_RMDIR
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("chdir"),
-#if HAVE_UNISTD_H && HAVE_CHDIR
+#if HAVE_CHDIR
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("link"),
-#if HAVE_UNISTD_H && HAVE_LINK
+#if HAVE_LINK
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("unlink"),
-#if HAVE_UNISTD_H && HAVE_UNLINK
+#if HAVE_UNLINK
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("rename"),
-#if HAVE_UNISTD_H && HAVE_RENAME
+#if HAVE_RENAME
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("chmod"),
-#if HAVE_UNISTD_H && HAVE_CHMOD
+#if HAVE_CHMOD
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("chown"),
-#if HAVE_UNISTD_H && HAVE_CHOWN
+#if HAVE_CHOWN
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("access"),
-#if HAVE_UNISTD_H && HAVE_ACCESS
+#if HAVE_ACCESS
 			   EcTrueObject );
 #else
 			   EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("open"),
-#if HAVE_UNISTD_H && HAVE_OPEN
+#if HAVE_OPEN
 			   EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("creat"),
-#if HAVE_UNISTD_H && (HAVE_CREAT || HAVE_OPEN)
+#if (HAVE_CREAT || HAVE_OPEN)
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("close"),
-#if HAVE_UNISTD_H && HAVE_CLOSE
+#if HAVE_CLOSE
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("read"),
-#if HAVE_UNISTD_H && HAVE_READ
+#if HAVE_READ
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("write"),
-#if HAVE_UNISTD_H && HAVE_WRITE
+#if HAVE_WRITE
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("stat"),
-#if HAVE_UNISTD_H && HAVE_STAT
+#if HAVE_STAT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("fstat"),
-#if HAVE_UNISTD_H && HAVE_FSTAT
+#if HAVE_FSTAT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("lstat"),
-#if HAVE_UNISTD_H && HAVE_LSTAT
+#if HAVE_LSTAT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("lseek"),
-#if HAVE_UNISTD_H && HAVE_LSEEK
+#if HAVE_LSEEK
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("dup"),
-#if HAVE_UNISTD_H && HAVE_DUP
+#if HAVE_DUP
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("dup2"),
-#if HAVE_UNISTD_H && HAVE_DUP2
+#if HAVE_DUP2
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("pipe"),
-#if HAVE_UNISTD_H && HAVE_PIPE
+#if HAVE_PIPE
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("mkfifo"),
-#if HAVE_UNISTD_H && HAVE_MKFIFO
+#if HAVE_MKFIFO
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("fork"),
-#if HAVE_UNISTD_H && HAVE_FORK
+#if HAVE_FORK
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("execv"),
-#if HAVE_UNISTD_H && HAVE_EXECV
+#if HAVE_EXECV
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("execve"),
-#if HAVE_UNISTD_H && HAVE_EXECVE
+#if HAVE_EXECVE
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("execvp"),
-#if HAVE_UNISTD_H && HAVE_EXECVP
+#if HAVE_EXECVP
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("wait"),
-#if HAVE_UNISTD_H && HAVE_WAIT
+#if HAVE_WAIT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("waitpid"),
-#if HAVE_UNISTD_H && HAVE_WAITPID
+#if HAVE_WAITPID
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("_exit"),
-#if HAVE_UNISTD_H && HAVE__EXIT
+#if HAVE__EXIT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("kill"),
-#if HAVE_UNISTD_H && HAVE_KILL
+#if HAVE_KILL
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("sleep"),
-#if HAVE_UNISTD_H && HAVE_SLEEP
+#if HAVE_SLEEP
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("pause"),
-#if HAVE_UNISTD_H && HAVE_PAUSE
+#if HAVE_PAUSE
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("alarm"),
-#if HAVE_UNISTD_H && HAVE_ALARM
+#if HAVE_ALARM
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("setuid"),
-#if HAVE_UNISTD_H && HAVE_SETUID
+#if HAVE_SETUID
 		       EcTrueObject );
 #else
 		       EcFalseObject );
 #endif
 	EcHashSet( feature, EcMakeSymbol("setgid"),
-#if HAVE_UNISTD_H && HAVE_SETGID
+#if HAVE_SETGID
 		       EcTrueObject );
 #else
 		       EcFalseObject );

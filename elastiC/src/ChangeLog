@@ -1,5 +1,7 @@
 2002-06-07  Marco Pantaleoni  <panta@elasticworld.org>
 
+	* lib.c: added `basic.system'
+
 	* types/file.c: added `file.popen'.
 
 	* modules/posix_m.c: added POSIX functions `stat', `fstat',
