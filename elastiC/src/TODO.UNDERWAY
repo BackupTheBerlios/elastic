@@ -21,10 +21,14 @@
 	* handle the optional compilation of obsolete `file' module (if not
 	  already done)
 
+	* add nullstream, stringstream, objectstream
+
 	o adopt the convention:
 	     ec_module_MODULENAME_[init|cleanup]    - for dynamically loadable modules
 	     _ec_module_MODULENAME_[init|cleanup]    - for static modules
 	  add macros to build the name, declare the author, version, ...
+
+	  [_]?ec_type_TYPENAME_[init|cleanup] - for types ?
 
 	o change header file protections to __EC_name_H
 

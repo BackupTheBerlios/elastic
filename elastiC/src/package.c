@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec  5 15:08:45 MET 1998
  *
- *   $Id: package.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: package.c,v 1.4 2002/06/14 10:55:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -193,7 +193,7 @@ EC_API EcBool EcPackageImport( EC_OBJ inPackage, const char *name, EC_OBJ array_
 	ASSERT( EC_NULLP(array_of_syms) || EC_ARRAYP(array_of_syms) || (EC_BOOLP(array_of_syms) && EC_BOOLVAL(array_of_syms)) );
 
 	/* Load the requested package */
-	pkg = EcPackageLoad( name, NULL, execute, execute );
+	pkg = EcPackageLoadByName( name, execute, execute );
 	if (EC_NULLP(pkg)) return FALSE;
 
 	ASSERT( EC_PACKAGEP(inPackage) );

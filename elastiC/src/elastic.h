@@ -7,9 +7,9 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.h,v 1.8 2002/06/13 17:44:18 panta Exp $
+ *   $Id: elastic.h,v 1.9 2002/06/14 10:55:37 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -381,13 +381,15 @@ EC_API EcBool EcPackageImport( EC_OBJ inPackage,
 EC_API EcBool EcPackageSaveStream( ec_stream *stream, EC_OBJ package );
 EC_API EcBool EcPackageSave( EC_OBJ package, const char *pathname );	                   /* pathname can be NULL                            */
 EC_API EC_OBJ EcPackageLoadStream( ec_stream *stream,
-								   const char *name,
+								   const char *name,			/* name is qualified */
 								   EcBool execute,
-								   EcBool executeImported );							   /* name is qualified                           */
-EC_API EC_OBJ EcPackageLoad( const char *name,
-							 const char *pathname,
-							 EcBool execute,
-							 EcBool executeImported );					                   /* name is qualified, pathname can be NULL         */
+								   EcBool executeImported );
+EC_API EC_OBJ EcPackageLoadByName( const char *name,			/* name is qualified */
+								   EcBool execute,
+								   EcBool executeImported );
+EC_API EC_OBJ EcPackageLoadByPath( const char *pathname,
+								   EcBool execute,
+								   EcBool executeImported );
 EC_API const char *EcPackageShortName( ec_string *dst, EC_OBJ package );
 EC_API EC_OBJ EcPackageFromName( const char *name );	                                   /* name is qualified                               */
 

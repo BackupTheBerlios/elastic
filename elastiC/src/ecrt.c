@@ -7,7 +7,7 @@
  *
  *   Created: Tue Oct  2 16:24:25 CEST 2001
  *
- *   $Id: ecrt.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: ecrt.c,v 1.3 2002/06/14 10:55:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -154,13 +154,13 @@ static int doExecute( const char *name, int argc, char *argv[] )
 	{
 		strcpy( pkgname, name );
 		pkgname[l - strlen(EC_COMPILEDSUFFIX)] = '\0';
-		package = EcPackageLoad( NULL, name, /* execute: */ FALSE, /* executeImported: */ TRUE );
+		package = EcPackageLoadByPath( name, /* execute: */ FALSE, /* executeImported: */ TRUE );
 		if (! EC_PACKAGEP(package))
 			error( "Bad package binary file specified." );
 	} else
 	{
 		strcpy( pkgname, name );
-		package = EcPackageLoad( pkgname, NULL, /* execute: */ FALSE, /* executeImported: */ TRUE );
+		package = EcPackageLoadByName( pkgname, /* execute: */ FALSE, /* executeImported: */ TRUE );
 		if (! EC_PACKAGEP(package))
 			error( "Bad package binary file specified." );
 	}

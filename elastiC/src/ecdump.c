@@ -7,7 +7,7 @@
  *
  *   Created: Thu Nov 31 15:32: MEST 1998
  *
- *   $Id: ecdump.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: ecdump.c,v 1.3 2002/06/14 10:55:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -151,7 +151,7 @@ static int doDump( const char *filename )
 
 	if (option_verbose)
 		fprintf( stderr, "Loading `%s'\n", filename );
-	package = EcPackageLoad( NULL, filename, /* execute: */ FALSE, /* executeImported: */ FALSE );
+	package = EcPackageLoadByPath( filename, /* execute: */ FALSE, /* executeImported: */ FALSE );
 	if (! EC_PACKAGEP(package))
 	{
 		EcAlert( EcError, "bad package binary file specified: %s", filename );

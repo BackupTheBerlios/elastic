@@ -328,6 +328,7 @@ packaging
    /* Win32 */
 	* update VC6 config.h & co. files
 	* update VC6 project files for new library versioning scheme
+	* add a README.WIN32
 	o update VC7 project files
 	o integrate Nullsoft NSIS installer generator in VC++ projects
 	o integrate Nullsoft NSIS installer generator in autoconf/automake

@@ -7,7 +7,7 @@
  *
  *   Created: 
  *
- *   $Id: packageio.c,v 1.3 2002/06/13 17:44:18 panta Exp $
+ *   $Id: packageio.c,v 1.4 2002/06/14 10:55:37 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -106,7 +106,9 @@ do {                                    \
  *  Levels:
  *
  *  API      EcPackageSave
- *  API      EcPackageLoad
+ *  API      EcPackageLoadStream
+ *  API      EcPackageLoadByName
+ *  API      EcPackageLoadByPath
  *
  *  mid      package_save_helper
  *  mid      package_load_helper
@@ -170,7 +172,7 @@ static EcByte     read_byte( ec_stream *stream );
 static EcWord     read_word( ec_stream *stream );
 static EcDWord    read_dword( ec_stream *stream );
 static EcFloat    read_float( ec_stream *stream );
-static char      *read_string( ec_stream *stream );
+static char      *read_string( ec_stream *stream, ec_string *dst );
 
 /* Object map: to avoid object processing recursion */
 static objectmap  objectmap_create( void );
@@ -295,39 +297,35 @@ onError:
 	return Ec_ERROR;
 }
 
-EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
-							 EcBool execute, EcBool executeImported )
+EC_API EC_OBJ EcPackageLoadByName( const char *name,
+								   EcBool execute, EcBool executeImported )
 {
 	EC_OBJ     obj;
 	ec_stream *stream = NULL;
 
-	ASSERT( name || pathname );
+	ASSERT( name );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "LOADING PACKAGE  NAME: %s  PATH: %s  (exec: %s, %s)\n",
+	fprintf( stderr, "LOADING PACKAGE BY NAME: %s  (exec: %s, %s)\n",
 			 name ? name : "--",
-			 pathname ? pathname : "--",
 			 execute ? "YES" : "NO",
 			 executeImported ? "YES" : "NO" );
 #endif
 
-	if (name)
+	/* Package already present ? */
+	obj = _ec_package_loaded( name );
+	if (EC_PACKAGEP(obj))
 	{
-		/* Package already present ? */
-		obj = _ec_package_loaded( name );
-		if (EC_PACKAGEP(obj))
-		{
-			EC_CHECK( obj );
+		EC_CHECK( obj );
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-			fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY IN)\n\n", name ? name : pathname );
+		fprintf( stderr, "PACKAGE '%s' LOADED. (ALREADY PRESENT)\n\n", name );
 #endif
-			return obj;
-		}
+		return obj;
 	}
 
 	stream = NULL;
 	obj = EC_NIL;
-	if (! find_package( name, pathname, &stream, &obj ))
+	if (! find_package( name, NULL, &stream, &obj ))
 	{
 		ec_msg_printf( "Can't find package \"%s\"\n", name );
 		goto onError;
@@ -355,7 +353,7 @@ EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 		ec_stream_close( stream );
 	}
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-	fprintf( stderr, "PACKAGE '%s' LOADED.\n\n", name ? name : pathname );
+	fprintf( stderr, "PACKAGE '%s' LOADED.\n\n", name );
 #endif
 
 	EC_CHECKALL();
@@ -364,7 +362,68 @@ EC_API EC_OBJ EcPackageLoad( const char *name, const char *pathname,
 
 onError:
 	if (stream) ec_stream_close( stream );
-	ec_msg_printf( "PACKAGE '%s' NOT LOADED. *ERROR*\n\n", name ? name : pathname );
+	ec_msg_printf( "PACKAGE '%s' NOT LOADED. *ERROR*\n\n", name );
+	return Ec_ERROR;
+}
+
+EC_API EC_OBJ EcPackageLoadByPath( const char *pathname,
+								   EcBool execute, EcBool executeImported )
+{
+	EC_OBJ     obj;
+	ec_stream *stream = NULL;
+
+	ASSERT( pathname );
+
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
+	fprintf( stderr, "LOADING PACKAGE BY PATH: %s  (exec: %s, %s)\n",
+			 pathname ? pathname : "--",
+			 execute ? "YES" : "NO",
+			 executeImported ? "YES" : "NO" );
+#endif
+
+	stream = NULL;
+	obj = EC_NIL;
+	if (! find_package( NULL, pathname, &stream, &obj ))
+	{
+		ec_msg_printf( "Can't find package with path \"%s\"\n", pathname );
+		goto onError;
+	}
+
+	if (EC_NNULLP(obj))
+	{
+		/* Got a native C package */
+
+	} else if (stream)
+	{
+		/* Got a compiled bytecode package */
+
+		ASSERT( PRIVATE(patchmap) );
+
+		obj = package_load_helper( stream, NULL, execute, executeImported );
+		if (! EC_PACKAGEP(obj))
+		{
+			ec_msg_printf( "Can't load package with path \"%s\"\n", pathname );
+			goto onError;
+		}
+
+		EC_CHECK( obj );
+
+		ec_stream_close( stream );
+	}
+#if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
+	if (EC_PACKAGEP(obj))
+		ec_msg_printf( "PACKAGE '%w' LOADED.\n\n", EC_PACKAGENAME(obj) );
+	else
+		ec_msg_printf( stderr, "PACKAGE with path '%s' LOADED.\n\n", pathname );
+#endif
+
+	EC_CHECKALL();
+	EC_CHECK( obj );
+	return obj;
+
+onError:
+	if (stream) ec_stream_close( stream );
+	ec_msg_printf( "PACKAGE with path '%s' NOT LOADED. *ERROR*\n\n", pathname );
 	return Ec_ERROR;
 }
 
@@ -486,24 +545,28 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 {
 	EC_OBJ             obj;
 	char              *lname = NULL;							/* package (local) name  */
-	char              *packagename = NULL;						/* saved package name    */
+	ec_string          packagename;								/* saved package name    */
 
 	EcInt              saved_ncoreglobals;						/* number of core globals at save time  */
 	EcInt              saved_npackages;							/* number of packages at save time      */
 	EcInt              saved_ncurpkg;							/* number of saved package at save time */
 
 	EcInt             *pkg_now_at;								/* package translation table */
-	objectmap         map = NULL;								/* object map                */
+	objectmap          map = NULL;								/* object map                */
 
-	char              *pkgname = NULL;
+	ec_string          pkgname;
 	EC_OBJ             pkg;
 	EcInt i;
 
+	char              *strp;
 	struct package *newPackages = NULL;
 	EcInt           n;
 	EcBool          started = FALSE;
 
 	ASSERT( stream );
+
+	ec_string_init( &packagename, NULL );
+	ec_string_init( &pkgname, NULL );
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
 	fprintf( stderr, "READING PACKAGE '%s'  (exec: %s, %s)\n",
@@ -516,35 +579,34 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 		goto onError;
 
 	/* package name */
-	packagename = read_string( stream );
+	strp = read_string( stream, &packagename );
 
 	if (name)
 		lname = ec_stringdup( name );
 	else
-		lname = ec_stringdup( packagename );
+		lname = ec_stringdup( ec_strdata(&packagename) );
 
-	if (! packagename) goto onError;
+	if ((! ec_strdata(&packagename)) || (! ec_strdata(&packagename)[0]))
+		goto onError;
 
 	/* Package already present ? */
-	obj = _ec_package_loaded( packagename );
+	obj = _ec_package_loaded( ec_strdata(&packagename) );
 	if (EC_PACKAGEP(obj))
 	{
-		ec_free( packagename );
+		ec_string_cleanup( &pkgname );
+        ec_string_cleanup( &packagename );
 		EC_CHECK( obj );
 		ec_free( lname );
 		return obj;
 	}
 
-	if (strcmp( packagename, lname ) != 0)
+	if (strcmp( ec_strdata(&packagename), lname ) != 0)
 	{
 /*		fprintf( stderr, "REQUESTED: '%s'\n", lname );
-		fprintf( stderr, "FOUND    : '%s'\n", packagename ); */
+		fprintf( stderr, "FOUND    : '%s'\n", ec_strdata(&packagename) ); */
 		EcAlert( EcError, "loaded a package with a different name from requested" );
 		goto onError;
 	}
-
-	ec_free( packagename );
-	packagename = NULL;
 
 	/* # of globals */
 	saved_ncoreglobals = read_dword( stream );
@@ -591,12 +653,12 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 
 	for (i = 0; i < saved_npackages; i++)
 	{
-		pkgname = read_string( stream );
-		if (! pkgname) goto onError;
+		strp = read_string( stream, &pkgname );
+		if (! strp) goto onError;
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, pkgname);
-		fprintf( stderr, "IMP %s\n", pkgname );
+		fprintf(stderr, "   pkg[%ld]  : %s\n",  (long)i, ec_strdata(&pkgname));
+		fprintf( stderr, "IMP %s\n", ec_strdata(&pkgname) );
 #endif
 		if (i != saved_ncurpkg)
 		{
@@ -606,20 +668,19 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 			 */
 
 			/* Already present ? */
-			if (_ec_package_position( pkgname ) >= 0)
+			if (_ec_package_position( ec_strdata(&pkgname) ) >= 0)
 			{
-				pkg_now_at[i] = _ec_package_position( pkgname );
+				pkg_now_at[i] = _ec_package_position( ec_strdata(&pkgname) );
 				continue;
 			}
 
-			ASSERT( strcmp( pkgname, lname ) != 0 );
+			ASSERT( strcmp( ec_strdata(&pkgname), lname ) != 0 );
 
-			pkg = EcPackageLoad( pkgname, NULL,
-								 executeImported, executeImported ); /* TODO: CHECK EXECUTION UPON IMPORT WHEN COMPILING */
+			pkg = EcPackageLoadByName( ec_strdata(&pkgname),
+									   executeImported, executeImported ); /* TODO: CHECK EXECUTION UPON IMPORT WHEN COMPILING */
 			if (! EC_PACKAGEP(pkg))
 			{
-				EcAlert( EcError, "can't import package '%s'", pkgname );
-				ec_free( pkgname );
+				EcAlert( EcError, "can't import package '%s'", ec_strdata(&pkgname) );
 				goto onError;
 			}
 
@@ -628,10 +689,8 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 			pkg_now_at[i] = n-1;								/* last position */
 
 #if defined(WITH_STDIO) && EC_DEBUG_PACKAGEIO
-		fprintf( stderr, "Package %ld  now at  %ld (name: %s)\n", (long)i, (long)pkg_now_at[i], pkgname );
+		fprintf( stderr, "Package %ld  now at  %ld (name: %s)\n", (long)i, (long)pkg_now_at[i], ec_strdata(&pkgname) );
 #endif
-
-		ec_free( pkgname );
 	}
 
 
@@ -689,6 +748,8 @@ static EC_OBJ package_load_helper( ec_stream *stream, const char *name, EcBool e
 
 	EC_CHECK( obj );
 	ec_free( lname );
+	ec_string_cleanup( &pkgname );
+	ec_string_cleanup( &packagename );
 	return obj;
 
 onError:
@@ -704,6 +765,8 @@ onError:
 	}
 	if (map) objectmap_destroy( map );
 	ec_free( lname );
+	ec_string_cleanup( &pkgname );
+	ec_string_cleanup( &packagename );
 	return Ec_ERROR;
 }
 
@@ -1025,7 +1088,7 @@ static EC_OBJ read_package( objectmap map, ec_stream *stream, EcBool executeImpo
 	EC_OBJ name, code, frame, source, import;
 	EcInt i, l, pos;
 	EcBool isconst;
-	char *buf;
+	ec_string str;
 	EcUInt ec_ver;
 
 	S_IN;
@@ -1101,11 +1164,12 @@ static EC_OBJ read_package( objectmap map, ec_stream *stream, EcBool executeImpo
 	l = read_dword( stream );
 	for (i = 0; i < l; i++)
 	{
-		buf     = read_string( stream );
+		ec_string_init( &str, NULL );
+		read_string( stream, &str );
 		isconst = read_byte( stream );
 		pos     = read_dword( stream );
-		_ec_package_add_public( obj, EcInternSymbol( buf ), pos, isconst );
-		ec_free( buf );
+		_ec_package_add_public( obj, EcInternSymbol( ec_strdata(&str) ), pos, isconst );
+		ec_string_cleanup( &str );
 	}
 	ASSERT( EC_PACKAGENEXPORT(obj) == l );
 
@@ -1765,14 +1829,15 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 	default:
 		if (type == tc_package)
 		{
-			char *pkgname;
+			ec_string pkgname;
 
-			pkgname = read_string( stream );
-			obj = EcPackageLoad( pkgname, NULL, executeImported, executeImported );
+			ec_string_init( &pkgname, NULL );
+			read_string( stream, &pkgname );
+			obj = EcPackageLoadByName( ec_strdata(&pkgname), executeImported, executeImported );
 			ASSERT( EC_PACKAGEP(obj) );
 			ASSERT( EC_STRINGP(EC_PACKAGENAME(obj)) );
-			ASSERT( strcmp( EC_STRDATA(EC_PACKAGENAME(obj)), pkgname ) == 0 );
-			ec_free( pkgname );
+			ASSERT( strcmp( EC_STRDATA(EC_PACKAGENAME(obj)), ec_strdata(&pkgname) ) == 0 );
+			ec_string_cleanup( &pkgname );
 
 			id = remember_object( map, obj );
 
@@ -1787,7 +1852,7 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 			EcBytecode  bc;
 			int         npar;
 			EcUInt      nargs;
-			char       *buf;
+			ec_string   str;
 			EcBool      ismethod;
 
 			EC_COMPILED(obj) = ec_malloc( sizeof(EcCompiled) );
@@ -1804,18 +1869,20 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 				EcCompiledPush( obj, bc );
 				if (bc == CallMethodOP)
 				{
-					buf   = read_string( stream );
+					ec_string_init( &str, NULL );
+					read_string( stream, &str );
 					nargs = read_dword( stream );
-					EcCompiledPush( obj, EcInternSymbol( buf ) );
+					EcCompiledPush( obj, EcInternSymbol( ec_strdata(&str) ) );
 					EcCompiledPush( obj, nargs );
-					ec_free( buf );
+					ec_string_cleanup( &str );
 				} else if (bc == CallSuperMethodOP)
 				{
-					buf   = read_string( stream );
+					ec_string_init( &str, NULL );
+					read_string( stream, &str );
 					nargs = read_dword( stream );
-					EcCompiledPush( obj, EcInternSymbol( buf ) );
+					EcCompiledPush( obj, EcInternSymbol( ec_strdata(&str) ) );
 					EcCompiledPush( obj, nargs );
-					ec_free( buf );
+					ec_string_cleanup( &str );
 				} else
 				{
 					for (j = 1; j <= npar; j++)
@@ -1994,7 +2061,7 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 			EC_OBJ super, package, name, shortname, code, impl;
 			EcInt i, l, pos;
 			EcInt specific;
-			char *buf;
+			ec_string str;
 
 			super     = read_object( map, stream, executeImported );
 			package   = read_object( map, stream, executeImported );
@@ -2036,19 +2103,23 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 			l = read_dword( stream );
 			EC_CLASSNMETHODS(obj) = 0;								/* set by EcAddMethod */
 			for (i = 0; i < l; i++) {
-				buf  = read_string( stream );
+				ec_string_init( &str, NULL );
+				read_string( stream, &str );
 				impl = read_object( map, stream, executeImported );
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
-				EcAddMethod( obj, buf, impl );
+				EcAddMethod( obj, ec_strdata(&str), impl );
+				ec_string_cleanup( &str );
 			}
 			ASSERT( EC_CLASSNMETHODS(obj) == l );
 			l = read_dword( stream );
 			EC_CLASSNCMETHODS(obj) = 0;								/* set by EcAddClassMethod */
 			for (i = 0; i < l; i++) {
-				buf  = read_string( stream );
+				ec_string_init( &str, NULL );
+				read_string( stream, &str );
 				impl = read_object( map, stream, executeImported );
 				ASSERT( EC_CMETHODP(impl) || EC_COMPILEDP(impl) );
-				EcAddClassMethod( obj, buf, impl );
+				EcAddClassMethod( obj, ec_strdata(&str), impl );
+				ec_string_cleanup( &str );
 			}
 			ASSERT( EC_CLASSNCMETHODS(obj) == l );
 			EC_CLASSIOFFSET(obj) = read_dword( stream );
@@ -2060,10 +2131,12 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 				EC_CLASSIVTABLE(obj) = ec_malloc( specific * sizeof(EcVariableEntry) );
 				ASSERT( EC_CLASSIVTABLE(obj) );
 				for (i = 0; i < specific; i++) {					/* read only specific vars */
-					buf  = read_string( stream );
+					ec_string_init( &str, NULL );
+					read_string( stream, &str );
 					pos  = read_dword( stream );
-					EC_CLASSIVTABLE(obj)[i].symid  = EcInternSymbol( buf );
+					EC_CLASSIVTABLE(obj)[i].symid  = EcInternSymbol( ec_strdata(&str) );
 					EC_CLASSIVTABLE(obj)[i].offset = pos;
+					ec_string_cleanup( &str );
 				}
 			} else
 			{
@@ -2077,10 +2150,12 @@ static EC_OBJ read_object( objectmap map, ec_stream *stream, EcBool executeImpor
 				ASSERT( EC_CLASSCVTABLE(obj) );
 				EC_CLASSNCVARS(obj) = l;
 				for (i = 0; i < l; i++) {
-					buf  = read_string( stream );
+					ec_string_init( &str, NULL );
+					read_string( stream, &str );
 					pos  = read_dword( stream );
-					EC_CLASSCVTABLE(obj)[i].symid  = EcInternSymbol( buf );
+					EC_CLASSCVTABLE(obj)[i].symid  = EcInternSymbol( ec_strdata(&str) );
 					EC_CLASSCVTABLE(obj)[i].offset = pos;
+					ec_string_cleanup( &str );
 				}
 			}
 			ASSERT( EC_CLASSNCVARS(obj) == l );
@@ -2224,21 +2299,23 @@ static EcFloat read_float( ec_stream *stream )
 	return (EcFloat)datum;
 }
 
-static char *read_string( ec_stream *stream )
+static char *read_string( ec_stream *stream, ec_string *dst )
 {
 	EcInt l;
-	char *buf;
 
 	l = read_dword( stream );
-	buf = malloc( l + 1 );										/* :TODO: use dynamic strings: ec_string */
-	if (! buf) return NULL;
+	if (! ec_string_prepare( dst, l+1 )) return NULL;
 	/* for (i = 0; i < l; i++)
 	   buf[i] = read_byte( fh );
 	   buf[i] = '\0'; */
-	ec_stream_readn( stream, buf, l );
-	buf[l] = '\0';
+	ASSERT( dst->avail >= l+1 );
+	ec_stream_readn( stream, ec_strdata(dst), l );
+	ec_strdata(dst)[l] = '\0';
+	dst->length = l;
+	ASSERT( dst->avail >= l+1 );
+	ASSERT( ec_strlen(dst) == l );
 
-	return buf;
+	return ec_strdata(dst);
 }
 
 
