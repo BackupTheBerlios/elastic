@@ -19,6 +19,9 @@ typedef struct ec_streamdef_struct
 {
 	ec_streamtype  streamtype;		/* type index returned by ec_stream_register() */
 
+	/* ec_stream_create_fcn    create_fcn; ??? */
+	ec_stream_destroy_fcn   destroy_fcn;
+
 	ec_stream_mode_fcn	mode_fcn;
 	ec_stream_close_fcn	close_fcn;
 	ec_stream_eof		eof_fcn;
@@ -57,8 +60,12 @@ typedef ec_stream_struct
 	union {
 		EcInt   v_int;
 		EcDWord v_dword;
+		EC_OBJ  v_obj;
 		EcAny   v_any;
 	} userdata;
+
+	/* Chained streams */
+	struct ec_stream_struct *delegate;
 
 	/* Serialization data */
 } ec_stream;

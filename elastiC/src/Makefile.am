@@ -7,7 +7,7 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.4 2002/06/07 17:34:05 panta Exp $
+#   $Id: Makefile.am,v 1.5 2002/06/11 15:08:59 panta Exp $
 # --------------------------------------------------------------------------
 #    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
@@ -115,6 +115,7 @@ static_sources = \
 	prime.c		\
 	printf.c	\
 	sprintf.c	\
+	stream.c	\
 	strtable.c	\
 	strtod.c	\
 	symbol.c	\
@@ -149,6 +150,7 @@ static_rt_sources = \
 	prime.c		\
 	printf.c	\
 	sprintf.c	\
+	stream.c	\
 	strtable.c	\
 	strtod.c	\
 	symbol.c	\
@@ -190,6 +192,7 @@ source_headers = \
 	os.h		\
 	prime.h		\
 	stackrecycle.h	\
+	stream.h	\
 	strtable.h	\
 	user.h		\
 	utility.h

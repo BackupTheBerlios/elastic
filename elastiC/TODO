@@ -19,17 +19,21 @@
 
 immediate_future  /* got from other sections (max ~10 points here) */
 {
-	- posix module
+	- posix module (ALMOST DONE: missing opendir, readdir, closedir, ...)
 	- registered C pointers
 	- packageio proper usage of C pointer register (with versioning, ...)
 	- handle versioning in modules
-	- generic I/O
+	- generic I/O (UNDER CONSTRUCTION)
 	- classes and methods for every type
 	- serialization framework
 }
 
 core
 {
+	* add fundamental types ec_int8, ec_uint8, ec_int16, ec_uint16, ...,
+	  ec_char, ec_schar, ec_uchar, ec_short, ec_ushort, ec_int, ec_uint, ...
+          ec_bool, ec_off64. Change EcInt, EcWord, EcBool, ... to ec_int,
+	  ec_uint16, ec_bool, ...
 	* throw an error on wrong argcount to method `new'
 	* check order of EC_STACKPOP calls in lib.c
 	o fix exception handling in compiler (for basic.compile())
@@ -292,6 +296,10 @@ code_quality
 
 code_security
 {
+	o add an option to always zero object memory and the heap at
+	  cleanup time
+	o add an option to lock interpreter in main memory (see
+          mlockall(2), munlockall(2), _POSIX_MEMLOCK)
 }
 
 packaging

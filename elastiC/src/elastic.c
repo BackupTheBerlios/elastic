@@ -7,9 +7,9 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.6 2002/06/07 16:09:56 panta Exp $
+ *   $Id: elastic.c,v 1.7 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -269,6 +269,14 @@ EC_API EcBool EcInit( void )
 	PRIVATE(usertypes) = tc_userbase - 1;
 	PRIVATE(typespec)  = NULL;
 
+	PRIVATE(streamtype_next) = 0;
+	PRIVATE(streamspec)      = NULL;
+	PRIVATE(stream_stdin)  = NULL;									/* these need to be initialized before being usable! */
+	PRIVATE(stream_stdout) = NULL;
+	PRIVATE(stream_stderr) = NULL;
+
+	/* :TODO: register filestream and initialize default streams */
+
 	PRIVATE(package)   = NULL;
 	PRIVATE(npackages) = 0;
 
@@ -400,6 +408,15 @@ EC_API void EcCleanup( void )
 	PRIVATE(package)   = NULL;
 	PRIVATE(npackages) = 0;
 
+	for (i = 0; i < PRIVATE(streamtype_next); i++)
+	{
+		ec_free( STREAMDEF(i).name );
+		STREAMDEF(i).name = NULL;
+	}
+	ec_free( PRIVATE(streamspec) );
+	PRIVATE(streamspec)      = NULL;
+	PRIVATE(streamtype_next) = 0;
+
 	for (i = tc_userbase; i <= PRIVATE(usertypes); i++)
 	{
 		ec_free( USERTYPE(i).name );
@@ -411,6 +428,9 @@ EC_API void EcCleanup( void )
 	ec_free( PRIVATE(typespec) );
 	PRIVATE(typespec)  = NULL;
 	PRIVATE(usertypes) = 0;
+	PRIVATE(stream_stdin)  = NULL;									/* these are no more usable from now on */
+	PRIVATE(stream_stdout) = NULL;
+	PRIVATE(stream_stderr) = NULL;
 
 	EcTrueObject        = EC_NIL;
 	EcFalseObject       = EC_NIL;

@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.7 2002/06/07 17:34:05 panta Exp $
+ *   $Id: private.h,v 1.8 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -239,6 +239,19 @@ struct EcPrivateStruct
 	EcTypespec *typespec;
 
 	/* ==========================================================================================
+	 * S T R E A M   T Y P E S
+	 * ========================================================================================== */
+
+	ec_streamtype  streamtype_next;								/* next stream type index */
+	ec_streamdef  *streamspec;
+
+	/* standard streams */
+	ec_stream *stream_stdin;
+	ec_stream *stream_stdout;
+	ec_stream *stream_stderr;
+	/* :TODO: add a C level debug stream ? */
+
+	/* ==========================================================================================
 	 * M I S C
 	 * ========================================================================================== */
 
@@ -316,6 +329,7 @@ extern EcPrivate _ec_private;
 #define LPRIVATE(E) (lprivate->E)
 
 #define USERTYPE(code)	(PRIVATE(typespec)[(code)])
+#define STREAMDEF(code)	(PRIVATE(streamspec)[(code)])
 
 /* Qualified symbols */
 

@@ -7,7 +7,7 @@
  *
  *   Created: Sat Jan 22 16:05:38 MET 2000
  *
- *   $Id: compat.h,v 1.4 2002/06/06 17:27:57 panta Exp $
+ *   $Id: compat.h,v 1.5 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2000-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -115,10 +115,6 @@
 
 #ifndef PATH_MAX
 #define PATH_MAX 1024
-#endif
-
-#if ! defined(HAVE_SSIZE_T)
-typedef long ssize_t;
 #endif
 
 EC_BEGIN_DECLS

@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.8 2002/06/07 16:30:50 panta Exp $
+ *   $Id: posix_m.c,v 1.9 2002/06/11 15:09:00 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -78,6 +78,10 @@
  *   fcntl
  *   fdopen
  *   fileno
+ *
+ *   symlink
+ *   chroot
+ *   ioctl
  *
  *   [signal handling functions]
  *
@@ -223,7 +227,7 @@ static _ec_symbol2int sym2int_waitpid_options[] =
  * posix.* primitives
  * ======================================================================== */
 
-	/* files and directories */
+	/* section: files and directories */
 
 /* If PATH_MAX is not defined, look for MAXPATHLEN */
 #if !defined (PATH_MAX)
@@ -513,7 +517,7 @@ static EC_OBJ EcLibPosix_chown( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_CHOWN */
 }
 
-	/* file operations */
+	/* section: file operations */
 
 static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
 {
@@ -1010,9 +1014,9 @@ static EC_OBJ EcLibPosix_mkfifo( EC_OBJ stack, EcAny userdata )
 #endif /* HAVE_MKFIFO */
 }
 
-	/* process properties */
+	/* section: process properties */
 
-	/* process management */
+	/* section: process management */
 
 static EC_OBJ EcLibPosix_fork( EC_OBJ stack, EcAny userdata )
 {

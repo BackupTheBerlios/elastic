@@ -7,7 +7,7 @@
  *
  *   Created: Sat May 23 11:02:52 MEST 1998
  *
- *   $Id: object.h,v 1.1 2002/05/23 21:17:26 panta Exp $
+ *   $Id: object.h,v 1.2 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
@@ -190,7 +190,7 @@ struct _obj
 	EcWord flags;
 	/*          15              0
 	 *           ----------------
-	 *  flags   |CxxxxGVOOOORRRRM|
+	 *  flags   |CxxxPGVOOOORRRRM|
 	 *           ----------------
 	 * ----------------------------------------------------------------------
 	 * BIT     |   MEANING
@@ -201,6 +201,7 @@ struct _obj
 	 * 9    V  |   (tc_primitive) flag: procedure receives remaining parameters
 	 * 10   G  |   (tc_primitive) userdata is an elastiC object: needs memory
 	 *         |                  handling (GC, ...)
+	 * 11   P  |   (tc_primitive) userdata is a registered C pointer
 	 * -    x  |   reserved
 	 * 15   C  |   object is constant
 	 * ----------------------------------------------------------------------
@@ -529,7 +530,8 @@ extern EC_API EcInt tc_object;
 #define EC_REQ_MASK			0x001E
 #define EC_OPT_MASK			0x01E0
 #define EC_REM_MASK			0x0200*/
-#define EC_UDOBJ_MASK		0x0400
+#define EC_UDOBJ_MASK		0x0400								/* userdata is an elastiC object      */
+#define EC_UDREGP_MASK		0x0800								/* userdata is a registered C pointer */
 #define EC_CONST_MASK		0x8000
 
 #define EC_FLAGS(obj)				((obj)->flags)
@@ -543,6 +545,11 @@ extern EC_API EcInt tc_object;
 #define EC_CLEAR_UDOBJ(obj)			(EC_FLAGS(obj) &= (~EC_UDOBJ_MASK))
 #define EC_UDOBJ(obj, val)			((val) ? EC_SET_UDOBJ(obj) : EC_CLEAR_UDOBJ(obj))
 #define EC_UDOBJP(obj)				(EC_FLAGS(obj)  & EC_UDOBJ_MASK)
+
+#define EC_SET_UDREGP(obj)			(EC_FLAGS(obj) |= EC_UDREGP_MASK)
+#define EC_CLEAR_UDREGP(obj)		(EC_FLAGS(obj) &= (~EC_UDREGP_MASK))
+#define EC_UDREGP(obj, val)			((val) ? EC_SET_UDREGP(obj) : EC_CLEAR_UDREGP(obj))
+#define EC_UDREGPP(obj)				(EC_FLAGS(obj)  & EC_UDREGP_MASK)
 
 /* Future use ?
 #define EC_PRIM_REQ(obj)				((EC_FLAGS(obj)  & EC_REQ_MASK) >> 1)

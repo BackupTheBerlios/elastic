@@ -7,9 +7,9 @@
  *
  *   Created: Sat Dec 12 11:39:17 MET 1998
  *
- *   $Id: user.c,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: user.c,v 1.3 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
- *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
+ *    Copyright (C) 1998-2002 Marco Pantaleoni. All rights reserved.
  *
  *  The contents of this file are subject to the elastiC License version 1.0
  *  (the "elastiC License"); you may not use this file except in compliance
@@ -33,8 +33,6 @@
  *  limitations under the elastiC License.
  * ==========================================================================
  */
-
-#include <stdlib.h>
 
 #include "basic.h"
 #include "debug.h"
@@ -65,21 +63,21 @@ EC_API EcInt EcAddType( EcTypespec *newtype )
 
 	newtypecode = PRIVATE(usertypes) + 1;
 
-	newspec = ec_realloc( PRIVATE(typespec), (newtypecode + 1) * sizeof(struct EcTypespec) );
+	newspec = ec_realloc( PRIVATE(typespec), (newtypecode + 1) * sizeof(struct EcTypespec_struct) );
 	if (! newspec)
 		return 0;
 
 	newtype->type = newtypecode;
 	PRIVATE(typespec) = newspec;
 
-	memcpy( &USERTYPE(newtypecode), newtype, sizeof(struct EcTypespec) );
+	memcpy( &USERTYPE(newtypecode), newtype, sizeof(struct EcTypespec_struct) );
 	USERTYPE(newtypecode).name = NULL;
 	if (newtype->name)
 	{
 		USERTYPE(newtypecode).name = ec_stringdup( newtype->name );
 		if (! USERTYPE(newtypecode).name)
 		{
-			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec) );
+			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec_struct) );
 			newtype->type = 0;
 			return 0;
 		}
@@ -89,7 +87,7 @@ EC_API EcInt EcAddType( EcTypespec *newtype )
 		USERTYPE(newtypecode).sequence_cb = ec_malloc( sizeof(EcSequenceCallbacks) );
 		if (! USERTYPE(newtypecode).sequence_cb)
 		{
-			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec) );
+			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec_struct) );
 			newtype->type = 0;
 			return 0;
 		}
@@ -101,7 +99,7 @@ EC_API EcInt EcAddType( EcTypespec *newtype )
 		if (! USERTYPE(newtypecode).numeric_cb)
 		{
 			if (USERTYPE(newtypecode).sequence_cb) ec_free( USERTYPE(newtypecode).sequence_cb );
-			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec) );
+			memset( &USERTYPE(newtypecode), 0x00, sizeof(struct EcTypespec_struct) );
 			newtype->type = 0;
 			return 0;
 		}

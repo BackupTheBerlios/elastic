@@ -7,7 +7,7 @@
  *
  *   Created: 28 Mar 1997
  *
- *   $Id: basic.h,v 1.2 2002/05/25 19:37:44 panta Exp $
+ *   $Id: basic.h,v 1.3 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1997-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -88,9 +88,16 @@
 
 /* ======================================================================== */
 
-
+#if HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+#if HAVE_ERRNO_H
 #include <errno.h>
+#endif
+
+#if ! defined(HAVE_SSIZE_T)
+typedef long ssize_t;
+#endif
 
 #include <elastic/tsize.h>
 
@@ -229,6 +236,49 @@ typedef unsigned long EcPointerInteger;
 #endif
 
 #endif /* AUTO */
+
+typedef enum
+{
+	ec_type_none,												/* no type        */
+	ec_type_char,												/* char           */
+	ec_type_schar,												/* signed char    */
+	ec_type_uchar,												/* unsigned char  */
+	ec_type_short,												/* short          */
+	ec_type_ushort,												/* unsigned short */
+	ec_type_int,												/* int            */
+	ec_type_uint,												/* unsigned int   */
+	ec_type_long,												/* long           */
+	ec_type_ulong,												/* unsigned long  */
+	ec_type_quad,												/* quad_t         */
+	ec_type_uquad,												/* uquad_t        */
+
+	ec_type_int8,												/* 8 bit signed integer    */
+	ec_type_uint8,												/* 8 bit unsigned integer  */
+	ec_type_int16,												/* 16 bit signed integer   */
+	ec_type_uint16,												/* 16 bit unsigned integer */
+	ec_type_int32,												/* 32 bit signed integer   */
+	ec_type_uint32,												/* 32 bit unsigned integer */
+	ec_type_int64,												/* 64 bit signed integer   */
+	ec_type_uint64,												/* 64 bit unsigned integer */
+
+	ec_type_float,												/* float                   */
+	ec_type_double,												/* double                  */
+	ec_type_longdouble,											/* long double             */
+
+	ec_type_charp,												/* char *                  */
+
+	ec_type_ecbool,												/* EcBool                  */
+	ec_type_ecchar,												/* EcChar                  */
+	ec_type_ecint,												/* EcInt                   */
+	ec_type_ecuint,												/* EcUInt                  */
+	ec_type_ecfloat,											/* EcFloat                 */
+	ec_type_ecany,												/* EcAny                   */
+	ec_type_ecpointerinteger,									/* EcPointerInteger        */
+	ec_type_ecstring,											/* ec_string *             */
+	ec_type_ecobj,												/* EC_OBJ                  */
+
+	ec_type_voidp												/* void *                  */
+} ec_type;
 
 #define EcFalse 0
 #define EcTrue  1

@@ -7,7 +7,7 @@
  *
  *   Created: Sat Dec 12 11:39:17 MET 1998
  *
- *   $Id: user.h,v 1.1 2002/05/23 21:17:41 panta Exp $
+ *   $Id: user.h,v 1.2 2002/06/11 15:08:59 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -109,7 +109,7 @@ typedef struct EcNumericCallbacks
 	ec_unaryop_fcn true_fcn;
 } EcNumericCallbacks;
 
-typedef struct EcTypespec
+typedef struct EcTypespec_struct
 {
 	EcInt  type;
 	char  *name;
