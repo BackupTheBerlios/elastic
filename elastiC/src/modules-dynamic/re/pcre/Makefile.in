@@ -174,7 +174,7 @@ am__quote = @am__quote@
 install_sh = @install_sh@
 
 EXTRA_DIST = AUTHORS COPYING ChangeLog INSTALL LICENCE NEWS NON-UNIX-USE README \
-	Makefile-libtool.am Makefile.in.orig configure.in configure \
+	Makefile-libtool.am Makefile.in.original configure.in configure \
 	pcre.in pcre.h pcre-config.in pcre-config RunTest.in RunTest dll.mk \
 	perltest perltest8 pcregrep.c pcredemo.c
 
@@ -254,8 +254,8 @@ am_libpcre_a_OBJECTS = $(am__objects_1)
 libpcre_a_OBJECTS = $(am_libpcre_a_OBJECTS)
 libpcreposix_a_AR = $(AR) cru
 libpcreposix_a_LIBADD =
-am__objects_7 = pcreposix.$(OBJEXT)
-am_libpcreposix_a_OBJECTS = $(am__objects_7)
+am__objects_8 = pcreposix.$(OBJEXT)
+am_libpcreposix_a_OBJECTS = $(am__objects_8)
 libpcreposix_a_OBJECTS = $(am_libpcreposix_a_OBJECTS)
 @CROSSCOMPILING_TRUE@noinst_PROGRAMS =
 @CROSSCOMPILING_FALSE@noinst_PROGRAMS = pcretest$(EXEEXT) \
@@ -530,9 +530,9 @@ uninstall-am: uninstall-info-am
 
 dist-hook:
 	mkdir -p $(distdir)/doc
-	cp -p $(srcdir)/doc/* $(distdir)/doc
+	cp -a $(srcdir)/doc/* $(distdir)/doc
 	mkdir -p $(distdir)/testdata
-	cp -p $(srcdir)/testdata/* $(distdir)/testdata
+	cp -a $(srcdir)/testdata/* $(distdir)/testdata
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
