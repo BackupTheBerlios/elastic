@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.6 2002/06/07 10:17:48 panta Exp $
+ *   $Id: posix_m.c,v 1.7 2002/06/07 16:09:56 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -69,9 +69,23 @@
 /*
  * MISSING:
  *
+ *   utime
+ *   opendir / readdir / closedir / rewinddir
+ *
+ *   fcntl
+ *   fdopen
+ *   fileno
+ *
+ *   [signal handling functions]
+ *
+ *   [process properties functions]
+ *   [process groups and job control]
+ *
  *   mknod
  *   truncate
  *   mount
+ *
+ *   system
  */
 
 #if HAVE_UNISTD_H
@@ -206,41 +220,6 @@ static _ec_symbol2int sym2int_waitpid_options[] =
 	{ 0, 0 }
 };
 
-static EcUInt posix2symbol( int posix_errnum )
-{
-	switch (posix_errnum)
-	{
-	case 0:
-		return EcInternSymbol("no-error");
-#include "errno_switch.c.incl"
-	default :
-		return EcInternSymbol("unknown");
-	}
-}
-
-static EC_OBJ posix2exception( int posix_errnum, EC_OBJ ioObject, const char *msg )
-{
-	EcUInt    errSym;
-	ec_string ds;
-	EC_OBJ    exc;
-
-	errSym = posix2symbol( posix_errnum );
-
-#if HAVE_STRERROR
-	if (posix_errnum != 0)
-	{
-		ec_string_init( &ds, NULL );
-		ec_sprintf( &ds, "%s: %s", msg, strerror( posix_errnum ) );
-		exc = EcIOError( ioObject, errSym, ec_strdata( &ds ) );
-		ec_string_cleanup( &ds );
-	} else
-		exc = EcIOError( ioObject, errSym, msg );
-#else
-	exc = EcIOError( ioObject, errSym, msg );
-#endif
-	return exc;
-}
-
 /* ========================================================================
  * posix.* primitives
  * ======================================================================== */
@@ -300,7 +279,7 @@ static EC_OBJ EcLibPosix_getcwd( EC_OBJ stack, EcAny userdata )
 	} while ((rv == NULL) && (errno == ERANGE));
 
 	if (rv == NULL)
-		return posix2exception( errno, EC_NIL, "in posix.getcwd" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.getcwd" );
 	return EcMakeString( buf, 0 );
 #else
 	return EcUnimplementedError( "POSIX `getcwd' function not available" );
@@ -340,7 +319,7 @@ static EC_OBJ EcLibPosix_mkdir( EC_OBJ stack, EcAny userdata )
 
 	rv = mkdir( pathname, mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.mkdir" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.mkdir" );
 	else
 		return EcTrueObject;
 #else
@@ -364,7 +343,7 @@ static EC_OBJ EcLibPosix_rmdir( EC_OBJ stack, EcAny userdata )
 
 	rv = rmdir( pathname );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.rmdir" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.rmdir" );
 	else
 		return EcTrueObject;
 #else
@@ -388,7 +367,7 @@ static EC_OBJ EcLibPosix_chdir( EC_OBJ stack, EcAny userdata )
 
 	rv = chdir( path );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.chdir" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.chdir" );
 	else
 		return EcTrueObject;
 #else
@@ -412,7 +391,7 @@ static EC_OBJ EcLibPosix_link( EC_OBJ stack, EcAny userdata )
 
 	rv = link( oldpath, newpath );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.link" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.link" );
 	else
 		return EcTrueObject;
 #else
@@ -436,7 +415,7 @@ static EC_OBJ EcLibPosix_unlink( EC_OBJ stack, EcAny userdata )
 
 	rv = unlink( pathname );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.unlink" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.unlink" );
 	else
 		return EcTrueObject;
 #else
@@ -460,7 +439,7 @@ static EC_OBJ EcLibPosix_rename( EC_OBJ stack, EcAny userdata )
 
 	rv = rename( oldpath, newpath );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.rename" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.rename" );
 	else
 		return EcTrueObject;
 #else
@@ -497,7 +476,7 @@ static EC_OBJ EcLibPosix_chmod( EC_OBJ stack, EcAny userdata )
 
 	rv = chmod( path, mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.chmod" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.chmod" );
 	else
 		return EcTrueObject;
 #else
@@ -527,7 +506,7 @@ static EC_OBJ EcLibPosix_chown( EC_OBJ stack, EcAny userdata )
 
 	rv = chown( path, owner, group );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.chown" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.chown" );
 	else
 		return EcTrueObject;
 #else
@@ -558,7 +537,7 @@ static EC_OBJ EcLibPosix_access( EC_OBJ stack, EcAny userdata )
 
 	rv = access( pathname, (int) mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.access" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.access" );
 	else
 		return EcTrueObject;
 #else
@@ -610,7 +589,7 @@ static EC_OBJ EcLibPosix_open( EC_OBJ stack, EcAny userdata )
 	else
 		rv = open( pathname, flags );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.open" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.open" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -651,13 +630,13 @@ static EC_OBJ EcLibPosix_creat( EC_OBJ stack, EcAny userdata )
 
 	rv = creat( pathname, mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.creat" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.creat" );
 	else
 		return EcMakeInt( rv );
 #elif HAVE_OPEN
 	rv = open( pathname, O_CREAT, mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.creat" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.creat" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -684,7 +663,7 @@ static EC_OBJ EcLibPosix_close( EC_OBJ stack, EcAny userdata )
 
 	rv = close( fd );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.close" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.close" );
 	else
 		return EcTrueObject;
 #else
@@ -714,7 +693,7 @@ static EC_OBJ EcLibPosix_read( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(buf)) return buf;
 	rv = read( fd, EC_STRDATA(buf), count );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.read" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.read" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -742,7 +721,7 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 
 	rv = write( fd, EC_STRDATA(buf), EC_STRLEN(buf) );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.write" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.write" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -797,6 +776,32 @@ static EC_OBJ stat2hash( const char *funcname, struct stat *buf )
 	return stat_h;
 }
 
+static EC_OBJ EcLibPosix_stat( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int stat(const char *file_name, struct stat *buf) */
+
+#if HAVE_STAT
+	const char *file_name;
+	struct stat buf;
+	int         rv;
+	EC_OBJ      res;
+
+	res = EcParseStackFunction( "posix.stat", TRUE, stack, "s",
+								&file_name );
+	if (EC_ERRORP(res))
+		return res;
+
+	memset( &buf, 0x00, sizeof(struct stat) );
+	rv = stat( file_name, &buf );
+	if (rv < 0)
+		return _ec_errno2exception( errno, EC_NIL, "in posix.stat" );
+
+	return stat2hash( "posix.stat", &buf );
+#else
+	return EcUnimplementedError( "POSIX `stat' function not available" );
+#endif /* HAVE_STAT */
+}
+
 static EC_OBJ EcLibPosix_fstat( EC_OBJ stack, EcAny userdata )
 {
 	/* POSIX function: int fstat(int filedes, struct stat *buf) */
@@ -818,12 +823,38 @@ static EC_OBJ EcLibPosix_fstat( EC_OBJ stack, EcAny userdata )
 	memset( &buf, 0x00, sizeof(struct stat) );
 	rv = fstat( filedes, &buf );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.fstat" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.fstat" );
 
 	return stat2hash( "posix.fstat", &buf );
 #else
 	return EcUnimplementedError( "POSIX `fstat' function not available" );
 #endif /* HAVE_FSTAT */
+}
+
+static EC_OBJ EcLibPosix_lstat( EC_OBJ stack, EcAny userdata )
+{
+	/* POSIX function: int lstat(const char *file_name, struct stat *buf) */
+
+#if HAVE_LSTAT
+	const char *file_name;
+	struct stat buf;
+	int         rv;
+	EC_OBJ      res;
+
+	res = EcParseStackFunction( "posix.lstat", TRUE, stack, "s",
+								&file_name );
+	if (EC_ERRORP(res))
+		return res;
+
+	memset( &buf, 0x00, sizeof(struct stat) );
+	rv = lstat( file_name, &buf );
+	if (rv < 0)
+		return _ec_errno2exception( errno, EC_NIL, "in posix.lstat" );
+
+	return stat2hash( "posix.lstat", &buf );
+#else
+	return EcUnimplementedError( "POSIX `lstat' function not available" );
+#endif /* HAVE_LSTAT */
 }
 
 static EC_OBJ EcLibPosix_lseek( EC_OBJ stack, EcAny userdata )
@@ -856,7 +887,7 @@ static EC_OBJ EcLibPosix_lseek( EC_OBJ stack, EcAny userdata )
 
 	rv = lseek( fildes, offset, whence );
 	if (rv == (off_t)-1)
-		return posix2exception( errno, EC_NIL, "in posix.lseek" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.lseek" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -883,7 +914,7 @@ static EC_OBJ EcLibPosix_dup( EC_OBJ stack, EcAny userdata )
 
 	newfd = dup( oldfd );
 	if (newfd < 0)
-		return posix2exception( errno, EC_NIL, "in posix.dup" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.dup" );
 	else
 		return EcMakeInt( newfd );
 #else
@@ -911,7 +942,7 @@ static EC_OBJ EcLibPosix_dup2( EC_OBJ stack, EcAny userdata )
 
 	newfd_r = dup2( oldfd, newfd );
 	if (newfd_r < 0)
-		return posix2exception( errno, EC_NIL, "in posix.dup2" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.dup2" );
 	else
 		return EcMakeInt( newfd_r );
 #else
@@ -931,7 +962,7 @@ static EC_OBJ EcLibPosix_pipe( EC_OBJ stack, EcAny userdata )
 
 	rv = pipe( filedes );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.pipe" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.pipe" );
 	else
 		return EcMakeArrayInit( 2, EcMakeInt( filedes[0] ), EcMakeInt( filedes[1] ) );
 #else
@@ -972,7 +1003,7 @@ static EC_OBJ EcLibPosix_mkfifo( EC_OBJ stack, EcAny userdata )
 
 	rv = mkfifo( pathname, mode );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.mkfifo" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.mkfifo" );
 	else
 		return EcTrueObject;
 #else
@@ -995,7 +1026,7 @@ static EC_OBJ EcLibPosix_fork( EC_OBJ stack, EcAny userdata )
 
 	rv = fork();
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.fork" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.fork" );
 	else
 		return EcMakeInt( rv );
 #else
@@ -1048,7 +1079,7 @@ static EC_OBJ EcLibPosix_execv( EC_OBJ stack, EcAny userdata )
 
 	rv = execv(pathname, argv);
 	/* we shouldn't return if everything worked */
-	return posix2exception( errno, EC_NIL, "in posix.execv" );
+	return _ec_errno2exception( errno, EC_NIL, "in posix.execv" );
 #else
 	return EcUnimplementedError( "POSIX `execv' function not available" );
 #endif /* HAVE_EXECV */
@@ -1127,7 +1158,7 @@ static EC_OBJ EcLibPosix_execve( EC_OBJ stack, EcAny userdata )
 
 	rv = execve(pathname, argv, envp);
 	/* we shouldn't return if everything worked */
-	return posix2exception( errno, EC_NIL, "in posix.execve" );
+	return _ec_errno2exception( errno, EC_NIL, "in posix.execve" );
 #else
 	return EcUnimplementedError( "POSIX `execve' function not available" );
 #endif /* HAVE_EXECVE */
@@ -1178,7 +1209,7 @@ static EC_OBJ EcLibPosix_execvp( EC_OBJ stack, EcAny userdata )
 
 	rv = execvp(filename, argv);
 	/* we shouldn't return if everything worked */
-	return posix2exception( errno, EC_NIL, "in posix.execvp" );
+	return _ec_errno2exception( errno, EC_NIL, "in posix.execvp" );
 #else
 	return EcUnimplementedError( "POSIX `execvp' function not available" );
 #endif /* HAVE_EXECVP */
@@ -1213,7 +1244,7 @@ static EC_OBJ EcLibPosix_wait( EC_OBJ stack, EcAny userdata )
 
 	rv = wait( &status );
 	if (rv <= 0)
-		return posix2exception( errno, EC_NIL, "in posix.wait" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.wait" );
 
 	status_h = waitstatus2hash( status );
 	if (EC_ERRORP(status_h)) return status_h;
@@ -1252,7 +1283,7 @@ static EC_OBJ EcLibPosix_waitpid( EC_OBJ stack, EcAny userdata )
 
 	rv = waitpid( pid, &status, options );
 	if (rv <= 0)
-		return posix2exception( errno, EC_NIL, "in posix.waitpid" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.waitpid" );
 
 	status_h = waitstatus2hash( status );
 	if (EC_ERRORP(status_h)) return status_h;
@@ -1283,7 +1314,7 @@ static EC_OBJ EcLibPosix__exit( EC_OBJ stack, EcAny userdata )
 
 	_exit( status );
 	/* _exit never returns ! */
-	return posix2exception( errno, EC_NIL, "in posix._exit" );
+	return _ec_errno2exception( errno, EC_NIL, "in posix._exit" );
 #else
 	return EcUnimplementedError( "POSIX `_exit' function not available" );
 #endif /* HAVE__EXIT */
@@ -1310,7 +1341,7 @@ static EC_OBJ EcLibPosix_kill( EC_OBJ stack, EcAny userdata )
 
 	rv = kill( pid, sig );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.kill" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.kill" );
 	else
 		return EcTrueObject;
 #else
@@ -1351,7 +1382,7 @@ static EC_OBJ EcLibPosix_pause( EC_OBJ stack, EcAny userdata )
 	EC_CHECKNARGS_F("posix.pause", 0);
 
 	rv = pause();
-	return posix2exception( errno, EC_NIL, "in posix.fork" );
+	return _ec_errno2exception( errno, EC_NIL, "in posix.fork" );
 #else
 	return EcUnimplementedError( "POSIX `pause' function not available" );
 #endif /* HAVE_PAUSE */
@@ -1399,7 +1430,7 @@ static EC_OBJ EcLibPosix_setuid( EC_OBJ stack, EcAny userdata )
 
 	rv = setuid( uid );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.setuid" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.setuid" );
 	else
 		return EcTrueObject;
 #else
@@ -1426,7 +1457,7 @@ static EC_OBJ EcLibPosix_setgid( EC_OBJ stack, EcAny userdata )
 
 	rv = setgid( gid );
 	if (rv < 0)
-		return posix2exception( errno, EC_NIL, "in posix.setgid" );
+		return _ec_errno2exception( errno, EC_NIL, "in posix.setgid" );
 	else
 		return EcTrueObject;
 #else
@@ -1469,7 +1500,9 @@ EC_API EC_OBJ ec_posix_init( void )
 	EcAddPrimitive( "posix.close",      EcLibPosix_close );
 	EcAddPrimitive( "posix.read",       EcLibPosix_read );
 	EcAddPrimitive( "posix.write",      EcLibPosix_write );
+	EcAddPrimitive( "posix.stat",       EcLibPosix_stat );
 	EcAddPrimitive( "posix.fstat",      EcLibPosix_fstat );
+	EcAddPrimitive( "posix.lstat",      EcLibPosix_lstat );
 	EcAddPrimitive( "posix.lseek",      EcLibPosix_lseek );
 	EcAddPrimitive( "posix.dup",        EcLibPosix_dup );
 	EcAddPrimitive( "posix.dup2",       EcLibPosix_dup2 );
@@ -1569,6 +1602,14 @@ EC_API EC_OBJ ec_posix_init( void )
 	sym2int_access_mode[i++].value    = 0;
 #endif
 	ASSERT( i == 4 );
+	i = 0;
+	while (sym2int_access_mode[i].symbolid > 0)
+	{
+		EcPackageVariable( pkg, EcSymbolAt( sym2int_access_mode[i].symbolid ),
+						   EcMakeInt( sym2int_access_mode[i].value ),
+						   TRUE, TRUE );
+		i++;
+	}
 
 	i = 0;
 	sym2int_open_flags[i].symbolid   = s_O_RDONLY;
@@ -1668,6 +1709,14 @@ EC_API EC_OBJ ec_posix_init( void )
 	sym2int_open_flags[i++].value    = 0;
 #endif
 	ASSERT( i == 16 );
+	i = 0;
+	while (sym2int_open_flags[i].symbolid > 0)
+	{
+		EcPackageVariable( pkg, EcSymbolAt( sym2int_open_flags[i].symbolid ),
+						   EcMakeInt( sym2int_open_flags[i].value ),
+						   TRUE, TRUE );
+		i++;
+	}
 
 	i = 0;
 	sym2int_open_mode[i].symbolid   = s_S_IRWXU;
@@ -1949,6 +1998,14 @@ EC_API EC_OBJ ec_posix_init( void )
 	sym2int_seek_whence[i++].value  = 2;
 #endif
 	ASSERT( i == 3 );
+	i = 0;
+	while (sym2int_seek_whence[i].symbolid > 0)
+	{
+		EcPackageVariable( pkg, EcSymbolAt( sym2int_seek_whence[i].symbolid ),
+						   EcMakeInt( sym2int_seek_whence[i].value ),
+						   TRUE, TRUE );
+		i++;
+	}
 
 	i = 0;
 	sym2int_waitpid_options[i].symbolid = s_WNOHANG;
@@ -1964,6 +2021,14 @@ EC_API EC_OBJ ec_posix_init( void )
 	sym2int_waitpid_options[i++].value  = 0;
 #endif
 	ASSERT( i == 2 );
+	i = 0;
+	while (sym2int_waitpid_options[i].symbolid > 0)
+	{
+		EcPackageVariable( pkg, EcSymbolAt( sym2int_waitpid_options[i].symbolid ),
+						   EcMakeInt( sym2int_waitpid_options[i].value ),
+						   TRUE, TRUE );
+		i++;
+	}
 
 #endif /* HAVE_UNISTD_H */
 
@@ -2062,8 +2127,20 @@ EC_API EC_OBJ ec_posix_init( void )
 #else
 		       EcFalseObject );
 #endif
+	EcHashSet( feature, EcMakeSymbol("stat"),
+#if HAVE_UNISTD_H && HAVE_STAT
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
 	EcHashSet( feature, EcMakeSymbol("fstat"),
 #if HAVE_UNISTD_H && HAVE_FSTAT
+		       EcTrueObject );
+#else
+		       EcFalseObject );
+#endif
+	EcHashSet( feature, EcMakeSymbol("lstat"),
+#if HAVE_UNISTD_H && HAVE_LSTAT
 		       EcTrueObject );
 #else
 		       EcFalseObject );
@@ -2177,7 +2254,7 @@ EC_API EC_OBJ ec_posix_init( void )
 		       EcFalseObject );
 #endif
 
-	EcPackageVariable( pkg, "has",
+	EcPackageVariable( pkg, "implements",
 					   feature,
 					   TRUE, TRUE );
 

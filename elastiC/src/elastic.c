@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 19:15:36 MEST 1998
  *
- *   $Id: elastic.c,v 1.5 2002/06/07 10:17:48 panta Exp $
+ *   $Id: elastic.c,v 1.6 2002/06/07 16:09:56 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -45,6 +45,7 @@
 #include "elastic.h"
 #include "ast.h"
 #include "bitstring.h"
+#include "compat.h"
 #include "private.h"
 
 #include "stackrecycle.h"
@@ -1371,6 +1372,43 @@ EC_OBJ _ec_mask2sequence( const char *func_name, _ec_symbol2int *map,
 	}
 
 	return res;
+}
+
+/* errno to IOError */
+
+static EcUInt posix2symbol( int posix_errnum )
+{
+	switch (posix_errnum)
+	{
+	case 0:
+		return EcInternSymbol("no-error");
+#include "errno_switch.c.incl"
+	default :
+		return EcInternSymbol("unknown");
+	}
+}
+
+EC_OBJ _ec_errno2exception( int posix_errnum, EC_OBJ ioObject, const char *msg )
+{
+	EcUInt    errSym;
+	ec_string ds;
+	EC_OBJ    exc;
+
+	errSym = posix2symbol( posix_errnum );
+
+#if HAVE_STRERROR
+	if (posix_errnum != 0)
+	{
+		ec_string_init( &ds, NULL );
+		ec_sprintf( &ds, "%s: %s", msg, strerror( posix_errnum ) );
+		exc = EcIOError( ioObject, errSym, ec_strdata( &ds ) );
+		ec_string_cleanup( &ds );
+	} else
+		exc = EcIOError( ioObject, errSym, msg );
+#else
+	exc = EcIOError( ioObject, errSym, msg );
+#endif
+	return exc;
 }
 
 /* Debugging */

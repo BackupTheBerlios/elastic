@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.h,v 1.1 2002/05/23 21:17:04 panta Exp $
+ *   $Id: file.h,v 1.2 2002/06/07 16:09:56 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -50,9 +50,11 @@ extern EC_API EcInt tc_file;
  * M A C R O S
  * ======================================================================== */
 
-#define EC_FILEP(obj)			(EC_TYPEP(obj,tc_file))
-#define EC_FILEH(obj)			((FILE *) EC_USER(obj))
-#define EC_FILEH_SET(obj,val)	do { EC_USER(obj) = (FILE *)(val); } while (0)
+#define EC_FILEP(obj)					(EC_TYPEP(obj,tc_file))
+#define EC_FILEH(obj)					((FILE *) EC_USER(obj))
+#define EC_FILEH_SET(obj,val)			do { EC_USER(obj) = (FILE *)(val); } while (0)
+#define EC_FILE_POPENED(obj)			(EC_USER1(obj, EcBool))
+#define EC_FILE_POPENED_SET(obj,val)	EC_USER1_SET(obj, EcBool, val)
 
 
 /* ========================================================================
@@ -61,15 +63,17 @@ extern EC_API EcInt tc_file;
 
 /* C API */
 
-EC_API EC_OBJ EcMakeFile( FILE *fh );
+EC_API EC_OBJ EcMakeFile( FILE *fh, EcBool popened );
 
 EC_API EC_OBJ EcLibFileOpen( const char *name, const char *mode );
 EC_API EC_OBJ EcLibFileFDOpen( int filedes, const char *mode );
-EC_API EcBool EcLibFileClose( EC_OBJ obj );
+EC_API EC_OBJ EcLibFilePOpen( const char *command, const char *type );
+EC_API EC_OBJ EcLibFileClose( EC_OBJ obj );
 
 /* elastiC API */
 
 EC_API EC_OBJ EcLibFile_Open( EC_OBJ stack, EcAny userdata );
+EC_API EC_OBJ EcLibFile_POpen( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibFile_Close( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibFile_Mode( EC_OBJ stack, EcAny userdata );
 EC_API EC_OBJ EcLibFile_Eof( EC_OBJ stack, EcAny userdata );

@@ -7,7 +7,7 @@
  *
  *   Created: Wed Dec 30 16:05:48 MET 1998
  *
- *   $Id: file.c,v 1.2 2002/05/25 19:37:45 panta Exp $
+ *   $Id: file.c,v 1.3 2002/06/07 16:09:56 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2000 Marco Pantaleoni. All rights reserved.
  *
@@ -57,11 +57,13 @@ static EcUInt s_start = 0, s_current = 0, s_end = 0;
 
 /* C API */
 
-EC_API EC_OBJ EcMakeFile( FILE *fh )
+EC_API EC_OBJ EcMakeFile( FILE *fh, EcBool popened )
 {
 	EC_OBJ res;
 
 	res = EcMakeUser( tc_file, fh );
+	if (EC_ERRORP(res)) return res;
+	EC_FILE_POPENED_SET(res, popened);
 	return res;
 }
 
@@ -77,7 +79,7 @@ EC_API EC_OBJ EcLibFileOpen( const char *name, const char *mode )
 		ASSERT( FALSE );
 		return Ec_ERROR;
 	}
-	return EcMakeFile( fh );
+	return EcMakeFile( fh, FALSE );
 }
 
 EC_API EC_OBJ EcLibFileFDOpen( int filedes, const char *mode )
@@ -91,28 +93,63 @@ EC_API EC_OBJ EcLibFileFDOpen( int filedes, const char *mode )
 		ASSERT( FALSE );
 		return Ec_ERROR;
 	}
-	return EcMakeFile( fh );
+	return EcMakeFile( fh, FALSE );
 }
 
-EC_API EcBool EcLibFileClose( EC_OBJ obj )
+EC_API EC_OBJ EcLibFilePOpen( const char *command, const char *type )
+{
+#if HAVE_POPEN
+	FILE *fh;
+
+	fflush(stdout);
+	fflush(stdin);
+	fh = popen( command, type );
+	if (! fh)
+	{
+		/* TODO: Throw an exception */
+		ASSERT( FALSE );
+		return Ec_ERROR;
+	}
+	return EcMakeFile( fh, TRUE );
+#else
+	return EcUnimplementedError( "`popen' function not available" );
+#endif
+}
+
+EC_API EC_OBJ EcLibFileClose( EC_OBJ obj )
 {
 	if (! EC_FILEP(obj))
 	{
 		/* TODO: Throw an exception */
 		ASSERT( FALSE );
-		return FALSE;
+		return EcUnimplementedError( "unimplemented exception" );
 	}
 
 	if (! EC_FILEH(obj))
 	{
 		/* TODO: Throw an exception */
 		ASSERT( FALSE );
-		return FALSE;
+		return EcUnimplementedError( "unimplemented exception" );
 	}
 
-	fclose( EC_FILEH(obj) );
+	if (EC_FILE_POPENED(obj))
+	{
+#if HAVE_PCLOSE
+		int rv;
+		rv = pclose( EC_FILEH(obj) );
+		EC_FILEH_SET(obj, NULL);
+		EC_FILE_POPENED_SET(obj, NULL);
+		if (rv == -1)
+			return _ec_errno2exception( errno, obj, "in pclose" );
+		return EcMakeInt( rv );
+#else
+		return EcUnimplementedError( "`pclose' function not available" );
+#endif
+	} else
+		fclose( EC_FILEH(obj) );
 	EC_FILEH_SET(obj, NULL);
-	return TRUE;
+	EC_FILE_POPENED_SET(obj, NULL);
+	return EcTrueObject;
 }
 
 /* elastiC API */
@@ -130,6 +167,19 @@ EC_API EC_OBJ EcLibFile_Open( EC_OBJ stack, EcAny userdata )
 	return EcLibFileOpen( name, mode );
 }
 
+EC_API EC_OBJ EcLibFile_POpen( EC_OBJ stack, EcAny userdata )
+{
+	char   *command;
+	char   *type = "r";
+	EC_OBJ  res;
+
+	res = EcParseStackFunction( "file.popen", TRUE, stack, "s|s", &command, &type );
+	if (EC_ERRORP(res))
+		return res;
+
+	return EcLibFilePOpen( command, type );
+}
+
 EC_API EC_OBJ EcLibFile_Close( EC_OBJ stack, EcAny userdata )
 {
 	EC_OBJ obj;
@@ -139,12 +189,7 @@ EC_API EC_OBJ EcLibFile_Close( EC_OBJ stack, EcAny userdata )
 	if (EC_ERRORP(res))
 		return res;
 
-	if (EcLibFileClose( obj ))
-		return obj;
-
-	/* TODO: Throw an exception */
-	ASSERT( FALSE );
-	return Ec_ERROR;
+	return EcLibFileClose( obj );
 }
 
 EC_API EC_OBJ EcLibFile_Mode( EC_OBJ stack, EcAny userdata )
@@ -584,7 +629,7 @@ static EC_OBJ file_copy( EC_OBJ obj, EcCopyType type )
 {
 	ASSERT( EC_FILEP(obj) );
 
-	return EcMakeFile( EC_FILEH(obj) );
+	return EcMakeFile( EC_FILEH(obj), EC_FILE_POPENED(obj) );
 }
 
 static void file_mark( EC_OBJ obj )
@@ -601,8 +646,14 @@ static void file_free( EC_OBJ obj )
 		if ((EC_FILEH(obj) != stdin)  &&
 			(EC_FILEH(obj) != stdout) &&
 			(EC_FILEH(obj) != stderr))
-			fclose( EC_FILEH(obj) );
+		{
+			if (EC_FILE_POPENED(obj))
+				pclose( EC_FILEH(obj) );
+			else
+				fclose( EC_FILEH(obj) );
+		}
 		EC_FILEH_SET(obj, NULL);
+		EC_FILE_POPENED_SET(obj, FALSE);
 	}
 }
 
@@ -611,7 +662,9 @@ static EcInt file_print( ec_string *str, EC_OBJ obj, EcBool detailed )
 	ASSERT( EC_FILEP(obj) );
 
 	if (detailed)
-		return ec_sprintf( str, "<file %d>", EC_FILEH(obj) ? fileno( EC_FILEH(obj) ) : -1 );
+		return ec_sprintf( str, "<file %d%s>",
+						   EC_FILEH(obj) ? fileno( EC_FILEH(obj) ) : -1,
+						   EC_FILE_POPENED(obj) ? " (pipe)" : "" );
 	else
 		return ec_sprintf( str, "<file>" );
 }
@@ -652,6 +705,7 @@ EcBool _ec_file_init( void )
 
 	pkg = EcPackageIntroduce( "file" );
 	EcAddPrimitive( "file.open",		EcLibFile_Open );
+	EcAddPrimitive( "file.popen",		EcLibFile_POpen );
 	EcAddPrimitive( "file.close",		EcLibFile_Close );
 	EcAddPrimitive( "file.mode",		EcLibFile_Mode );
 	EcAddPrimitive( "file.eof",			EcLibFile_Eof );
@@ -679,9 +733,9 @@ EcBool _ec_file_init( void )
 
 	/* Variables */
 
-	EcPackageVariable( EC_NIL, "file.stdin",  EcMakeFile( stdin  ), TRUE, FALSE );
-	EcPackageVariable( EC_NIL, "file.stdout", EcMakeFile( stdout ), TRUE, FALSE );
-	EcPackageVariable( EC_NIL, "file.stderr", EcMakeFile( stderr ), TRUE, FALSE );
+	EcPackageVariable( EC_NIL, "file.stdin",  EcMakeFile( stdin,  FALSE ), TRUE, FALSE );
+	EcPackageVariable( EC_NIL, "file.stdout", EcMakeFile( stdout, FALSE ), TRUE, FALSE );
+	EcPackageVariable( EC_NIL, "file.stderr", EcMakeFile( stderr, FALSE ), TRUE, FALSE );
 
 	/* Misc */
 

@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.5 2002/06/07 10:17:48 panta Exp $
+ *   $Id: private.h,v 1.6 2002/06/07 16:09:56 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -363,6 +363,10 @@ EC_OBJ _ec_sequence2mask( const char *func_name, EcInt param_index, _ec_symbol2i
 						  EcBool nullok, EcBool singleok, EC_OBJ seq, EcInt *options );
 EC_OBJ _ec_mask2sequence( const char *func_name, _ec_symbol2int *map,
 						  unsigned long mask );
+
+/* errno to IOError */
+
+EC_OBJ _ec_errno2exception( int posix_errnum, EC_OBJ ioObject, const char *msg );
 
 /* ========================================================================
  * P R I V A T E   F U N C T I O N S
