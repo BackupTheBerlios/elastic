@@ -8,9 +8,8 @@
 #   Created : 24 Nov 1999
 #   Modified: 19 Oct 2001
 #
-#   $Id: Makefile.am,v 1.1 2002/05/23 21:19:34 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
