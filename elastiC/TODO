@@ -81,6 +81,9 @@ core
 	   construction and have to modify EcLibObjectClass_New() (and
 	   EcMakeObject() or avoid EcMakeObject() and use something else, like
 	   generic construction))
+	  o how about direct type checks in source code? The new subclassed types
+	    will not be recognized in many parts of the system. What will be the
+	    the impact of this fact? Solutions? (Using method calss is too expensive).
 	* finish hash table expansion (use next prime calculation) (still
 	  needed?)
 	o change tc_compiled to tc_bytecode

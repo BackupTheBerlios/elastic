@@ -7,7 +7,7 @@
  *
  *   Created: Wed Jun  5 21:48:10 CEST 2002
  *
- *   $Id: posix_m.c,v 1.1 2002/06/06 00:09:25 panta Exp $
+ *   $Id: posix_m.c,v 1.2 2002/06/06 13:44:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 2002 Marco Pantaleoni. All rights reserved.
  *
@@ -132,7 +132,7 @@ static EcUInt posix2symbol( int posix_errnum )
 	{
 	case 0:
 		return EcInternSymbol("no-error");
-#include "errno_switch.c"
+#include "errno_switch.c.incl"
 	default :
 		return EcInternSymbol("unknown");
 	}
@@ -356,11 +356,18 @@ static EC_OBJ EcLibPosix_write( EC_OBJ stack, EcAny userdata )
 
 /* Private */
 
-EcBool _ec_modposix_init( void )
+#if ECMODULE_POSIX_STATIC
+EC_OBJ _ec_modposix_init( void )
+#else
+EC_API EC_OBJ ec_posix_init( void )
+#endif
 {
+	EC_OBJ pkg;
 	int i;
 
-	EcPackageIntroduce( "posix" );
+	pkg = EcPackageIntroduce( "posix" );
+	if (EC_ERRORP(pkg))
+		return pkg;
 
 #if HAVE_UNISTD_H
 	EcAddPrimitive( "posix.access",     EcLibPosix_access );
@@ -631,9 +638,13 @@ EcBool _ec_modposix_init( void )
 
 #endif /* HAVE_UNISTD_H */
 
-	return TRUE;
+	return pkg;
 }
 
+#if ECMODULE_POSIX_STATIC
 void _ec_modposix_cleanup( void )
+#else
+EC_API void ec_posix_cleanup( void )
+#endif
 {
 }

@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.7 2002/06/06 00:09:24 panta Exp $
+dnl   $Id: configure.in,v 1.8 2002/06/06 13:44:05 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -289,14 +289,39 @@ AC_ARG_ENABLE(utf8,
 AC_SUBST(DLBACKEND)
 
 AC_ARG_WITH(dlbackend,
-[  --with-dlbackend=[dl/ltdl/win32/no] - Specify shared objects backend [default=ltdl]],DLBACKEND=$with_dlbackend,DLBACKEND="ltdl")
+[  --with-dlbackend=[dl/ltdl/win32/no]    - Specify shared objects backend [default=ltdl]],DLBACKEND=$with_dlbackend,DLBACKEND="ltdl")
 AC_ARG_WITH(newline,
-[  --with-newline=[CR/LF/specify]      - Use CR, LF or given value as newline in PCRE [default=LF]],newline_val=$with_newline,newline_val="LF")
+[  --with-newline=[CR/LF/specify]         - Use CR, LF or given value as newline in PCRE [default=LF]],newline_val=$with_newline,newline_val="LF")
 
 AM_CONDITIONAL(DLBACKEND_DL, test x$DLBACKEND = xdl)
 AM_CONDITIONAL(DLBACKEND_LTDL, test x$DLBACKEND = xltdl)
 AM_CONDITIONAL(DLBACKEND_WIN32, test x$DLBACKEND = xwin32)
 AM_CONDITIONAL(DLBACKEND_NO, test x$DLBACKEND = xno)
+
+dnl Modules
+
+AC_ARG_WITH(module_posix,
+[  --with-module-posix=[no/static/dynamic] - Specify whether/how to build the POSIX module [default=dynamic]],ECMODULE_POSIX="${with_module_posix}",ECMODULE_POSIX="dynamic")
+
+if test "x$ECMODULE_POSIX" = "xno" ; then
+  ecmodule_posix="no"
+  ecmodule_posix_static=0
+  ecmodule_posix_dynamic=0
+elif test "x$ECMODULE_POSIX" = "xstatic" -o "x$ECMODULE_POSIX" = "xyes"; then
+  ecmodule_posix="static"
+  ecmodule_posix_static=1
+  ecmodule_posix_dynamic=0
+elif  test "x$ECMODULE_POSIX" = "xdynamic" -o "x$ECMODULE_POSIX" = "xshared"; then
+  ecmodule_posix="dynamic"
+  ecmodule_posix_static=0
+  ecmodule_posix_dynamic=1
+fi
+AC_SUBST(ecmodule_posix)
+AC_SUBST(ecmodule_posix_static)
+AC_SUBST(ecmodule_posix_dynamic)
+AM_CONDITIONAL(ECMODULE_POSIX_NO,      test x$ecmodule_posix = xno)
+AM_CONDITIONAL(ECMODULE_POSIX_STATIC,  test x$ecmodule_posix = xstatic)
+AM_CONDITIONAL(ECMODULE_POSIX_DYNAMIC, test x$ecmodule_posix = xdynamic)
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CORE_CFLAGS)
@@ -587,7 +612,7 @@ AC_SUBST(MKMODULELIBS)
 MKMODULE='${top_srcdir}/makemodule'
 dnl MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/libelastic.la'
 dnl MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/libelastic.a'
-MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/.libs/libelastic-$EC_API_VERSION.a'
+MKMODULEFLAGS='-c ${top_builddir}/src/elastic-config --elastic-import=${top_builddir}/src/.libs/libelastic-${EC_API_VERSION}.a'
 MKMODULELIBS=''
 
 dnl Get platform alignment restrictions
@@ -625,3 +650,17 @@ todos win32/README.txt
 todos win32/LICENSE.txt
 ])
 AC_OUTPUT
+
+echo
+echo "Build options:"
+echo "   developer mode   : ${enable_devel}"
+echo "   debug mode       : ${enable_debug}"
+echo "   memory debug mode: ${enable_memdebug}"
+echo "   profiling        : ${enable_profile}"
+echo
+echo "General configuration:"
+echo "   dynamic module loading: ${DLBACKEND}"
+echo
+echo "Configured modules:"
+echo "   posix (POSIX Std 1003.1)  - ${ecmodule_posix}"
+echo

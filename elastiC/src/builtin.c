@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.3 2002/06/06 00:09:24 panta Exp $
+ *   $Id: builtin.c,v 1.4 2002/06/06 13:44:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -574,8 +574,10 @@ EcBool _ec_register_builtin( void )
 	if (! _ec_modarray_init())
 		return FALSE;
 
-	if (! _ec_modposix_init())
-		return FALSE;
+#if ECMODULE_POSIX_STATIC
+	if (EC_ERRORP(_ec_modposix_init()))
+		return FALSE;											/* :TODO: do something with exception */
+#endif
 
 	/* Object class */
 
@@ -724,7 +726,9 @@ EcBool _ec_register_builtin( void )
 
 void _ec_cleanup_builtin( void )
 {
+#if ECMODULE_POSIX_STATIC
 	_ec_modposix_cleanup();
+#endif
 	_ec_modarray_cleanup();
 	_ec_modstring_cleanup();
 	_ec_file_cleanup();

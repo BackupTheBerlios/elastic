@@ -77,6 +77,15 @@
 
 #define EC_PLATFORM_ALIGNMENT	@PLATFORM_ALIGNMENT@
 
+/* static/dynamic modules */
+
+#if @ecmodule_posix_static@										/* ecmodule_posix_static  */
+#define ECMODULE_POSIX_STATIC @ecmodule_posix_static@
+#endif
+#if @ecmodule_posix_dynamic@									/* ecmodule_posix_dynamic */
+#define ECMODULE_POSIX_DYNAMIC @ecmodule_posix_dynamic@
+#endif
+
 /*
  * Should we use EC_API_VERSION instead of EC_VERSION in EC_DEFAULTLIBPATH ???
  * Maybe we should use:
@@ -96,4 +105,4 @@
 #define EC_DEFAULTLIBPATH	"C:\\elastic-@EC_API_VERSION@;C:\\elastic-@EC_API_VERSION@\\lib;C:\\elastic;C:\\elastic\\lib"
 #endif
 
-#endif
+#endif /* #ifndef WIN32 ... #else */

@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.3 2002/06/06 00:09:24 panta Exp $
+ *   $Id: private.h,v 1.4 2002/06/06 13:44:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -424,9 +424,11 @@ void      _ec_modstring_cleanup( void );
 EcBool    _ec_modarray_init( void );
 void      _ec_modarray_cleanup( void );
 
+#if ECMODULE_POSIX_STATIC
 /* Posix module */
-EcBool    _ec_modposix_init( void );
+EC_OBJ    _ec_modposix_init( void );
 void      _ec_modposix_cleanup( void );
+#endif
 
 /* Misc */
 #define MAX_HASH_RECUR 2
