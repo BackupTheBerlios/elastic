@@ -7,7 +7,7 @@ dnl   AUTHOR:  Marco Pantaleoni         E-mail: panta@elasticworld.org
 dnl
 dnl   Created: 1999
 dnl
-dnl   $Id: configure.in,v 1.13 2002/06/07 16:09:56 panta Exp $
+dnl   $Id: configure.in,v 1.14 2002/06/07 17:34:04 panta Exp $
 dnl --------------------------------------------------------------------------
 dnl    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 dnl
@@ -302,6 +302,8 @@ dnl Modules
 
 AC_ARG_WITH(module_posix,
 [  --with-module-posix=[no/static/dynamic] - Specify whether/how to build the POSIX module [default=dynamic]],ECMODULE_POSIX="${with_module_posix}",ECMODULE_POSIX="dynamic")
+AC_ARG_WITH(module_errno,
+[  --with-module-errno=[no/static/dynamic] - Specify whether/how to build the errno module [default=dynamic]],ECMODULE_ERRNO="${with_module_errno}",ECMODULE_ERRNO="dynamic")
 
 if test "x$ECMODULE_POSIX" = "xno" ; then
   ecmodule_posix="no"
@@ -322,6 +324,27 @@ AC_SUBST(ecmodule_posix_dynamic)
 AM_CONDITIONAL(ECMODULE_POSIX_NO,      test x$ecmodule_posix = xno)
 AM_CONDITIONAL(ECMODULE_POSIX_STATIC,  test x$ecmodule_posix = xstatic)
 AM_CONDITIONAL(ECMODULE_POSIX_DYNAMIC, test x$ecmodule_posix = xdynamic)
+
+if test "x$ECMODULE_ERRNO" = "xno" ; then
+  ecmodule_errno="no"
+  ecmodule_errno_static=0
+  ecmodule_errno_dynamic=0
+elif test "x$ECMODULE_ERRNO" = "xstatic" -o "x$ECMODULE_ERRNO" = "xyes"; then
+  ecmodule_errno="static"
+  ecmodule_errno_static=1
+  ecmodule_errno_dynamic=0
+elif  test "x$ECMODULE_ERRNO" = "xdynamic" -o "x$ECMODULE_ERRNO" = "xshared"; then
+  ecmodule_errno="dynamic"
+  ecmodule_errno_static=0
+  ecmodule_errno_dynamic=1
+fi
+AC_SUBST(ecmodule_errno)
+AC_SUBST(ecmodule_errno_static)
+AC_SUBST(ecmodule_errno_dynamic)
+AM_CONDITIONAL(ECMODULE_ERRNO_NO,      test x$ecmodule_errno = xno)
+AM_CONDITIONAL(ECMODULE_ERRNO_STATIC,  test x$ecmodule_errno = xstatic)
+AM_CONDITIONAL(ECMODULE_ERRNO_DYNAMIC, test x$ecmodule_errno = xdynamic)
+
 
 AC_SUBST(CFLAGS)
 AC_SUBST(CORE_CFLAGS)
@@ -673,4 +696,5 @@ echo "   dynamic module loading: ${DLBACKEND}"
 echo
 echo "Configured modules:"
 echo "   posix (POSIX Std 1003.1)  - ${ecmodule_posix}"
+echo "   errno                     - ${ecmodule_errno}"
 echo

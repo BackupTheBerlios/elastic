@@ -1,0 +1,944 @@
+#ifdef EPERM
+	EcPackageVariable( pkg, "EPERM",
+					   EcMakeInt( EPERM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPERM"), EcMakeInt( EPERM ) );
+	EcHashSet( symbol_h, EcMakeInt( EPERM ), EcMakeSymbol("EPERM") );
+#endif /* EPERM */
+#ifdef ENOENT
+	EcPackageVariable( pkg, "ENOENT",
+					   EcMakeInt( ENOENT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOENT"), EcMakeInt( ENOENT ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOENT ), EcMakeSymbol("ENOENT") );
+#endif /* ENOENT */
+#ifdef ESRCH
+	EcPackageVariable( pkg, "ESRCH",
+					   EcMakeInt( ESRCH ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESRCH"), EcMakeInt( ESRCH ) );
+	EcHashSet( symbol_h, EcMakeInt( ESRCH ), EcMakeSymbol("ESRCH") );
+#endif /* ESRCH */
+#ifdef EINTR
+	EcPackageVariable( pkg, "EINTR",
+					   EcMakeInt( EINTR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EINTR"), EcMakeInt( EINTR ) );
+	EcHashSet( symbol_h, EcMakeInt( EINTR ), EcMakeSymbol("EINTR") );
+#endif /* EINTR */
+#ifdef EIO
+	EcPackageVariable( pkg, "EIO",
+					   EcMakeInt( EIO ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EIO"), EcMakeInt( EIO ) );
+	EcHashSet( symbol_h, EcMakeInt( EIO ), EcMakeSymbol("EIO") );
+#endif /* EIO */
+#ifdef ENXIO
+	EcPackageVariable( pkg, "ENXIO",
+					   EcMakeInt( ENXIO ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENXIO"), EcMakeInt( ENXIO ) );
+	EcHashSet( symbol_h, EcMakeInt( ENXIO ), EcMakeSymbol("ENXIO") );
+#endif /* ENXIO */
+#ifdef ENOEXEC
+	EcPackageVariable( pkg, "ENOEXEC",
+					   EcMakeInt( ENOEXEC ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOEXEC"), EcMakeInt( ENOEXEC ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOEXEC ), EcMakeSymbol("ENOEXEC") );
+#endif /* ENOEXEC */
+#ifdef EBADF
+	EcPackageVariable( pkg, "EBADF",
+					   EcMakeInt( EBADF ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADF"), EcMakeInt( EBADF ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADF ), EcMakeSymbol("EBADF") );
+#endif /* EBADF */
+#ifdef ECHILD
+	EcPackageVariable( pkg, "ECHILD",
+					   EcMakeInt( ECHILD ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECHILD"), EcMakeInt( ECHILD ) );
+	EcHashSet( symbol_h, EcMakeInt( ECHILD ), EcMakeSymbol("ECHILD") );
+#endif /* ECHILD */
+#ifdef EAGAIN
+	EcPackageVariable( pkg, "EAGAIN",
+					   EcMakeInt( EAGAIN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EAGAIN"), EcMakeInt( EAGAIN ) );
+	EcHashSet( symbol_h, EcMakeInt( EAGAIN ), EcMakeSymbol("EAGAIN") );
+#endif /* EAGAIN */
+#ifdef ENOMEM
+	EcPackageVariable( pkg, "ENOMEM",
+					   EcMakeInt( ENOMEM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOMEM"), EcMakeInt( ENOMEM ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOMEM ), EcMakeSymbol("ENOMEM") );
+#endif /* ENOMEM */
+#ifdef EACCES
+	EcPackageVariable( pkg, "EACCES",
+					   EcMakeInt( EACCES ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EACCES"), EcMakeInt( EACCES ) );
+	EcHashSet( symbol_h, EcMakeInt( EACCES ), EcMakeSymbol("EACCES") );
+#endif /* EACCES */
+#ifdef EFAULT
+	EcPackageVariable( pkg, "EFAULT",
+					   EcMakeInt( EFAULT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EFAULT"), EcMakeInt( EFAULT ) );
+	EcHashSet( symbol_h, EcMakeInt( EFAULT ), EcMakeSymbol("EFAULT") );
+#endif /* EFAULT */
+#ifdef ENOTBLK
+	EcPackageVariable( pkg, "ENOTBLK",
+					   EcMakeInt( ENOTBLK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTBLK"), EcMakeInt( ENOTBLK ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTBLK ), EcMakeSymbol("ENOTBLK") );
+#endif /* ENOTBLK */
+#ifdef EBUSY
+	EcPackageVariable( pkg, "EBUSY",
+					   EcMakeInt( EBUSY ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBUSY"), EcMakeInt( EBUSY ) );
+	EcHashSet( symbol_h, EcMakeInt( EBUSY ), EcMakeSymbol("EBUSY") );
+#endif /* EBUSY */
+#ifdef EEXIST
+	EcPackageVariable( pkg, "EEXIST",
+					   EcMakeInt( EEXIST ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EEXIST"), EcMakeInt( EEXIST ) );
+	EcHashSet( symbol_h, EcMakeInt( EEXIST ), EcMakeSymbol("EEXIST") );
+#endif /* EEXIST */
+#ifdef EXDEV
+	EcPackageVariable( pkg, "EXDEV",
+					   EcMakeInt( EXDEV ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EXDEV"), EcMakeInt( EXDEV ) );
+	EcHashSet( symbol_h, EcMakeInt( EXDEV ), EcMakeSymbol("EXDEV") );
+#endif /* EXDEV */
+#ifdef ENODEV
+	EcPackageVariable( pkg, "ENODEV",
+					   EcMakeInt( ENODEV ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENODEV"), EcMakeInt( ENODEV ) );
+	EcHashSet( symbol_h, EcMakeInt( ENODEV ), EcMakeSymbol("ENODEV") );
+#endif /* ENODEV */
+#ifdef ENOTDIR
+	EcPackageVariable( pkg, "ENOTDIR",
+					   EcMakeInt( ENOTDIR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTDIR"), EcMakeInt( ENOTDIR ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTDIR ), EcMakeSymbol("ENOTDIR") );
+#endif /* ENOTDIR */
+#ifdef EISDIR
+	EcPackageVariable( pkg, "EISDIR",
+					   EcMakeInt( EISDIR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EISDIR"), EcMakeInt( EISDIR ) );
+	EcHashSet( symbol_h, EcMakeInt( EISDIR ), EcMakeSymbol("EISDIR") );
+#endif /* EISDIR */
+#ifdef EINVAL
+	EcPackageVariable( pkg, "EINVAL",
+					   EcMakeInt( EINVAL ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EINVAL"), EcMakeInt( EINVAL ) );
+	EcHashSet( symbol_h, EcMakeInt( EINVAL ), EcMakeSymbol("EINVAL") );
+#endif /* EINVAL */
+#ifdef ENFILE
+	EcPackageVariable( pkg, "ENFILE",
+					   EcMakeInt( ENFILE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENFILE"), EcMakeInt( ENFILE ) );
+	EcHashSet( symbol_h, EcMakeInt( ENFILE ), EcMakeSymbol("ENFILE") );
+#endif /* ENFILE */
+#ifdef EMFILE
+	EcPackageVariable( pkg, "EMFILE",
+					   EcMakeInt( EMFILE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EMFILE"), EcMakeInt( EMFILE ) );
+	EcHashSet( symbol_h, EcMakeInt( EMFILE ), EcMakeSymbol("EMFILE") );
+#endif /* EMFILE */
+#ifdef ENOTTY
+	EcPackageVariable( pkg, "ENOTTY",
+					   EcMakeInt( ENOTTY ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTTY"), EcMakeInt( ENOTTY ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTTY ), EcMakeSymbol("ENOTTY") );
+#endif /* ENOTTY */
+#ifdef ETXTBSY
+	EcPackageVariable( pkg, "ETXTBSY",
+					   EcMakeInt( ETXTBSY ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ETXTBSY"), EcMakeInt( ETXTBSY ) );
+	EcHashSet( symbol_h, EcMakeInt( ETXTBSY ), EcMakeSymbol("ETXTBSY") );
+#endif /* ETXTBSY */
+#ifdef EFBIG
+	EcPackageVariable( pkg, "EFBIG",
+					   EcMakeInt( EFBIG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EFBIG"), EcMakeInt( EFBIG ) );
+	EcHashSet( symbol_h, EcMakeInt( EFBIG ), EcMakeSymbol("EFBIG") );
+#endif /* EFBIG */
+#ifdef ENOSPC
+	EcPackageVariable( pkg, "ENOSPC",
+					   EcMakeInt( ENOSPC ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOSPC"), EcMakeInt( ENOSPC ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOSPC ), EcMakeSymbol("ENOSPC") );
+#endif /* ENOSPC */
+#ifdef ESPIPE
+	EcPackageVariable( pkg, "ESPIPE",
+					   EcMakeInt( ESPIPE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESPIPE"), EcMakeInt( ESPIPE ) );
+	EcHashSet( symbol_h, EcMakeInt( ESPIPE ), EcMakeSymbol("ESPIPE") );
+#endif /* ESPIPE */
+#ifdef EROFS
+	EcPackageVariable( pkg, "EROFS",
+					   EcMakeInt( EROFS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EROFS"), EcMakeInt( EROFS ) );
+	EcHashSet( symbol_h, EcMakeInt( EROFS ), EcMakeSymbol("EROFS") );
+#endif /* EROFS */
+#ifdef EMLINK
+	EcPackageVariable( pkg, "EMLINK",
+					   EcMakeInt( EMLINK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EMLINK"), EcMakeInt( EMLINK ) );
+	EcHashSet( symbol_h, EcMakeInt( EMLINK ), EcMakeSymbol("EMLINK") );
+#endif /* EMLINK */
+#ifdef EPIPE
+	EcPackageVariable( pkg, "EPIPE",
+					   EcMakeInt( EPIPE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPIPE"), EcMakeInt( EPIPE ) );
+	EcHashSet( symbol_h, EcMakeInt( EPIPE ), EcMakeSymbol("EPIPE") );
+#endif /* EPIPE */
+#ifdef EDOM
+	EcPackageVariable( pkg, "EDOM",
+					   EcMakeInt( EDOM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EDOM"), EcMakeInt( EDOM ) );
+	EcHashSet( symbol_h, EcMakeInt( EDOM ), EcMakeSymbol("EDOM") );
+#endif /* EDOM */
+#ifdef ERANGE
+	EcPackageVariable( pkg, "ERANGE",
+					   EcMakeInt( ERANGE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ERANGE"), EcMakeInt( ERANGE ) );
+	EcHashSet( symbol_h, EcMakeInt( ERANGE ), EcMakeSymbol("ERANGE") );
+#endif /* ERANGE */
+#ifdef EDEADLK
+	EcPackageVariable( pkg, "EDEADLK",
+					   EcMakeInt( EDEADLK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EDEADLK"), EcMakeInt( EDEADLK ) );
+	EcHashSet( symbol_h, EcMakeInt( EDEADLK ), EcMakeSymbol("EDEADLK") );
+#endif /* EDEADLK */
+#ifdef ENAMETOOLONG
+	EcPackageVariable( pkg, "ENAMETOOLONG",
+					   EcMakeInt( ENAMETOOLONG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENAMETOOLONG"), EcMakeInt( ENAMETOOLONG ) );
+	EcHashSet( symbol_h, EcMakeInt( ENAMETOOLONG ), EcMakeSymbol("ENAMETOOLONG") );
+#endif /* ENAMETOOLONG */
+#ifdef ENOLCK
+	EcPackageVariable( pkg, "ENOLCK",
+					   EcMakeInt( ENOLCK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOLCK"), EcMakeInt( ENOLCK ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOLCK ), EcMakeSymbol("ENOLCK") );
+#endif /* ENOLCK */
+#ifdef ENOSYS
+	EcPackageVariable( pkg, "ENOSYS",
+					   EcMakeInt( ENOSYS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOSYS"), EcMakeInt( ENOSYS ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOSYS ), EcMakeSymbol("ENOSYS") );
+#endif /* ENOSYS */
+#ifdef ENOTEMPTY
+	EcPackageVariable( pkg, "ENOTEMPTY",
+					   EcMakeInt( ENOTEMPTY ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTEMPTY"), EcMakeInt( ENOTEMPTY ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTEMPTY ), EcMakeSymbol("ENOTEMPTY") );
+#endif /* ENOTEMPTY */
+#ifdef ELOOP
+	EcPackageVariable( pkg, "ELOOP",
+					   EcMakeInt( ELOOP ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELOOP"), EcMakeInt( ELOOP ) );
+	EcHashSet( symbol_h, EcMakeInt( ELOOP ), EcMakeSymbol("ELOOP") );
+#endif /* ELOOP */
+#ifdef ENOMSG
+	EcPackageVariable( pkg, "ENOMSG",
+					   EcMakeInt( ENOMSG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOMSG"), EcMakeInt( ENOMSG ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOMSG ), EcMakeSymbol("ENOMSG") );
+#endif /* ENOMSG */
+#ifdef EIDRM
+	EcPackageVariable( pkg, "EIDRM",
+					   EcMakeInt( EIDRM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EIDRM"), EcMakeInt( EIDRM ) );
+	EcHashSet( symbol_h, EcMakeInt( EIDRM ), EcMakeSymbol("EIDRM") );
+#endif /* EIDRM */
+#ifdef ECHRNG
+	EcPackageVariable( pkg, "ECHRNG",
+					   EcMakeInt( ECHRNG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECHRNG"), EcMakeInt( ECHRNG ) );
+	EcHashSet( symbol_h, EcMakeInt( ECHRNG ), EcMakeSymbol("ECHRNG") );
+#endif /* ECHRNG */
+#ifdef ELNRNG
+	EcPackageVariable( pkg, "ELNRNG",
+					   EcMakeInt( ELNRNG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELNRNG"), EcMakeInt( ELNRNG ) );
+	EcHashSet( symbol_h, EcMakeInt( ELNRNG ), EcMakeSymbol("ELNRNG") );
+#endif /* ELNRNG */
+#ifdef EUNATCH
+	EcPackageVariable( pkg, "EUNATCH",
+					   EcMakeInt( EUNATCH ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EUNATCH"), EcMakeInt( EUNATCH ) );
+	EcHashSet( symbol_h, EcMakeInt( EUNATCH ), EcMakeSymbol("EUNATCH") );
+#endif /* EUNATCH */
+#ifdef ENOCSI
+	EcPackageVariable( pkg, "ENOCSI",
+					   EcMakeInt( ENOCSI ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOCSI"), EcMakeInt( ENOCSI ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOCSI ), EcMakeSymbol("ENOCSI") );
+#endif /* ENOCSI */
+#ifdef EBADE
+	EcPackageVariable( pkg, "EBADE",
+					   EcMakeInt( EBADE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADE"), EcMakeInt( EBADE ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADE ), EcMakeSymbol("EBADE") );
+#endif /* EBADE */
+#ifdef EBADR
+	EcPackageVariable( pkg, "EBADR",
+					   EcMakeInt( EBADR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADR"), EcMakeInt( EBADR ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADR ), EcMakeSymbol("EBADR") );
+#endif /* EBADR */
+#ifdef EXFULL
+	EcPackageVariable( pkg, "EXFULL",
+					   EcMakeInt( EXFULL ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EXFULL"), EcMakeInt( EXFULL ) );
+	EcHashSet( symbol_h, EcMakeInt( EXFULL ), EcMakeSymbol("EXFULL") );
+#endif /* EXFULL */
+#ifdef ENOANO
+	EcPackageVariable( pkg, "ENOANO",
+					   EcMakeInt( ENOANO ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOANO"), EcMakeInt( ENOANO ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOANO ), EcMakeSymbol("ENOANO") );
+#endif /* ENOANO */
+#ifdef EBADRQC
+	EcPackageVariable( pkg, "EBADRQC",
+					   EcMakeInt( EBADRQC ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADRQC"), EcMakeInt( EBADRQC ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADRQC ), EcMakeSymbol("EBADRQC") );
+#endif /* EBADRQC */
+#ifdef EBADSLT
+	EcPackageVariable( pkg, "EBADSLT",
+					   EcMakeInt( EBADSLT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADSLT"), EcMakeInt( EBADSLT ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADSLT ), EcMakeSymbol("EBADSLT") );
+#endif /* EBADSLT */
+#ifdef EBFONT
+	EcPackageVariable( pkg, "EBFONT",
+					   EcMakeInt( EBFONT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBFONT"), EcMakeInt( EBFONT ) );
+	EcHashSet( symbol_h, EcMakeInt( EBFONT ), EcMakeSymbol("EBFONT") );
+#endif /* EBFONT */
+#ifdef ENOSTR
+	EcPackageVariable( pkg, "ENOSTR",
+					   EcMakeInt( ENOSTR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOSTR"), EcMakeInt( ENOSTR ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOSTR ), EcMakeSymbol("ENOSTR") );
+#endif /* ENOSTR */
+#ifdef ENODATA
+	EcPackageVariable( pkg, "ENODATA",
+					   EcMakeInt( ENODATA ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENODATA"), EcMakeInt( ENODATA ) );
+	EcHashSet( symbol_h, EcMakeInt( ENODATA ), EcMakeSymbol("ENODATA") );
+#endif /* ENODATA */
+#ifdef ETIME
+	EcPackageVariable( pkg, "ETIME",
+					   EcMakeInt( ETIME ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ETIME"), EcMakeInt( ETIME ) );
+	EcHashSet( symbol_h, EcMakeInt( ETIME ), EcMakeSymbol("ETIME") );
+#endif /* ETIME */
+#ifdef ENOSR
+	EcPackageVariable( pkg, "ENOSR",
+					   EcMakeInt( ENOSR ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOSR"), EcMakeInt( ENOSR ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOSR ), EcMakeSymbol("ENOSR") );
+#endif /* ENOSR */
+#ifdef ENONET
+	EcPackageVariable( pkg, "ENONET",
+					   EcMakeInt( ENONET ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENONET"), EcMakeInt( ENONET ) );
+	EcHashSet( symbol_h, EcMakeInt( ENONET ), EcMakeSymbol("ENONET") );
+#endif /* ENONET */
+#ifdef ENOPKG
+	EcPackageVariable( pkg, "ENOPKG",
+					   EcMakeInt( ENOPKG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOPKG"), EcMakeInt( ENOPKG ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOPKG ), EcMakeSymbol("ENOPKG") );
+#endif /* ENOPKG */
+#ifdef EREMOTE
+	EcPackageVariable( pkg, "EREMOTE",
+					   EcMakeInt( EREMOTE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EREMOTE"), EcMakeInt( EREMOTE ) );
+	EcHashSet( symbol_h, EcMakeInt( EREMOTE ), EcMakeSymbol("EREMOTE") );
+#endif /* EREMOTE */
+#ifdef ENOLINK
+	EcPackageVariable( pkg, "ENOLINK",
+					   EcMakeInt( ENOLINK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOLINK"), EcMakeInt( ENOLINK ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOLINK ), EcMakeSymbol("ENOLINK") );
+#endif /* ENOLINK */
+#ifdef EADV
+	EcPackageVariable( pkg, "EADV",
+					   EcMakeInt( EADV ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EADV"), EcMakeInt( EADV ) );
+	EcHashSet( symbol_h, EcMakeInt( EADV ), EcMakeSymbol("EADV") );
+#endif /* EADV */
+#ifdef ESRMNT
+	EcPackageVariable( pkg, "ESRMNT",
+					   EcMakeInt( ESRMNT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESRMNT"), EcMakeInt( ESRMNT ) );
+	EcHashSet( symbol_h, EcMakeInt( ESRMNT ), EcMakeSymbol("ESRMNT") );
+#endif /* ESRMNT */
+#ifdef ECOMM
+	EcPackageVariable( pkg, "ECOMM",
+					   EcMakeInt( ECOMM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECOMM"), EcMakeInt( ECOMM ) );
+	EcHashSet( symbol_h, EcMakeInt( ECOMM ), EcMakeSymbol("ECOMM") );
+#endif /* ECOMM */
+#ifdef EPROTO
+	EcPackageVariable( pkg, "EPROTO",
+					   EcMakeInt( EPROTO ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPROTO"), EcMakeInt( EPROTO ) );
+	EcHashSet( symbol_h, EcMakeInt( EPROTO ), EcMakeSymbol("EPROTO") );
+#endif /* EPROTO */
+#ifdef EMULTIHOP
+	EcPackageVariable( pkg, "EMULTIHOP",
+					   EcMakeInt( EMULTIHOP ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EMULTIHOP"), EcMakeInt( EMULTIHOP ) );
+	EcHashSet( symbol_h, EcMakeInt( EMULTIHOP ), EcMakeSymbol("EMULTIHOP") );
+#endif /* EMULTIHOP */
+#ifdef EDOTDOT
+	EcPackageVariable( pkg, "EDOTDOT",
+					   EcMakeInt( EDOTDOT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EDOTDOT"), EcMakeInt( EDOTDOT ) );
+	EcHashSet( symbol_h, EcMakeInt( EDOTDOT ), EcMakeSymbol("EDOTDOT") );
+#endif /* EDOTDOT */
+#ifdef EBADMSG
+	EcPackageVariable( pkg, "EBADMSG",
+					   EcMakeInt( EBADMSG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADMSG"), EcMakeInt( EBADMSG ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADMSG ), EcMakeSymbol("EBADMSG") );
+#endif /* EBADMSG */
+#ifdef EOVERFLOW
+	EcPackageVariable( pkg, "EOVERFLOW",
+					   EcMakeInt( EOVERFLOW ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EOVERFLOW"), EcMakeInt( EOVERFLOW ) );
+	EcHashSet( symbol_h, EcMakeInt( EOVERFLOW ), EcMakeSymbol("EOVERFLOW") );
+#endif /* EOVERFLOW */
+#ifdef ENOTUNIQ
+	EcPackageVariable( pkg, "ENOTUNIQ",
+					   EcMakeInt( ENOTUNIQ ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTUNIQ"), EcMakeInt( ENOTUNIQ ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTUNIQ ), EcMakeSymbol("ENOTUNIQ") );
+#endif /* ENOTUNIQ */
+#ifdef EBADFD
+	EcPackageVariable( pkg, "EBADFD",
+					   EcMakeInt( EBADFD ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EBADFD"), EcMakeInt( EBADFD ) );
+	EcHashSet( symbol_h, EcMakeInt( EBADFD ), EcMakeSymbol("EBADFD") );
+#endif /* EBADFD */
+#ifdef EREMCHG
+	EcPackageVariable( pkg, "EREMCHG",
+					   EcMakeInt( EREMCHG ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EREMCHG"), EcMakeInt( EREMCHG ) );
+	EcHashSet( symbol_h, EcMakeInt( EREMCHG ), EcMakeSymbol("EREMCHG") );
+#endif /* EREMCHG */
+#ifdef ELIBACC
+	EcPackageVariable( pkg, "ELIBACC",
+					   EcMakeInt( ELIBACC ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELIBACC"), EcMakeInt( ELIBACC ) );
+	EcHashSet( symbol_h, EcMakeInt( ELIBACC ), EcMakeSymbol("ELIBACC") );
+#endif /* ELIBACC */
+#ifdef ELIBBAD
+	EcPackageVariable( pkg, "ELIBBAD",
+					   EcMakeInt( ELIBBAD ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELIBBAD"), EcMakeInt( ELIBBAD ) );
+	EcHashSet( symbol_h, EcMakeInt( ELIBBAD ), EcMakeSymbol("ELIBBAD") );
+#endif /* ELIBBAD */
+#ifdef ELIBSCN
+	EcPackageVariable( pkg, "ELIBSCN",
+					   EcMakeInt( ELIBSCN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELIBSCN"), EcMakeInt( ELIBSCN ) );
+	EcHashSet( symbol_h, EcMakeInt( ELIBSCN ), EcMakeSymbol("ELIBSCN") );
+#endif /* ELIBSCN */
+#ifdef ELIBMAX
+	EcPackageVariable( pkg, "ELIBMAX",
+					   EcMakeInt( ELIBMAX ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELIBMAX"), EcMakeInt( ELIBMAX ) );
+	EcHashSet( symbol_h, EcMakeInt( ELIBMAX ), EcMakeSymbol("ELIBMAX") );
+#endif /* ELIBMAX */
+#ifdef ELIBEXEC
+	EcPackageVariable( pkg, "ELIBEXEC",
+					   EcMakeInt( ELIBEXEC ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ELIBEXEC"), EcMakeInt( ELIBEXEC ) );
+	EcHashSet( symbol_h, EcMakeInt( ELIBEXEC ), EcMakeSymbol("ELIBEXEC") );
+#endif /* ELIBEXEC */
+#ifdef EILSEQ
+	EcPackageVariable( pkg, "EILSEQ",
+					   EcMakeInt( EILSEQ ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EILSEQ"), EcMakeInt( EILSEQ ) );
+	EcHashSet( symbol_h, EcMakeInt( EILSEQ ), EcMakeSymbol("EILSEQ") );
+#endif /* EILSEQ */
+#ifdef ERESTART
+	EcPackageVariable( pkg, "ERESTART",
+					   EcMakeInt( ERESTART ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ERESTART"), EcMakeInt( ERESTART ) );
+	EcHashSet( symbol_h, EcMakeInt( ERESTART ), EcMakeSymbol("ERESTART") );
+#endif /* ERESTART */
+#ifdef ESTRPIPE
+	EcPackageVariable( pkg, "ESTRPIPE",
+					   EcMakeInt( ESTRPIPE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESTRPIPE"), EcMakeInt( ESTRPIPE ) );
+	EcHashSet( symbol_h, EcMakeInt( ESTRPIPE ), EcMakeSymbol("ESTRPIPE") );
+#endif /* ESTRPIPE */
+#ifdef EUSERS
+	EcPackageVariable( pkg, "EUSERS",
+					   EcMakeInt( EUSERS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EUSERS"), EcMakeInt( EUSERS ) );
+	EcHashSet( symbol_h, EcMakeInt( EUSERS ), EcMakeSymbol("EUSERS") );
+#endif /* EUSERS */
+#ifdef ENOTSOCK
+	EcPackageVariable( pkg, "ENOTSOCK",
+					   EcMakeInt( ENOTSOCK ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTSOCK"), EcMakeInt( ENOTSOCK ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTSOCK ), EcMakeSymbol("ENOTSOCK") );
+#endif /* ENOTSOCK */
+#ifdef EDESTADDRREQ
+	EcPackageVariable( pkg, "EDESTADDRREQ",
+					   EcMakeInt( EDESTADDRREQ ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EDESTADDRREQ"), EcMakeInt( EDESTADDRREQ ) );
+	EcHashSet( symbol_h, EcMakeInt( EDESTADDRREQ ), EcMakeSymbol("EDESTADDRREQ") );
+#endif /* EDESTADDRREQ */
+#ifdef EMSGSIZE
+	EcPackageVariable( pkg, "EMSGSIZE",
+					   EcMakeInt( EMSGSIZE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EMSGSIZE"), EcMakeInt( EMSGSIZE ) );
+	EcHashSet( symbol_h, EcMakeInt( EMSGSIZE ), EcMakeSymbol("EMSGSIZE") );
+#endif /* EMSGSIZE */
+#ifdef EPROTOTYPE
+	EcPackageVariable( pkg, "EPROTOTYPE",
+					   EcMakeInt( EPROTOTYPE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPROTOTYPE"), EcMakeInt( EPROTOTYPE ) );
+	EcHashSet( symbol_h, EcMakeInt( EPROTOTYPE ), EcMakeSymbol("EPROTOTYPE") );
+#endif /* EPROTOTYPE */
+#ifdef ENOPROTOOPT
+	EcPackageVariable( pkg, "ENOPROTOOPT",
+					   EcMakeInt( ENOPROTOOPT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOPROTOOPT"), EcMakeInt( ENOPROTOOPT ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOPROTOOPT ), EcMakeSymbol("ENOPROTOOPT") );
+#endif /* ENOPROTOOPT */
+#ifdef EPROTONOSUPPORT
+	EcPackageVariable( pkg, "EPROTONOSUPPORT",
+					   EcMakeInt( EPROTONOSUPPORT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPROTONOSUPPORT"), EcMakeInt( EPROTONOSUPPORT ) );
+	EcHashSet( symbol_h, EcMakeInt( EPROTONOSUPPORT ), EcMakeSymbol("EPROTONOSUPPORT") );
+#endif /* EPROTONOSUPPORT */
+#ifdef ESOCKTNOSUPPORT
+	EcPackageVariable( pkg, "ESOCKTNOSUPPORT",
+					   EcMakeInt( ESOCKTNOSUPPORT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESOCKTNOSUPPORT"), EcMakeInt( ESOCKTNOSUPPORT ) );
+	EcHashSet( symbol_h, EcMakeInt( ESOCKTNOSUPPORT ), EcMakeSymbol("ESOCKTNOSUPPORT") );
+#endif /* ESOCKTNOSUPPORT */
+#ifdef EOPNOTSUPP
+	EcPackageVariable( pkg, "EOPNOTSUPP",
+					   EcMakeInt( EOPNOTSUPP ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EOPNOTSUPP"), EcMakeInt( EOPNOTSUPP ) );
+	EcHashSet( symbol_h, EcMakeInt( EOPNOTSUPP ), EcMakeSymbol("EOPNOTSUPP") );
+#endif /* EOPNOTSUPP */
+#ifdef EPFNOSUPPORT
+	EcPackageVariable( pkg, "EPFNOSUPPORT",
+					   EcMakeInt( EPFNOSUPPORT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EPFNOSUPPORT"), EcMakeInt( EPFNOSUPPORT ) );
+	EcHashSet( symbol_h, EcMakeInt( EPFNOSUPPORT ), EcMakeSymbol("EPFNOSUPPORT") );
+#endif /* EPFNOSUPPORT */
+#ifdef EAFNOSUPPORT
+	EcPackageVariable( pkg, "EAFNOSUPPORT",
+					   EcMakeInt( EAFNOSUPPORT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EAFNOSUPPORT"), EcMakeInt( EAFNOSUPPORT ) );
+	EcHashSet( symbol_h, EcMakeInt( EAFNOSUPPORT ), EcMakeSymbol("EAFNOSUPPORT") );
+#endif /* EAFNOSUPPORT */
+#ifdef EADDRINUSE
+	EcPackageVariable( pkg, "EADDRINUSE",
+					   EcMakeInt( EADDRINUSE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EADDRINUSE"), EcMakeInt( EADDRINUSE ) );
+	EcHashSet( symbol_h, EcMakeInt( EADDRINUSE ), EcMakeSymbol("EADDRINUSE") );
+#endif /* EADDRINUSE */
+#ifdef EADDRNOTAVAIL
+	EcPackageVariable( pkg, "EADDRNOTAVAIL",
+					   EcMakeInt( EADDRNOTAVAIL ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EADDRNOTAVAIL"), EcMakeInt( EADDRNOTAVAIL ) );
+	EcHashSet( symbol_h, EcMakeInt( EADDRNOTAVAIL ), EcMakeSymbol("EADDRNOTAVAIL") );
+#endif /* EADDRNOTAVAIL */
+#ifdef ENETDOWN
+	EcPackageVariable( pkg, "ENETDOWN",
+					   EcMakeInt( ENETDOWN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENETDOWN"), EcMakeInt( ENETDOWN ) );
+	EcHashSet( symbol_h, EcMakeInt( ENETDOWN ), EcMakeSymbol("ENETDOWN") );
+#endif /* ENETDOWN */
+#ifdef ENETUNREACH
+	EcPackageVariable( pkg, "ENETUNREACH",
+					   EcMakeInt( ENETUNREACH ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENETUNREACH"), EcMakeInt( ENETUNREACH ) );
+	EcHashSet( symbol_h, EcMakeInt( ENETUNREACH ), EcMakeSymbol("ENETUNREACH") );
+#endif /* ENETUNREACH */
+#ifdef ENETRESET
+	EcPackageVariable( pkg, "ENETRESET",
+					   EcMakeInt( ENETRESET ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENETRESET"), EcMakeInt( ENETRESET ) );
+	EcHashSet( symbol_h, EcMakeInt( ENETRESET ), EcMakeSymbol("ENETRESET") );
+#endif /* ENETRESET */
+#ifdef ECONNABORTED
+	EcPackageVariable( pkg, "ECONNABORTED",
+					   EcMakeInt( ECONNABORTED ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECONNABORTED"), EcMakeInt( ECONNABORTED ) );
+	EcHashSet( symbol_h, EcMakeInt( ECONNABORTED ), EcMakeSymbol("ECONNABORTED") );
+#endif /* ECONNABORTED */
+#ifdef ECONNRESET
+	EcPackageVariable( pkg, "ECONNRESET",
+					   EcMakeInt( ECONNRESET ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECONNRESET"), EcMakeInt( ECONNRESET ) );
+	EcHashSet( symbol_h, EcMakeInt( ECONNRESET ), EcMakeSymbol("ECONNRESET") );
+#endif /* ECONNRESET */
+#ifdef ENOBUFS
+	EcPackageVariable( pkg, "ENOBUFS",
+					   EcMakeInt( ENOBUFS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOBUFS"), EcMakeInt( ENOBUFS ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOBUFS ), EcMakeSymbol("ENOBUFS") );
+#endif /* ENOBUFS */
+#ifdef EISCONN
+	EcPackageVariable( pkg, "EISCONN",
+					   EcMakeInt( EISCONN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EISCONN"), EcMakeInt( EISCONN ) );
+	EcHashSet( symbol_h, EcMakeInt( EISCONN ), EcMakeSymbol("EISCONN") );
+#endif /* EISCONN */
+#ifdef ENOTCONN
+	EcPackageVariable( pkg, "ENOTCONN",
+					   EcMakeInt( ENOTCONN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTCONN"), EcMakeInt( ENOTCONN ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTCONN ), EcMakeSymbol("ENOTCONN") );
+#endif /* ENOTCONN */
+#ifdef ESHUTDOWN
+	EcPackageVariable( pkg, "ESHUTDOWN",
+					   EcMakeInt( ESHUTDOWN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESHUTDOWN"), EcMakeInt( ESHUTDOWN ) );
+	EcHashSet( symbol_h, EcMakeInt( ESHUTDOWN ), EcMakeSymbol("ESHUTDOWN") );
+#endif /* ESHUTDOWN */
+#ifdef ETOOMANYREFS
+	EcPackageVariable( pkg, "ETOOMANYREFS",
+					   EcMakeInt( ETOOMANYREFS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ETOOMANYREFS"), EcMakeInt( ETOOMANYREFS ) );
+	EcHashSet( symbol_h, EcMakeInt( ETOOMANYREFS ), EcMakeSymbol("ETOOMANYREFS") );
+#endif /* ETOOMANYREFS */
+#ifdef ETIMEDOUT
+	EcPackageVariable( pkg, "ETIMEDOUT",
+					   EcMakeInt( ETIMEDOUT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ETIMEDOUT"), EcMakeInt( ETIMEDOUT ) );
+	EcHashSet( symbol_h, EcMakeInt( ETIMEDOUT ), EcMakeSymbol("ETIMEDOUT") );
+#endif /* ETIMEDOUT */
+#ifdef ECONNREFUSED
+	EcPackageVariable( pkg, "ECONNREFUSED",
+					   EcMakeInt( ECONNREFUSED ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ECONNREFUSED"), EcMakeInt( ECONNREFUSED ) );
+	EcHashSet( symbol_h, EcMakeInt( ECONNREFUSED ), EcMakeSymbol("ECONNREFUSED") );
+#endif /* ECONNREFUSED */
+#ifdef EHOSTDOWN
+	EcPackageVariable( pkg, "EHOSTDOWN",
+					   EcMakeInt( EHOSTDOWN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EHOSTDOWN"), EcMakeInt( EHOSTDOWN ) );
+	EcHashSet( symbol_h, EcMakeInt( EHOSTDOWN ), EcMakeSymbol("EHOSTDOWN") );
+#endif /* EHOSTDOWN */
+#ifdef EHOSTUNREACH
+	EcPackageVariable( pkg, "EHOSTUNREACH",
+					   EcMakeInt( EHOSTUNREACH ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EHOSTUNREACH"), EcMakeInt( EHOSTUNREACH ) );
+	EcHashSet( symbol_h, EcMakeInt( EHOSTUNREACH ), EcMakeSymbol("EHOSTUNREACH") );
+#endif /* EHOSTUNREACH */
+#ifdef EALREADY
+	EcPackageVariable( pkg, "EALREADY",
+					   EcMakeInt( EALREADY ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EALREADY"), EcMakeInt( EALREADY ) );
+	EcHashSet( symbol_h, EcMakeInt( EALREADY ), EcMakeSymbol("EALREADY") );
+#endif /* EALREADY */
+#ifdef EINPROGRESS
+	EcPackageVariable( pkg, "EINPROGRESS",
+					   EcMakeInt( EINPROGRESS ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EINPROGRESS"), EcMakeInt( EINPROGRESS ) );
+	EcHashSet( symbol_h, EcMakeInt( EINPROGRESS ), EcMakeSymbol("EINPROGRESS") );
+#endif /* EINPROGRESS */
+#ifdef ESTALE
+	EcPackageVariable( pkg, "ESTALE",
+					   EcMakeInt( ESTALE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ESTALE"), EcMakeInt( ESTALE ) );
+	EcHashSet( symbol_h, EcMakeInt( ESTALE ), EcMakeSymbol("ESTALE") );
+#endif /* ESTALE */
+#ifdef EUCLEAN
+	EcPackageVariable( pkg, "EUCLEAN",
+					   EcMakeInt( EUCLEAN ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EUCLEAN"), EcMakeInt( EUCLEAN ) );
+	EcHashSet( symbol_h, EcMakeInt( EUCLEAN ), EcMakeSymbol("EUCLEAN") );
+#endif /* EUCLEAN */
+#ifdef ENOTNAM
+	EcPackageVariable( pkg, "ENOTNAM",
+					   EcMakeInt( ENOTNAM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOTNAM"), EcMakeInt( ENOTNAM ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOTNAM ), EcMakeSymbol("ENOTNAM") );
+#endif /* ENOTNAM */
+#ifdef ENAVAIL
+	EcPackageVariable( pkg, "ENAVAIL",
+					   EcMakeInt( ENAVAIL ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENAVAIL"), EcMakeInt( ENAVAIL ) );
+	EcHashSet( symbol_h, EcMakeInt( ENAVAIL ), EcMakeSymbol("ENAVAIL") );
+#endif /* ENAVAIL */
+#ifdef EISNAM
+	EcPackageVariable( pkg, "EISNAM",
+					   EcMakeInt( EISNAM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EISNAM"), EcMakeInt( EISNAM ) );
+	EcHashSet( symbol_h, EcMakeInt( EISNAM ), EcMakeSymbol("EISNAM") );
+#endif /* EISNAM */
+#ifdef EREMOTEIO
+	EcPackageVariable( pkg, "EREMOTEIO",
+					   EcMakeInt( EREMOTEIO ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EREMOTEIO"), EcMakeInt( EREMOTEIO ) );
+	EcHashSet( symbol_h, EcMakeInt( EREMOTEIO ), EcMakeSymbol("EREMOTEIO") );
+#endif /* EREMOTEIO */
+#ifdef EDQUOT
+	EcPackageVariable( pkg, "EDQUOT",
+					   EcMakeInt( EDQUOT ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EDQUOT"), EcMakeInt( EDQUOT ) );
+	EcHashSet( symbol_h, EcMakeInt( EDQUOT ), EcMakeSymbol("EDQUOT") );
+#endif /* EDQUOT */
+#ifdef ENOMEDIUM
+	EcPackageVariable( pkg, "ENOMEDIUM",
+					   EcMakeInt( ENOMEDIUM ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("ENOMEDIUM"), EcMakeInt( ENOMEDIUM ) );
+	EcHashSet( symbol_h, EcMakeInt( ENOMEDIUM ), EcMakeSymbol("ENOMEDIUM") );
+#endif /* ENOMEDIUM */
+#ifdef EMEDIUMTYPE
+	EcPackageVariable( pkg, "EMEDIUMTYPE",
+					   EcMakeInt( EMEDIUMTYPE ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EMEDIUMTYPE"), EcMakeInt( EMEDIUMTYPE ) );
+	EcHashSet( symbol_h, EcMakeInt( EMEDIUMTYPE ), EcMakeSymbol("EMEDIUMTYPE") );
+#endif /* EMEDIUMTYPE */
+#ifdef EHASHCOLLISION
+	EcPackageVariable( pkg, "EHASHCOLLISION",
+					   EcMakeInt( EHASHCOLLISION ),
+					   TRUE, TRUE );
+
+	EcHashSet( value_h, EcMakeSymbol("EHASHCOLLISION"), EcMakeInt( EHASHCOLLISION ) );
+	EcHashSet( symbol_h, EcMakeInt( EHASHCOLLISION ), EcMakeSymbol("EHASHCOLLISION") );
+#endif /* EHASHCOLLISION */

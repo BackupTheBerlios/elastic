@@ -7,7 +7,7 @@
  *
  *   Created: Mon May 25 16:50:11 MEST 1998
  *
- *   $Id: private.h,v 1.6 2002/06/07 16:09:56 panta Exp $
+ *   $Id: private.h,v 1.7 2002/06/07 17:34:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -436,6 +436,12 @@ void      _ec_modarray_cleanup( void );
 /* Posix module */
 EC_OBJ    _ec_modposix_init( void );
 void      _ec_modposix_cleanup( void );
+#endif
+
+#if ECMODULE_ERRNO_STATIC
+/* errno module */
+EC_OBJ    _ec_moderrno_init( void );
+void      _ec_moderrno_cleanup( void );
 #endif
 
 /* Misc */

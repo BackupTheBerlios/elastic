@@ -1,5 +1,8 @@
 2002-06-07  Marco Pantaleoni  <panta@elasticworld.org>
 
+	* configure.in src/compat.h src/builtin.c src/elastic.c
+	src/private.h src/modules/errno_m.c: added the `errno' module.
+
 	* src/lib.c: added `basic.system'
 
 	* src/types/file.c: added `file.popen'.
@@ -23,8 +26,8 @@
 	modules/Makefile.am: made possible to chose between statically
 	linked-in and dynamic for the `posix' modules.
 
-	* compat.h builtin.c elastic.c private.h modules/posix_m.c:
-	started implementing a POSIX 1003.1 module.
+	* configure.in compat.h builtin.c elastic.c private.h
+	modules/posix_m.c: started implementing a POSIX 1003.1 module.
 
 	* lib.c (EcLibIOErrorClass_New): fixed, it checked for two
 	parameters and it received three.

@@ -7,7 +7,7 @@
  *
  *   Created: Sun Jan  3 12:13:42 MET 1999
  *
- *   $Id: builtin.c,v 1.4 2002/06/06 13:44:05 panta Exp $
+ *   $Id: builtin.c,v 1.5 2002/06/07 17:34:05 panta Exp $
  * --------------------------------------------------------------------------
  *    Copyright (C) 1998-2001 Marco Pantaleoni. All rights reserved.
  *
@@ -579,6 +579,11 @@ EcBool _ec_register_builtin( void )
 		return FALSE;											/* :TODO: do something with exception */
 #endif
 
+#if ECMODULE_ERRNO_STATIC
+	if (EC_ERRORP(_ec_moderrno_init()))
+		return FALSE;											/* :TODO: do something with exception */
+#endif
+
 	/* Object class */
 
 	EcObjectClassDef.superclass   = EC_NIL;
@@ -726,6 +731,9 @@ EcBool _ec_register_builtin( void )
 
 void _ec_cleanup_builtin( void )
 {
+#if ECMODULE_ERRNO_STATIC
+	_ec_moderrno_cleanup();
+#endif
 #if ECMODULE_POSIX_STATIC
 	_ec_modposix_cleanup();
 #endif

@@ -7,9 +7,9 @@
 #
 #   Created: 15 Nov 1999
 #
-#   $Id: Makefile.am,v 1.4 2002/06/06 19:52:49 panta Exp $
+#   $Id: Makefile.am,v 1.5 2002/06/07 17:34:05 panta Exp $
 # --------------------------------------------------------------------------
-#    Copyright (C) 1999-2001 Marco Pantaleoni. All rights reserved.
+#    Copyright (C) 1999-2002 Marco Pantaleoni. All rights reserved.
 #
 #  The contents of this file are subject to the elastiC License version 1.0
 #  (the "elastiC License"); you may not use this file except in compliance
@@ -50,6 +50,8 @@ noinst_LTLIBRARIES = libmodules.la
 
 CFLAGS = $(CORE_CFLAGS)
 
+# `posix' module
+
 if ECMODULE_POSIX_STATIC
 posix_static = posix_m.c
 else
@@ -66,8 +68,26 @@ dynamic_modules_posix         =
 sources_dynamic_modules_posix = $(posix_dynamic)
 endif
 
-DYNAMIC_MODULES = $(dynamic_modules_posix)
-SOURCES_DYNAMIC_MODULES = $(sources_dynamic_modules_posix)
+# `errno' module
+
+if ECMODULE_ERRNO_STATIC
+errno_static = errno_m.c
+else
+errno_static =
+endif
+
+if ECMODULE_ERRNO_DYNAMIC
+errno_dynamic                 = errno_m.c
+dynamic_modules_errno         = errno$(SO)
+sources_dynamic_modules_errno = $(errno_dynamic)
+else
+errno_dynamic                 =
+dynamic_modules_errno         =
+sources_dynamic_modules_errno = $(errno_dynamic)
+endif
+
+DYNAMIC_MODULES = $(dynamic_modules_posix) $(dynamic_modules_errno)
+SOURCES_DYNAMIC_MODULES = $(sources_dynamic_modules_posix) $(sources_dynamic_modules_errno)
 
 static_sources = \
 	list_m.c	\
@@ -75,8 +95,9 @@ static_sources = \
 	string_m.h	\
 	array_m.c	\
 	array_m.h	\
-	$(posix_static)	\
-	errno_switch.c.incl
+	$(posix_static) \
+	$(errno_static)	\
+	errno_m_body.c.incl
 
 libmodules_la_SOURCES = \
 	$(static_sources)
@@ -90,6 +111,14 @@ posix_m.o : posix_m.c
 	$(COMPILE_DYNAMIC) -c $< -o $@
 
 $(dynamic_modules_posix): posix_m.o
+	$(MKMODULE) $(MKMODULEFLAGS) $@ $^ $(MKMODULELIBS) $(LIBS)
+endif
+
+if ECMODULE_ERRNO_DYNAMIC
+errno_m.o : errno_m.c
+	$(COMPILE_DYNAMIC) -c $< -o $@
+
+$(dynamic_modules_errno): errno_m.o
 	$(MKMODULE) $(MKMODULEFLAGS) $@ $^ $(MKMODULELIBS) $(LIBS)
 endif
 

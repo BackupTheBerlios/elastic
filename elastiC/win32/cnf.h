@@ -86,6 +86,13 @@
 #define ECMODULE_POSIX_DYNAMIC 1
 #endif
 
+#if 0										/* ecmodule_errno_static  */
+#define ECMODULE_ERRNO_STATIC 0
+#endif
+#if 1									/* ecmodule_errno_dynamic */
+#define ECMODULE_ERRNO_DYNAMIC 1
+#endif
+
 /*
  * Should we use EC_API_VERSION instead of EC_VERSION in EC_DEFAULTLIBPATH ???
  * Maybe we should use:
